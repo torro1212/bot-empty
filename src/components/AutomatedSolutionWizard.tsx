@@ -6,6 +6,9 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowRight, CheckCircle, HelpCircle, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { CSSProperties } from 'react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 // Import flow data
 import kupaFlow from '../../kupa.js';
@@ -17,19 +20,23 @@ const styles: Record<string, CSSProperties> = {
   card: {
     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
     border: 'none',
-    background: 'linear-gradient(to bottom right, white, #eef2ff)'
+    background: 'linear-gradient(to bottom right, white, #eef2ff)',
+    textAlign: 'center'
   },
   cardHeader: {
     background: 'linear-gradient(to right, #4f46e5, #9333ea)',
     color: 'white',
     borderTopLeftRadius: '0.5rem',
-    borderTopRightRadius: '0.5rem'
+    borderTopRightRadius: '0.5rem',
+    textAlign: 'center'
   },
   cardTitle: {
-    color: 'white'
+    color: 'white',
+    textAlign: 'center'
   },
   cardDescription: {
-    color: '#e0e7ff'
+    color: '#e0e7ff',
+    textAlign: 'center'
   },
   badge: {
     color: '#e0e7ff',
@@ -39,11 +46,13 @@ const styles: Record<string, CSSProperties> = {
     backgroundColor: '#e0e7ff'
   },
   optionButton: {
-    borderColor: '#e0e7ff'
+    borderColor: '#e0e7ff',
+    textAlign: 'center'
   },
   sendButton: {
     background: 'linear-gradient(to right, #4f46e5, #9333ea)',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+    textAlign: 'center'
   },
   backButton: {
     color: '#4f46e5'
@@ -53,7 +62,20 @@ const styles: Record<string, CSSProperties> = {
   },
   flowTypeButton: {
     borderColor: '#e0e7ff',
-    height: '6rem'
+    height: '6rem',
+    textAlign: 'center'
+  },
+  formContainer: {
+    textAlign: 'center'
+  },
+  buttonContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '1rem',
+    marginTop: '1rem'
+  },
+  textCenter: {
+    textAlign: 'center'
   }
 };
 
@@ -78,20 +100,30 @@ interface FlowData {
 
 interface WizardProps {
   onComplete?: () => void;
+  onReportIssue?: () => void;
 }
 
-const AutomatedSolutionWizard = ({ onComplete }: WizardProps) => {
+const AutomatedSolutionWizard = ({ onComplete, onReportIssue }: WizardProps) => {
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
   const [currentNodeId, setCurrentNodeId] = useState<string | null>(null);
   const [currentNode, setCurrentNode] = useState<FlowNode | null>(null);
   const [history, setHistory] = useState<string[]>([]);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [showReportForm, setShowReportForm] = useState(false);
+  const [reportForm, setReportForm] = useState({
+    brand: '',
+    branchName: '',
+    registerNumber: '',
+    issueDetails: '',
+    name: '',
+    phone: ''
+  });
   const { toast } = useToast();
 
   const flowTypes = [
     { id: 'kupa', name: 'בעיות קופה', description: 'פתרון בעיות במערכת הקופה' },
     { id: 'ashrai', name: 'בעיות אשראי', description: 'פתרון בעיות במכשיר האשראי' },
-    { id: 'holetz', name: 'בעיות חולץ', description: 'פתרון בעיות בחולץ הכרטיסים' },
+    { id: 'holetz', name: 'בעיות חולץ', description: 'פתרון בעיות בחולץ' },
   ];
 
   // Get the appropriate flow data based on selection
@@ -153,10 +185,6 @@ const AutomatedSolutionWizard = ({ onComplete }: WizardProps) => {
       const nextNode = flowData[nextNodeId];
       if (typeof nextNode === 'object' && nextNode.type === 'end') {
         setIsCompleted(true);
-        toast({
-          title: "תהליך הושלם!",
-          description: nextNode.text || "תהליך פתרון הבעיה הושלם בהצלחה.",
-        });
         if (onComplete) onComplete();
       }
     }
@@ -184,11 +212,34 @@ const AutomatedSolutionWizard = ({ onComplete }: WizardProps) => {
   };
 
   const handleSendReport = () => {
+    if (onReportIssue) {
+      onReportIssue();
+    } else {
+      setShowReportForm(true);
+    }
+  };
+
+  const handleReportFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // כאן יהיה הקוד לשליחת הטופס לשרת
+    console.log(reportForm);
+    
     toast({
       title: "דיווח נשלח",
       description: "תודה על הדיווח! צוות התמיכה יצור איתך קשר בהקדם.",
     });
+    
+    setShowReportForm(false);
     setIsCompleted(true);
+    if (onComplete) onComplete();
+  };
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setReportForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const renderOptions = () => {
@@ -222,6 +273,123 @@ const AutomatedSolutionWizard = ({ onComplete }: WizardProps) => {
       ));
     }
   };
+
+  // Render report form
+  if (showReportForm) {
+    return (
+      <Card style={styles.card}>
+        <CardHeader style={styles.cardHeader}>
+          <CardTitle style={styles.cardTitle} className="text-xl">טופס דיווח תקלה</CardTitle>
+          <CardDescription style={styles.cardDescription}>אנא מלא את הפרטים הבאים</CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <form onSubmit={handleReportFormSubmit} className="space-y-4" style={styles.formContainer}>
+            <div className="space-y-2">
+              <Label htmlFor="brand" className="text-center block">מותג:</Label>
+              <Input 
+                id="brand" 
+                name="brand" 
+                value={reportForm.brand} 
+                onChange={handleInputChange} 
+                placeholder="שם המותג"
+                required
+                className="text-center mx-auto"
+                style={{maxWidth: '400px'}}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="branchName" className="text-center block">שם סניף:</Label>
+              <Input 
+                id="branchName" 
+                name="branchName" 
+                value={reportForm.branchName} 
+                onChange={handleInputChange} 
+                placeholder="שם הסניף"
+                required
+                className="text-center mx-auto"
+                style={{maxWidth: '400px'}}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="registerNumber" className="text-center block">מספר קופה:</Label>
+              <Input 
+                id="registerNumber" 
+                name="registerNumber" 
+                value={reportForm.registerNumber} 
+                onChange={handleInputChange} 
+                placeholder="מספר הקופה"
+                required
+                className="text-center mx-auto"
+                style={{maxWidth: '400px'}}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="issueDetails" className="text-center block">פירוט התקלה:</Label>
+              <Textarea 
+                id="issueDetails" 
+                name="issueDetails" 
+                value={reportForm.issueDetails} 
+                onChange={handleInputChange} 
+                placeholder="תיאור מפורט של התקלה"
+                required
+                className="min-h-[100px] text-center mx-auto"
+                style={{maxWidth: '400px'}}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-center block">שם:</Label>
+              <Input 
+                id="name" 
+                name="name" 
+                value={reportForm.name} 
+                onChange={handleInputChange} 
+                placeholder="השם שלך"
+                required
+                className="text-center mx-auto"
+                style={{maxWidth: '400px'}}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-center block">מספר טלפון:</Label>
+              <Input 
+                id="phone" 
+                name="phone" 
+                value={reportForm.phone} 
+                onChange={handleInputChange} 
+                placeholder="מספר הטלפון שלך"
+                required
+                className="text-center mx-auto"
+                style={{maxWidth: '400px'}}
+              />
+            </div>
+            
+            <div style={styles.buttonContainer}>
+              <Button 
+                type="button"
+                variant="ghost" 
+                onClick={() => setShowReportForm(false)}
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                חזור
+              </Button>
+              
+              <Button 
+                type="submit"
+                style={styles.sendButton}
+              >
+                שלח דיווח
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    );
+  }
 
   // Render flow selection
   if (!selectedFlow) {
@@ -267,19 +435,19 @@ const AutomatedSolutionWizard = ({ onComplete }: WizardProps) => {
       
       <CardContent className="p-6">
         {currentNode && (
-          <div className="space-y-6">
-            <div className="text-lg font-medium">{currentNode.text}</div>
+          <div className="space-y-6" style={styles.textCenter}>
+            <div className="text-lg font-medium text-center">{currentNode.text}</div>
             
             {/* Display images */}
             {(currentNode.image || currentNode.image2) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4 mx-auto" style={{maxWidth: '800px'}}>
                 {currentNode.image && (
-                  <div className="rounded-lg overflow-hidden border border-indigo-100 shadow-md">
+                  <div className="rounded-lg overflow-hidden border border-indigo-100 shadow-md mx-auto">
                     <img src={currentNode.image} alt="הדרכה" className="w-full h-auto" />
                   </div>
                 )}
                 {currentNode.image2 && (
-                  <div className="rounded-lg overflow-hidden border border-indigo-100 shadow-md">
+                  <div className="rounded-lg overflow-hidden border border-indigo-100 shadow-md mx-auto">
                     <img src={currentNode.image2} alt="הדרכה נוספת" className="w-full h-auto" />
                   </div>
                 )}
@@ -288,7 +456,7 @@ const AutomatedSolutionWizard = ({ onComplete }: WizardProps) => {
             
             {/* Display video */}
             {currentNode.video && (
-              <div className="rounded-lg overflow-hidden border border-indigo-100 shadow-md my-4">
+              <div className="rounded-lg overflow-hidden border border-indigo-100 shadow-md my-4 mx-auto" style={{maxWidth: '600px'}}>
                 <video 
                   src={currentNode.video} 
                   controls 
@@ -319,7 +487,7 @@ const AutomatedSolutionWizard = ({ onComplete }: WizardProps) => {
               )}
             </div>
             
-            <div className="flex justify-between items-center pt-4">
+            <div style={styles.buttonContainer}>
               <Button 
                 variant="ghost" 
                 size="sm" 
