@@ -47,7 +47,9 @@ const styles: Record<string, CSSProperties> = {
   },
   optionButton: {
     borderColor: '#e0e7ff',
-    textAlign: 'center'
+    textAlign: 'center',
+    direction: 'rtl',
+    unicodeBidi: 'embed'
   },
   sendButton: {
     background: 'linear-gradient(to right, #4f46e5, #9333ea)',
@@ -75,7 +77,9 @@ const styles: Record<string, CSSProperties> = {
     marginTop: '1rem'
   },
   textCenter: {
-    textAlign: 'center'
+    textAlign: 'center',
+    direction: 'rtl',
+    unicodeBidi: 'embed'
   }
 };
 
@@ -267,6 +271,7 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue }: WizardProps) => 
           className="flex items-center gap-2 hover:bg-indigo-50 hover:text-indigo-700 justify-center mx-auto w-full sm:w-3/4"
           style={styles.optionButton}
           onClick={() => handleOptionClick(label)}
+          dir="rtl"
         >
           {label}
         </Button>
@@ -436,7 +441,7 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue }: WizardProps) => 
       <CardContent className="p-6">
         {currentNode && (
           <div className="space-y-6" style={styles.textCenter}>
-            <div className="text-lg font-medium text-center">{currentNode.text}</div>
+            <div className="text-lg font-medium text-center" dir="rtl">{currentNode.text}</div>
             
             {/* Display images */}
             {(currentNode.image || currentNode.image2) && (
@@ -481,6 +486,7 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue }: WizardProps) => 
                   className="w-full sm:w-3/4 hover:shadow-lg transition-shadow"
                   style={styles.sendButton}
                   onClick={handleSendReport}
+                  dir="rtl"
                 >
                   שלח דיווח תקלה
                 </Button>
