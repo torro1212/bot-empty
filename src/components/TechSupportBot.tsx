@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarContent, AvatarFallback } from '@/components/ui/avatar';
-import { MessageCircle, Send, Settings, Printer, Wifi, Monitor, Users, HelpCircle, CheckCircle } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { MessageCircle, Send, Settings, Printer, Wifi, Monitor, Users, HelpCircle, CheckCircle, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface Message {
@@ -18,7 +18,192 @@ interface Message {
   steps?: string[];
   hasImage?: boolean;
   imageUrl?: string;
+  image2Url?: string;
+  hasVideo?: boolean;
+  videoUrl?: string;
+  flowOptions?: { [key: string]: string };
+  currentFlowNode?: string;
 }
+
+const creditCardFlow = {
+  start: "ASHRAI",
+  nodes: {
+    ASHRAI: {
+      type: "question",
+      text: "האם מכשיר האשראי דולק?",
+      image: "https://i.imgur.com/3HbntNU.jpeg",
+      options: {
+        "דלוק": "A-DALOK",
+        "לא דלוק": "A-LODALOK"
+      }
+    },
+    "A-DALOK": {
+      type: "question",
+      text: "יש ללחוץ על הכפתור הירוק. האם מופיעים שלושה ריבועים בצד שמאל – כמו בתמונה 1 או כמו בתמונה 2?",
+      image: "https://i.imgur.com/iUXJPVo.jpeg",
+      image2: "https://i.imgur.com/umUOoUc.png",
+      options: {
+        "תמונה 1": "A-PIC-1-V",
+        "תמונה 2": "A-PIC-2-X"
+      }
+    },
+    "A-PIC-1-V": {
+      type: "question",
+      text: "יש ללחוץ על כוכבית או על כפתור F, ולאחר מכן להקליד 7277 ולסיים שוב בלחיצה על כוכבית או F – כפי שמוצג בסרטון",
+      image: "https://i.imgur.com/UZLWIlt.jpeg",
+      video: "https://i.imgur.com/hCqwr4B.mp4",
+      options: {
+        "הבא": "A-NEXT",
+        "כבר ביצעתי לא עזר": "DONELOVED"
+      }
+    },
+    "A-NEXT": {
+      type: "question",
+      text: "נא ללחוץ על כפתור ה-ROUTE. מה מופיע במסך – כמו בתמונה 1, תמונה 2 או משהו אחר?",
+      image: "https://i.imgur.com/1Ut0dKU.jpeg",
+      image2: "https://i.imgur.com/OyqOLJg.png",
+      options: {
+        "תמונה 1": "Route-PIC1-3-V",
+        "תמונה 2 \\ אחר": "Route-PIC4-X"
+      }
+    },
+    "Route-PIC1-3-V": {
+      type: "question",
+      text: "נא לבצע כיבוי והדלקה (כפי שמוצג בסרטון). האם התקלה נפתרה?",
+      video: "https://i.imgur.com/Ps5UHMg.mp4",
+      options: {
+        "כן": "YES",
+        "לא": "NO"
+      }
+    },
+    "YES": {
+      type: "end",
+      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+    },
+    "NO": {
+      type: "question",
+      text: "לא הצלחת לפתור את התקלה? לחצו על 'שליחת תקלה' ונחזור אליכם בהקדם 😊",
+      options: {
+        "שליחת תקלה": "SEND"
+      }
+    },
+    "Route-PIC4-X": {
+      type: "question",
+      text: "נא לבצע 'הצמדה' של האשראי לקופה כפי שמתואר בסרטון",
+      video: "https://i.imgur.com/srw8fHO.mp4",
+      options: {
+        "הצליח ועובד": "WORKOVED",
+        "הצליח ולא עובד": "WORKLOVED"
+      }
+    },
+    "WORKOVED": {
+      type: "end",
+      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+    },
+    "WORKLOVED": {
+      type: "question",
+      text: "לא הצלחת לפתור את התקלה? לחצו על 'שליחת תקלה' ונחזור אליכם בהקדם 😊",
+      options: {
+        "שליחת תקלה": "SEND"
+      }
+    },
+    "DONELOVED": {
+      type: "question",
+      text: "לא הצלחת לפתור את התקלה? לחצו על 'שליחת תקלה' ונחזור אליכם בהקדם 😊",
+      options: {
+        "שליחת תקלה": "SEND"
+      }
+    },
+    "A-PIC-2-X": {
+      type: "question",
+      text: "נא לעקוב אחר הכבל כפי שמוצג בסרטון, ולוודא שהוא מחובר כפי שמתואר בתמונה",
+      video: "https://i.imgur.com/tyZBRer.mp4",
+      options: {
+        "מחובר ועובד": "A-CA-OVED",
+        "מחובר ולא עובד": "A-CA-LOVED"
+      }
+    },
+    "A-CA-OVED": {
+      type: "end",
+      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+    },
+    "A-CA-LOVED": {
+      type: "question",
+      text: "נא ללחוץ על הכפתור שמסומן בתמונה 1 לבדוק שמופיע כמו בתמונה 2",
+      image: "https://i.imgur.com/VreUuab.png",
+      options: {
+        "תקין-ירוק": "TAKINYAROK",
+        "לא תקין": "LOTAKIN"
+      }
+    },
+    "TAKINYAROK": {
+      type: "question",
+      text: "נא לבצע 'הצמדה' של האשראי לקופה כפי שמתואר בסרטון",
+      video: "https://i.imgur.com/srw8fHO.mp4",
+      options: {
+        "הצליח ועובד": "WORKOVED",
+        "הצליח ולא עובד": "WORKLOVED"
+      }
+    },
+    "LOTAKIN": {
+      type: "question",
+      text: "נא לבדוק שהכבל רשת מחובר כמו בסרטון ומופיע חיבורים ירוקים כמו בתמונה",
+      video: "https://i.imgur.com/J6tKRYe.mp4",
+      options: {
+        "מחובר-ירוק": "MHO-YAROK",
+        "מחובר-לא ירוק": "LO-YAROK"
+      }
+    },
+    "MHO-YAROK": {
+      type: "question",
+      text: "נא לבצע 'הצמדה' של האשראי לקופה כפי שמתואר בסרטון",
+      video: "https://i.imgur.com/srw8fHO.mp4",
+      options: {
+        "הצליח ועובד": "WORKOVED",
+        "הצליח ולא עובד": "WORKLOVED"
+      }
+    },
+    "LO-YAROK": {
+      type: "question",
+      text: "לא הצלחת לפתור את התקלה? לחצו על 'שליחת תקלה' ונחזור אליכם בהקדם 😊",
+      options: {
+        "שליחת תקלה": "SEND"
+      }
+    },
+    "A-LODALOK": {
+      type: "question",
+      text: "נא לעקוב אחר הכבל בהתאם לסרטון, ולוודא שהוא מחובר כפי שמוצג בתמונה",
+      video: "https://i.imgur.com/eKLaeYO.mp4",
+      options: {
+        "נדלק ועובד": "A-CAH-OVED",
+        "נדלק ולא עובד": "A-CAH-LOVED",
+        "מחובר וכבוי": "A-CAH-LONDLAK"
+      }
+    },
+    "A-CAH-OVED": {
+      type: "end",
+      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+    },
+    "A-CAH-LOVED": {
+      type: "question",
+      text: "לא הצלחת לפתור את התקלה? לחצו על 'שליחת תקלה' ונחזור אליכם בהקדם 😊",
+      options: {
+        "שליחת תקלה": "SEND"
+      }
+    },
+    "A-CAH-LONDLAK": {
+      type: "question",
+      text: "לא הצלחת לפתור את התקלה? לחצו על 'שליחת תקלה' ונחזור אליכם בהקדם 😊",
+      options: {
+        "שליחת תקלה": "SEND"
+      }
+    },
+    "SEND": {
+      type: "end",
+      text: "התקלה נשלחה לצוות התמיכה. נחזור אליכם בהקדם האפשרי!"
+    }
+  }
+};
 
 const TechSupportBot = () => {
   const [messages, setMessages] = useState<Message[]>([
@@ -37,6 +222,7 @@ const TechSupportBot = () => {
     { text: 'הקופה לא עובדת', category: 'pos', icon: Monitor },
     { text: 'המדפסת לא מדפיסה', category: 'printer', icon: Printer },
     { text: 'אין אינטרנט', category: 'network', icon: Wifi },
+    { text: 'בעיה באשראי', category: 'credit-card', icon: CreditCard },
     { text: 'שכחתי סיסמה', category: 'users', icon: Users },
   ];
 
@@ -106,8 +292,69 @@ const TechSupportBot = () => {
     }, 1500);
   };
 
+  const handleFlowOption = (nodeId: string, option: string) => {
+    const nextNodeId = creditCardFlow.nodes[nodeId]?.options?.[option];
+    if (!nextNodeId) return;
+
+    const nextNode = creditCardFlow.nodes[nextNodeId];
+    if (!nextNode) return;
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: option,
+      isBot: false,
+      timestamp: new Date(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setIsTyping(true);
+
+    setTimeout(() => {
+      const botMessage: Message = {
+        id: Date.now().toString(),
+        text: nextNode.text,
+        isBot: true,
+        timestamp: new Date(),
+        category: 'credit-card',
+        hasImage: !!nextNode.image,
+        imageUrl: nextNode.image,
+        image2Url: nextNode.image2,
+        hasVideo: !!nextNode.video,
+        videoUrl: nextNode.video,
+        flowOptions: nextNode.type === 'question' ? nextNode.options : undefined,
+        currentFlowNode: nextNodeId
+      };
+
+      if (nextNode.type === 'end' && nextNodeId === 'SEND') {
+        // Handle report issue
+        toast({
+          title: "תקלה נשלחה",
+          description: "התקלה נשלחה לצוות התמיכה. נחזור אליכם בהקדם!",
+        });
+      }
+
+      setMessages(prev => [...prev, botMessage]);
+      setIsTyping(false);
+    }, 1500);
+  };
+
   const generateBotResponse = (userMessage: string): Message => {
     const lowerMessage = userMessage.toLowerCase();
+    
+    if (lowerMessage.includes('אשראי') || lowerMessage.includes('כרטיס אשראי') || lowerMessage.includes('בעיה באשראי')) {
+      const startNode = creditCardFlow.nodes[creditCardFlow.start];
+      return {
+        id: Date.now().toString(),
+        text: "בואו נפתור את בעיית האשראי יחד! אני אדריך אותך שלב אחר שלב:\n\n" + startNode.text,
+        isBot: true,
+        timestamp: new Date(),
+        category: 'credit-card',
+        hasImage: !!startNode.image,
+        imageUrl: startNode.image,
+        flowOptions: startNode.options,
+        currentFlowNode: creditCardFlow.start
+      };
+    }
     
     if (lowerMessage.includes('קופה') || lowerMessage.includes('pos')) {
       return {
@@ -163,7 +410,7 @@ const TechSupportBot = () => {
 
     return {
       id: Date.now().toString(),
-      text: 'תודה על השאלה! אני יכול לעזור לך עם:\n• בעיות קופה ומערכות POS\n• בעיות מדפסות וסורקים\n• בעיות רשת ואינטרנט\n• ניהול משתמשים וסיסמאות\n\nפשוט תאמר לי איך אוכל לעזור! 😊',
+      text: 'תודה על השאלה! אני יכול לעזור לך עם:\n• בעיות קופה ומערכות POS\n• בעיות מדפסות וסורקים\n• בעיות רשת ואינטרנט\n• בעיות אשראי וכרטיסי אשראי\n• ניהול משתמשים וסיסמאות\n\nפשוט תאמר לי איך אוכל לעזור! 😊',
       isBot: true,
       timestamp: new Date(),
     };
@@ -215,8 +462,59 @@ const TechSupportBot = () => {
                       
                       {message.category && (
                         <Badge className="mt-2" variant="outline">
-                          {troubleshootingSteps[message.category as keyof typeof troubleshootingSteps].title}
+                          {message.category === 'credit-card' ? 'פתרון בעיות אשראי' : 
+                           troubleshootingSteps[message.category as keyof typeof troubleshootingSteps]?.title}
                         </Badge>
+                      )}
+                      
+                      {message.hasImage && message.imageUrl && (
+                        <div className="mt-3">
+                          <img 
+                            src={message.imageUrl} 
+                            alt="מדריך חזותי"
+                            className="rounded-lg max-w-full h-auto"
+                          />
+                        </div>
+                      )}
+
+                      {message.image2Url && (
+                        <div className="mt-3">
+                          <p className="text-sm font-medium mb-2">תמונה 2:</p>
+                          <img 
+                            src={message.image2Url} 
+                            alt="מדריך חזותי - תמונה 2"
+                            className="rounded-lg max-w-full h-auto"
+                          />
+                        </div>
+                      )}
+
+                      {message.hasVideo && message.videoUrl && (
+                        <div className="mt-3">
+                          <video 
+                            controls 
+                            className="rounded-lg max-w-full h-auto"
+                            style={{ maxHeight: '300px' }}
+                          >
+                            <source src={message.videoUrl} type="video/mp4" />
+                            הדפדפן שלך לא תומך בהצגת וידאו
+                          </video>
+                        </div>
+                      )}
+
+                      {message.flowOptions && (
+                        <div className="mt-4 space-y-2">
+                          {Object.entries(message.flowOptions).map(([option, nextNode]) => (
+                            <Button
+                              key={option}
+                              variant="outline"
+                              size="sm"
+                              className="block w-full text-right"
+                              onClick={() => handleFlowOption(message.currentFlowNode!, option)}
+                            >
+                              {option}
+                            </Button>
+                          ))}
+                        </div>
                       )}
                       
                       {message.steps && (
@@ -234,16 +532,6 @@ const TechSupportBot = () => {
                               <span className="text-sm">{step}</span>
                             </div>
                           ))}
-                        </div>
-                      )}
-                      
-                      {message.hasImage && (
-                        <div className="mt-3">
-                          <img 
-                            src={message.imageUrl} 
-                            alt="מדריך חזותי"
-                            className="rounded-lg max-w-full h-auto"
-                          />
                         </div>
                       )}
                       
@@ -276,7 +564,7 @@ const TechSupportBot = () => {
           
           {/* Quick Replies */}
           <div className="p-4 border-t bg-gray-50">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-4">
               {quickReplies.map((reply, index) => (
                 <Button
                   key={index}
