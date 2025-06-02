@@ -6,6 +6,9 @@
   },
   "github": {
     "enabled": true,
-    "silent": true
-  }
+    "silent": true,
+    "autoAlias": true
+  },
+  "public": true,
+  "cleanUrls": true
 } 
