@@ -18,6 +18,16 @@ const TroubleshootingFlow = ({ flowType, flowData, onComplete }: Troubleshooting
   
   const currentNode = flowData.nodes[currentNodeId];
   
+  // Log the current image URL for debugging
+  useEffect(() => {
+    if (currentNode?.image) {
+      console.log('Current image URL:', currentNode.image);
+    }
+    if (currentNode?.video) {
+      console.log('Current video URL:', currentNode.video);
+    }
+  }, [currentNode]);
+  
   const handleOptionClick = (nextNodeId: string) => {
     setHistory(prev => [...prev, currentNodeId]);
     setCurrentNodeId(nextNodeId);
@@ -82,6 +92,9 @@ const TroubleshootingFlow = ({ flowType, flowData, onComplete }: Troubleshooting
             <div className="flex flex-wrap gap-4 justify-center">
               {currentNode.image && (
                 <div className="border rounded-lg overflow-hidden shadow-md">
+                  <div className="bg-black text-white p-1 text-xs overflow-auto max-w-full">
+                    <code>{currentNode.image}</code>
+                  </div>
                   <img 
                     src={currentNode.image} 
                     alt="תמונת הדרכה" 
@@ -92,6 +105,9 @@ const TroubleshootingFlow = ({ flowType, flowData, onComplete }: Troubleshooting
               
               {currentNode.image2 && (
                 <div className="border rounded-lg overflow-hidden shadow-md">
+                  <div className="bg-black text-white p-1 text-xs overflow-auto max-w-full">
+                    <code>{currentNode.image2}</code>
+                  </div>
                   <img 
                     src={currentNode.image2} 
                     alt="תמונת הדרכה נוספת" 
