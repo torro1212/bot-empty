@@ -1,13 +1,66 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarContent, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MessageCircle, Send, Settings, Printer, Wifi, Monitor, Users, HelpCircle, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { CSSProperties } from 'react';
+
+// Direct style objects with explicit colors
+const styles: Record<string, CSSProperties> = {
+  card: {
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+    border: 'none',
+    background: 'linear-gradient(to bottom right, white, #eef2ff)'
+  },
+  cardHeader: {
+    background: 'linear-gradient(to right, #4f46e5, #9333ea)',
+    color: 'white',
+    borderTopLeftRadius: '0.5rem',
+    borderTopRightRadius: '0.5rem',
+    padding: '0.75rem 1.5rem'
+  },
+  botMessage: {
+    backgroundColor: 'white',
+    border: '1px solid #e0e7ff',
+    color: '#1f2937',
+    borderTopRightRadius: '1rem',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+  },
+  userMessage: {
+    background: 'linear-gradient(to right, #4f46e5, #9333ea)',
+    color: 'white',
+    borderTopLeftRadius: '1rem',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+  },
+  avatarBg: {
+    backgroundColor: '#4f46e5'
+  },
+  stepsContainer: {
+    backgroundColor: '#eef2ff',
+    padding: '0.5rem 0.75rem',
+    borderRadius: '0.5rem',
+    border: '1px solid #e0e7ff'
+  },
+  stepButton: {
+    borderColor: '#e0e7ff'
+  },
+  quickReplyButton: {
+    borderColor: '#e0e7ff'
+  },
+  sendButton: {
+    background: 'linear-gradient(to right, #4f46e5, #9333ea)',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+  },
+  inputBorder: {
+    borderColor: '#e0e7ff'
+  }
+};
+
+// Hover and focus styles will be applied using className instead
 
 interface Message {
   id: string;
@@ -49,7 +102,7 @@ const TechSupportBot = () => {
         'נסה להפעיל מחדש את המערכת ■',
         'בדוק עדכונים במערכת ■'
       ],
-      image: '/api/placeholder/400/300'
+      image: 'https://placehold.co/400x300/EEE/31343C'
     },
     printer: {
       title: 'פתרון בעיות מדפסת',
@@ -59,7 +112,7 @@ const TechSupportBot = () => {
         'בדוק שכבל USB/רשת מחובר ■',
         'נסה להדפיס דף בדיקה ■'
       ],
-      image: '/api/placeholder/400/300'
+      image: 'https://placehold.co/400x300/EEE/31343C'
     },
     network: {
       title: 'פתרון בעיות רשת',
@@ -69,7 +122,7 @@ const TechSupportBot = () => {
         'נסה להפעיל מחדש את הנתב ■',
         'בדוק עם ספק האינטרנט ■'
       ],
-      image: '/api/placeholder/400/300'
+      image: 'https://placehold.co/400x300/EEE/31343C'
     },
     users: {
       title: 'איפוס סיסמה',
@@ -79,7 +132,7 @@ const TechSupportBot = () => {
         'בדוק את תיבת המייל לקישור איפוס ■',
         'צור סיסמה חדשה ■'
       ],
-      image: '/api/placeholder/400/300'
+      image: 'https://placehold.co/400x300/EEE/31343C'
     }
   };
 
@@ -178,78 +231,87 @@ const TechSupportBot = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <Card className="h-[600px] flex flex-col shadow-2xl border-0 bg-gradient-to-br from-white to-blue-50">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
-          <CardTitle className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <Settings className="w-6 h-6 animate-spin" />
+      <Card style={styles.card} className="h-[500px] sm:h-[600px] flex flex-col">
+        <CardHeader style={styles.cardHeader} className="p-3 sm:p-6">
+          <CardTitle className="flex items-center gap-2 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white/20 rounded-full flex items-center justify-center">
+              <Settings className="w-4 h-4 sm:w-6 sm:h-6 animate-spin" />
             </div>
             <div>
-              <h3 className="text-xl">טיפ - העוזר הטכני החכם</h3>
-              <p className="text-blue-100 text-sm">מוכן לעזור לך לפתור כל תקלה!</p>
+              <h3 className="text-base sm:text-xl">טיפ - העוזר הטכני החכם</h3>
+              <p className="text-indigo-100 text-xs sm:text-sm">מוכן לעזור לך לפתור כל תקלה!</p>
             </div>
           </CardTitle>
         </CardHeader>
         
         <CardContent className="flex-1 flex flex-col p-0">
-          <ScrollArea className="flex-1 p-4">
-            <div className="space-y-4">
+          <ScrollArea className="flex-1 p-2 sm:p-4">
+            <div className="space-y-3 sm:space-y-4">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
                 >
-                  <div className={`flex gap-3 max-w-[80%] ${message.isBot ? '' : 'flex-row-reverse'}`}>
-                    <Avatar className="w-8 h-8">
-                      <AvatarFallback className={message.isBot ? 'bg-blue-500 text-white' : 'bg-gray-500 text-white'}>
-                        {message.isBot ? '🤖' : '👤'}
-                      </AvatarFallback>
-                    </Avatar>
+                  <div
+                    style={message.isBot ? styles.botMessage : styles.userMessage}
+                    className="max-w-[85%] sm:max-w-[75%] rounded-2xl p-3 sm:p-4"
+                  >
+                    {message.isBot && (
+                      <div className="flex items-center gap-2 mb-2">
+                        <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
+                          <AvatarFallback style={styles.avatarBg}>
+                            <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex items-center">
+                          <span className="font-semibold text-sm sm:text-base">טיפ</span>
+                          <Badge variant="outline" className="ml-2 text-xs border-indigo-200">בוט</Badge>
+                        </div>
+                      </div>
+                    )}
                     
-                    <div className={`rounded-2xl p-4 ${
-                      message.isBot 
-                        ? 'bg-white border border-gray-200 shadow-sm' 
-                        : 'bg-blue-500 text-white'
-                    }`}>
-                      <p className="whitespace-pre-wrap">{message.text}</p>
-                      
-                      {message.category && (
-                        <Badge className="mt-2" variant="outline">
-                          {troubleshootingSteps[message.category as keyof typeof troubleshootingSteps].title}
-                        </Badge>
-                      )}
+                    <div className="space-y-2">
+                      <p className="whitespace-pre-wrap text-sm sm:text-base">{message.text}</p>
                       
                       {message.steps && (
-                        <div className="mt-4 space-y-2">
-                          {message.steps.map((step, index) => (
-                            <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="w-6 h-6 p-0"
-                                onClick={() => handleStepComplete(message.id, index)}
-                              >
-                                <CheckCircle className="w-4 h-4" />
-                              </Button>
-                              <span className="text-sm">{step}</span>
-                            </div>
-                          ))}
+                        <div style={styles.stepsContainer} className="mt-3 space-y-2">
+                          <h4 className="font-medium text-sm sm:text-base">{troubleshootingSteps[message.category as keyof typeof troubleshootingSteps]?.title}</h4>
+                          <ul className="space-y-1 sm:space-y-2">
+                            {message.steps.map((step, index) => (
+                              <li key={index} className="flex items-start gap-2">
+                                <Button 
+                                  size="icon" 
+                                  variant="outline" 
+                                  className="h-5 w-5 sm:h-6 sm:w-6 rounded-full mt-0.5 hover:bg-indigo-100 hover:text-indigo-700"
+                                  style={{borderColor: '#e0e7ff'}}
+                                  onClick={() => handleStepComplete(message.id, index)}
+                                >
+                                  <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                                </Button>
+                                <span className="text-xs sm:text-sm">{step}</span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       )}
                       
                       {message.hasImage && (
                         <div className="mt-3">
-                          <img 
-                            src={message.imageUrl} 
-                            alt="מדריך חזותי"
-                            className="rounded-lg max-w-full h-auto"
-                          />
+                          <div style={styles.stepsContainer} className="overflow-hidden">
+                            <img 
+                              src={message.imageUrl} 
+                              alt="Troubleshooting visual guide" 
+                              className="w-full h-auto object-cover" 
+                            />
+                          </div>
                         </div>
                       )}
-                      
-                      <p className="text-xs opacity-60 mt-2">
-                        {message.timestamp.toLocaleTimeString('he-IL')}
-                      </p>
+                    </div>
+                    
+                    <div className="mt-2 flex justify-end">
+                      <span className="text-xs text-gray-500">
+                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -257,16 +319,22 @@ const TechSupportBot = () => {
               
               {isTyping && (
                 <div className="flex justify-start">
-                  <div className="flex gap-3">
-                    <Avatar className="w-8 h-8">
-                      <AvatarFallback className="bg-blue-500 text-white">🤖</AvatarFallback>
-                    </Avatar>
-                    <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
-                      <div className="flex gap-1">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  <div style={styles.botMessage} className="max-w-[75%] rounded-2xl p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Avatar className="h-6 w-6 sm:h-8 sm:w-8">
+                        <AvatarFallback style={styles.avatarBg}>
+                          <Settings className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex items-center">
+                        <span className="font-semibold text-sm sm:text-base">טיפ</span>
+                        <Badge variant="outline" className="ml-2 text-xs border-indigo-200">בוט</Badge>
                       </div>
+                    </div>
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
                     </div>
                   </div>
                 </div>
@@ -274,35 +342,42 @@ const TechSupportBot = () => {
             </div>
           </ScrollArea>
           
-          {/* Quick Replies */}
-          <div className="p-4 border-t bg-gray-50">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-              {quickReplies.map((reply, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  className="text-xs h-auto p-2 flex items-center gap-1"
-                  onClick={() => handleSendMessage(reply.text)}
+          <div className="p-2 sm:p-4 border-t border-indigo-100 bg-white">
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-wrap gap-1 sm:gap-2 mb-2">
+                {quickReplies.map((reply, index) => (
+                  <Button 
+                    key={index} 
+                    variant="outline" 
+                    size="sm"
+                    className="text-xs sm:text-sm h-7 sm:h-9 px-2 sm:px-3 hover:bg-indigo-50 hover:text-indigo-700"
+                    style={{borderColor: '#e0e7ff'}}
+                    onClick={() => handleSendMessage(reply.text)}
+                  >
+                    <reply.icon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                    {reply.text}
+                  </Button>
+                ))}
+              </div>
+              
+              <div className="flex gap-2">
+                <Input
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  placeholder="הקלד את שאלתך כאן..."
+                  className="flex-1 text-sm sm:text-base focus-visible:ring-indigo-500"
+                  style={{borderColor: '#e0e7ff'}}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                />
+                <Button 
+                  onClick={() => handleSendMessage()} 
+                  size="icon"
+                  style={styles.sendButton}
+                  className="hover:shadow-lg transition-shadow"
                 >
-                  <reply.icon className="w-3 h-3" />
-                  {reply.text}
+                  <Send className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
-              ))}
-            </div>
-            
-            {/* Input */}
-            <div className="flex gap-2">
-              <Input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="תאמר לי איך אוכל לעזור לך..."
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="flex-1"
-              />
-              <Button onClick={() => handleSendMessage()} className="px-6">
-                <Send className="w-4 h-4" />
-              </Button>
+              </div>
             </div>
           </div>
         </CardContent>

@@ -1,13 +1,16 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Monitor, Printer, Wifi, Users, ChevronDown, Play, FileText, MessageCircle } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Monitor, Printer, Wifi, Users, ChevronDown, Play, FileText, MessageCircle, Zap } from 'lucide-react';
+import TroubleshootingSelector from './TroubleshootingSelector';
+import InteractiveSolutionCenter from './InteractiveSolutionCenter';
 
 const SupportCategories = () => {
   const [openCategories, setOpenCategories] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<string>('guides');
 
   const categories = [
     {
@@ -154,83 +157,89 @@ const SupportCategories = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">מדריכי פתרון בעיות</h2>
-        <p className="text-lg text-gray-600">מדריכים מפורטים לפתרון התקלות הנפוצות ביותר</p>
+    <div className="max-w-6xl mx-auto space-y-4 sm:space-y-6">
+      <div className="text-center mb-4 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">פתרון בעיות טכניות</h2>
+        <p className="text-base sm:text-lg text-gray-600">מדריכים ומערכות אוטומטיות לפתרון תקלות בקלות ובמהירות</p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        {categories.map((category) => (
-          <Card key={category.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            <CardHeader className={`${category.color} text-white`}>
-              <CardTitle className="flex items-center gap-3">
-                <category.icon className="w-6 h-6" />
-                {category.title}
-              </CardTitle>
-              <CardDescription className="text-white/90">
-                {category.description}
-              </CardDescription>
-            </CardHeader>
-            
-            <CardContent className="p-0">
-              {category.articles.map((article, index) => (
-                <Collapsible key={index}>
-                  <CollapsibleTrigger asChild>
-                    <div className="p-4 hover:bg-gray-50 cursor-pointer border-b last:border-b-0">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900 mb-2">{article.title}</h4>
-                          <div className="flex gap-2">
-                            <Badge className={getDifficultyColor(article.difficulty)}>
-                              {article.difficulty}
-                            </Badge>
-                            <Badge variant="outline">
-                              {article.duration}
-                            </Badge>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-4 sm:mb-8">
+          <TabsTrigger value="guides" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-base py-2">
+            <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
+            מדריכים כתובים
+          </TabsTrigger>
+          <TabsTrigger value="interactive" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-base py-2">
+            <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
+            פתרון אוטומטי אינטראקטיבי
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="guides" className="space-y-4 sm:space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            {categories.map((category) => (
+              <Card key={category.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <CardHeader className={`${category.color} text-white p-3 sm:p-6`}>
+                  <CardTitle className="flex items-center gap-2 sm:gap-3 text-base sm:text-lg">
+                    <category.icon className="w-4 h-4 sm:w-6 sm:h-6" />
+                    {category.title}
+                  </CardTitle>
+                  <CardDescription className="text-white/90 text-xs sm:text-sm">
+                    {category.description}
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="p-0">
+                  {category.articles.map((article, index) => (
+                    <Collapsible key={index}>
+                      <CollapsibleTrigger asChild>
+                        <div className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer border-b last:border-b-0">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-gray-900 mb-1 sm:mb-2 text-sm sm:text-base">{article.title}</h4>
+                              <div className="flex flex-wrap gap-1 sm:gap-2">
+                                <Badge className={`${getDifficultyColor(article.difficulty)} text-xs`}>
+                                  {article.difficulty}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  {article.duration}
+                                </Badge>
+                              </div>
+                            </div>
+                            <Button variant="ghost" size="sm" className="h-7 w-7 sm:h-8 sm:w-8 p-0 rounded-full">
+                              <ChevronDown className="h-4 w-4 sm:h-5 sm:w-5" />
+                            </Button>
                           </div>
                         </div>
-                        <ChevronDown className="w-5 h-5 text-gray-400" />
-                      </div>
-                    </div>
-                  </CollapsibleTrigger>
-                  
-                  <CollapsibleContent>
-                    <div className="p-4 bg-gray-50">
-                      <h5 className="font-medium text-gray-900 mb-3">שלבי הפתרון:</h5>
-                      <ol className="space-y-3">
-                        {article.steps.map((step, stepIndex) => (
-                          <li key={stepIndex} className="flex gap-3">
-                            <span className="flex-shrink-0 w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-medium">
-                              {stepIndex + 1}
-                            </span>
-                            <span className="text-gray-700">{step}</span>
-                          </li>
-                        ))}
-                      </ol>
-                      
-                      <div className="mt-4 pt-4 border-t flex gap-2">
-                        <Button size="sm" variant="outline" className="flex items-center gap-2">
-                          <Play className="w-4 h-4" />
-                          צפה בסרטון
-                        </Button>
-                        <Button size="sm" variant="outline" className="flex items-center gap-2">
-                          <FileText className="w-4 h-4" />
-                          הורד מדריך
-                        </Button>
-                        <Button size="sm" variant="outline" className="flex items-center gap-2">
-                          <MessageCircle className="w-4 h-4" />
-                          דבר עם טיפ
-                        </Button>
-                      </div>
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
-              ))}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="p-3 sm:p-4 bg-gray-50 space-y-2 sm:space-y-3">
+                          <h5 className="font-medium text-sm sm:text-base">שלבי פתרון:</h5>
+                          <ol className="space-y-1 sm:space-y-2 list-decimal list-inside text-xs sm:text-sm">
+                            {article.steps.map((step, stepIndex) => (
+                              <li key={stepIndex} className="text-gray-700">{step}</li>
+                            ))}
+                          </ol>
+                          <div className="pt-2 sm:pt-3 flex justify-end">
+                            <Button size="sm" className="text-xs sm:text-sm h-7 sm:h-9">
+                              <Play className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                              הצג מדריך מפורט
+                            </Button>
+                          </div>
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="interactive" className="space-y-4 sm:space-y-6">
+          <InteractiveSolutionCenter />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

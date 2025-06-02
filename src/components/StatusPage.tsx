@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -121,19 +120,19 @@ const StatusPage = () => {
   const OverallStatusIcon = getStatusIcon(overallStatus);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-4 sm:space-y-8">
       {/* Overall Status */}
       <Card className="text-center">
-        <CardHeader>
-          <div className="flex justify-center mb-4">
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center ${getStatusColor(overallStatus)}`}>
-              <OverallStatusIcon className="w-8 h-8" />
+        <CardHeader className="p-3 sm:p-6">
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center ${getStatusColor(overallStatus)}`}>
+              <OverallStatusIcon className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
           </div>
-          <CardTitle className="text-2xl">
+          <CardTitle className="text-xl sm:text-2xl">
             מצב כללי של המערכות: <span className={getStatusColor(overallStatus).split(' ')[0]}>{getStatusText(overallStatus)}</span>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm sm:text-base">
             {overallStatus === 'operational' 
               ? 'כל המערכות פועלות תקין' 
               : overallStatus === 'degraded'
@@ -145,42 +144,42 @@ const StatusPage = () => {
 
       {/* System Status */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">סטטוס מערכות</h2>
-        <div className="grid md:grid-cols-2 gap-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-6">סטטוס מערכות</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
           {systemStatus.map((system, index) => {
             const StatusIcon = getStatusIcon(system.status);
             const SystemIcon = system.icon;
             
             return (
               <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-6">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <SystemIcon className="w-6 h-6 text-gray-600" />
-                      <CardTitle className="text-lg">{system.name}</CardTitle>
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <SystemIcon className="w-4 h-4 sm:w-6 sm:h-6 text-gray-600" />
+                      <CardTitle className="text-base sm:text-lg">{system.name}</CardTitle>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <StatusIcon className={`w-5 h-5 ${getStatusColor(system.status).split(' ')[0]}`} />
-                      <Badge className={getStatusColor(system.status)}>
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <StatusIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${getStatusColor(system.status).split(' ')[0]}`} />
+                      <Badge className={`${getStatusColor(system.status)} text-xs sm:text-sm px-1 sm:px-2 py-0 sm:py-0.5`}>
                         {getStatusText(system.status)}
                       </Badge>
                     </div>
                   </div>
                 </CardHeader>
                 
-                <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">{system.description}</p>
+                <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
+                  <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">{system.description}</p>
                   
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
+                  <div className="space-y-1 sm:space-y-2">
+                    <div className="flex justify-between text-xs sm:text-sm">
                       <span>זמינות (30 יום)</span>
                       <span className="font-medium">{system.uptime}%</span>
                     </div>
-                    <Progress value={system.uptime} className="h-2" />
+                    <Progress value={system.uptime} className="h-1.5 sm:h-2" />
                   </div>
                   
                   {system.lastIncident && (
-                    <p className="text-xs text-gray-500 mt-3">
+                    <p className="text-xs text-gray-500 mt-2 sm:mt-3">
                       תקרית אחרונה: לפני {system.lastIncident}
                     </p>
                   )}
@@ -194,36 +193,43 @@ const StatusPage = () => {
       {/* Active Incidents */}
       {incidents.length > 0 && (
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">תקריות פעילות</h2>
-          <div className="space-y-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-6">תקריות פעילות</h2>
+          <div className="space-y-3 sm:space-y-4">
             {incidents.map((incident) => (
               <Card key={incident.id} className="border-l-4 border-l-yellow-500">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">{incident.title}</CardTitle>
-                    <div className="flex gap-2">
+                <CardHeader className="pb-2 sm:pb-4 p-3 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+                    <div>
+                      <CardTitle className="text-base sm:text-lg">{incident.title}</CardTitle>
+                      <CardDescription className="text-xs sm:text-sm mt-1">
+                        התחיל ב-{incident.startTime}
+                      </CardDescription>
+                    </div>
+                    <div className="flex flex-wrap gap-1 sm:gap-2">
                       <Badge className={getSeverityColor(incident.severity)}>
-                        {incident.severity === 'medium' ? 'בינוני' : incident.severity}
+                        {incident.severity === 'low' ? 'נמוכה' : 
+                         incident.severity === 'medium' ? 'בינונית' : 
+                         incident.severity === 'high' ? 'גבוהה' : 'קריטית'}
                       </Badge>
                       <Badge className={getIncidentStatusColor(incident.status)}>
                         {getIncidentStatusText(incident.status)}
                       </Badge>
                     </div>
                   </div>
-                  <CardDescription>
-                    התחיל בשעה {incident.startTime} • {incident.description}
-                  </CardDescription>
                 </CardHeader>
-                
-                <CardContent>
-                  <h4 className="font-medium text-gray-900 mb-3">עדכונים:</h4>
-                  <div className="space-y-3">
-                    {incident.updates.map((update, index) => (
-                      <div key={index} className="flex gap-3 text-sm">
-                        <span className="text-gray-500 font-medium min-w-[50px]">{update.time}</span>
-                        <span className="text-gray-700">{update.message}</span>
-                      </div>
-                    ))}
+                <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
+                  <p className="text-xs sm:text-sm text-gray-700 mb-3 sm:mb-4">{incident.description}</p>
+                  
+                  <div className="border-t pt-2 sm:pt-3">
+                    <h4 className="text-xs sm:text-sm font-medium mb-2 sm:mb-3">עדכונים אחרונים</h4>
+                    <div className="space-y-2 sm:space-y-3">
+                      {incident.updates.map((update, i) => (
+                        <div key={i} className="flex gap-2 sm:gap-3 text-xs sm:text-sm">
+                          <div className="font-medium text-gray-500 whitespace-nowrap">{update.time}</div>
+                          <div className="text-gray-700">{update.message}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -232,63 +238,18 @@ const StatusPage = () => {
         </div>
       )}
 
-      {/* Status History */}
-      <Card>
-        <CardHeader>
-          <CardTitle>היסטוריית מערכות - 7 ימים אחרונים</CardTitle>
-          <CardDescription>סטטוס יומי של המערכות הקריטיות</CardDescription>
-        </CardHeader>
-        
-        <CardContent>
-          <div className="space-y-4">
-            {systemStatus.map((system, systemIndex) => (
-              <div key={systemIndex}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">{system.name}</span>
-                  <span className="text-xs text-gray-500">זמינות שבועית: {system.uptime}%</span>
-                </div>
-                <div className="flex gap-1">
-                  {Array.from({ length: 7 }, (_, dayIndex) => {
-                    const isToday = dayIndex === 6;
-                    const hasIssue = system.status !== 'operational' && isToday;
-                    
-                    return (
-                      <div
-                        key={dayIndex}
-                        className={`h-8 flex-1 rounded ${
-                          hasIssue ? 'bg-yellow-200' : 'bg-green-200'
-                        } flex items-center justify-center`}
-                        title={`יום ${dayIndex + 1}`}
-                      >
-                        {hasIssue ? (
-                          <AlertTriangle className="w-3 h-3 text-yellow-600" />
-                        ) : (
-                          <CheckCircle className="w-3 h-3 text-green-600" />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="mt-6 flex justify-center gap-6 text-xs text-gray-500">
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-green-200 rounded"></div>
-              <span>פעיל</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-yellow-200 rounded"></div>
-              <span>בעיות</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-red-200 rounded"></div>
-              <span>לא פעיל</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Maintenance */}
+      <div>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-6">תחזוקה מתוכננת</h2>
+        <Card>
+          <CardHeader className="p-3 sm:p-6">
+            <CardTitle className="text-base sm:text-lg">אין תחזוקה מתוכננת בקרוב</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">
+              אנו נודיע מראש על כל תחזוקה מתוכננת שעלולה להשפיע על השירות
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
     </div>
   );
 };

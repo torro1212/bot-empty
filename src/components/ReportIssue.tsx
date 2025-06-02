@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -97,99 +96,102 @@ const ReportIssue = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">דיווח תקלה חדשה</h2>
-        <p className="text-lg text-gray-600">
+      <div className="text-center mb-4 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">דיווח תקלה חדשה</h2>
+        <p className="text-base sm:text-lg text-gray-600">
           לא הצלחת לפתור את הבעיה עם טיפ? דווח על התקלה ואנחנו נחזור אליך במהירות
         </p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-4 sm:mb-8">
         <Card className="text-center">
-          <CardContent className="pt-6">
-            <Clock className="w-8 h-8 text-blue-500 mx-auto mb-2" />
-            <h3 className="font-semibold text-gray-900">תגובה מהירה</h3>
-            <p className="text-sm text-gray-600">זמן תגובה ממוצע: 2 דקות</p>
+          <CardContent className="pt-4 sm:pt-6 p-3 sm:p-6">
+            <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 mx-auto mb-1 sm:mb-2" />
+            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">תגובה מהירה</h3>
+            <p className="text-xs sm:text-sm text-gray-600">זמן תגובה ממוצע: 2 דקות</p>
           </CardContent>
         </Card>
         
         <Card className="text-center">
-          <CardContent className="pt-6">
-            <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
-            <h3 className="font-semibold text-gray-900">פתרון יעיל</h3>
-            <p className="text-sm text-gray-600">95% מהבעיות נפתרות באותו יום</p>
+          <CardContent className="pt-4 sm:pt-6 p-3 sm:p-6">
+            <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-500 mx-auto mb-1 sm:mb-2" />
+            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">פתרון יעיל</h3>
+            <p className="text-xs sm:text-sm text-gray-600">95% מהבעיות נפתרות באותו יום</p>
           </CardContent>
         </Card>
         
         <Card className="text-center">
-          <CardContent className="pt-6">
-            <Phone className="w-8 h-8 text-purple-500 mx-auto mb-2" />
-            <h3 className="font-semibold text-gray-900">תמיכה אישית</h3>
-            <p className="text-sm text-gray-600">מעקב צמוד עד לפתרון מלא</p>
+          <CardContent className="pt-4 sm:pt-6 p-3 sm:p-6">
+            <Phone className="w-6 h-6 sm:w-8 sm:h-8 text-purple-500 mx-auto mb-1 sm:mb-2" />
+            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">תמיכה אישית</h3>
+            <p className="text-xs sm:text-sm text-gray-600">מעקב צמוד עד לפתרון מלא</p>
           </CardContent>
         </Card>
       </div>
 
       <Card className="shadow-xl">
-        <CardHeader className="bg-gradient-to-r from-red-500 to-pink-500 text-white">
-          <CardTitle className="flex items-center gap-3">
-            <AlertCircle className="w-6 h-6" />
+        <CardHeader className="bg-gradient-to-r from-red-500 to-pink-500 text-white p-3 sm:p-6">
+          <CardTitle className="flex items-center gap-2 sm:gap-3 text-base sm:text-lg">
+            <AlertCircle className="w-4 h-4 sm:w-6 sm:h-6" />
             פרטי התקלה
           </CardTitle>
-          <CardDescription className="text-red-100">
+          <CardDescription className="text-red-100 text-xs sm:text-sm">
             אנא מלא את כל השדות כדי שנוכל לעזור לך בצורה הטובה ביותר
           </CardDescription>
         </CardHeader>
         
-        <CardContent className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent className="p-3 sm:p-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             {/* Contact Information */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">שם מלא *</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="name" className="text-xs sm:text-sm">שם מלא *</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
                   placeholder="הזן את שמך המלא"
                   required
+                  className="text-sm"
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="phone">טלפון *</Label>
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="phone" className="text-xs sm:text-sm">טלפון *</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   placeholder="050-1234567"
                   required
+                  className="text-sm"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">אימייל</Label>
+            <div className="space-y-1 sm:space-y-2">
+              <Label htmlFor="email" className="text-xs sm:text-sm">אימייל</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 placeholder="your@email.com"
+                className="text-sm"
               />
             </div>
 
             {/* Issue Details */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="issueType">סוג התקלה *</Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="issueType" className="text-xs sm:text-sm">סוג התקלה *</Label>
                 <Select value={formData.issueType} onValueChange={(value) => handleInputChange('issueType', value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="text-sm">
                     <SelectValue placeholder="בחר סוג תקלה" />
                   </SelectTrigger>
                   <SelectContent>
                     {issueTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
+                      <SelectItem key={type.value} value={type.value} className="text-sm">
                         {type.label}
                       </SelectItem>
                     ))}
@@ -197,87 +199,87 @@ const ReportIssue = () => {
                 </Select>
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="priority">עדיפות *</Label>
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="priority" className="text-xs sm:text-sm">דחיפות *</Label>
                 <Select value={formData.priority} onValueChange={(value) => handleInputChange('priority', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="בחר עדיפות" />
+                  <SelectTrigger className="text-sm">
+                    <SelectValue placeholder="בחר דחיפות" />
                   </SelectTrigger>
                   <SelectContent>
                     {priorities.map((priority) => (
-                      <SelectItem key={priority.value} value={priority.value}>
-                        <span className={priority.color}>{priority.label}</span>
+                      <SelectItem key={priority.value} value={priority.value} className={`${priority.color} text-sm`}>
+                        {priority.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                
                 {formData.priority && (
-                  <p className="text-sm text-gray-600">
-                    זמן תגובה משוער: <strong>{getEstimatedResponseTime(formData.priority)}</strong>
+                  <p className="text-xs text-gray-500 mt-1">
+                    זמן תגובה משוער: <span className="font-medium">{getEstimatedResponseTime(formData.priority)}</span>
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">תיאור התקלה *</Label>
+            <div className="space-y-1 sm:space-y-2">
+              <Label htmlFor="description" className="text-xs sm:text-sm">תיאור התקלה *</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="תאר את הבעיה בפירוט - מה קרה? מתי זה התחיל? איך זה משפיע על העבודה?"
-                rows={4}
+                placeholder="תאר את התקלה בפירוט רב ככל האפשר"
                 required
+                className="min-h-[100px] text-sm"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="stepsAttempted">מה ניסית לעשות?</Label>
+            <div className="space-y-1 sm:space-y-2">
+              <Label htmlFor="stepsAttempted" className="text-xs sm:text-sm">צעדים שכבר ניסית</Label>
               <Textarea
                 id="stepsAttempted"
                 value={formData.stepsAttempted}
                 onChange={(e) => handleInputChange('stepsAttempted', e.target.value)}
-                placeholder="תאר את הפעולות שכבר ביצעת לפתרון הבעיה (למשל: הפעלה מחדש, בדיקת כבלים וכו')"
-                rows={3}
+                placeholder="פרט אילו פתרונות כבר ניסית"
+                className="min-h-[80px] text-sm"
               />
             </div>
 
-            {/* File Upload */}
-            <div className="space-y-2">
-              <Label htmlFor="attachments">צרף תמונות או וידאו (אופציונלי)</Label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <input
+            <div className="space-y-1 sm:space-y-2">
+              <Label htmlFor="attachments" className="text-xs sm:text-sm">צרף קבצים (תמונות/מסמכים)</Label>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="text-xs sm:text-sm h-8 sm:h-10"
+                  onClick={() => document.getElementById('file-upload')?.click()}
+                >
+                  <Upload className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  בחר קבצים
+                </Button>
+                <Input
+                  id="file-upload"
                   type="file"
-                  id="attachments"
                   multiple
-                  accept="image/*,video/*"
-                  onChange={handleFileUpload}
                   className="hidden"
+                  onChange={handleFileUpload}
                 />
-                <label htmlFor="attachments" className="cursor-pointer">
-                  <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-sm text-gray-600">
-                    לחץ לבחירת קבצים או גרור לכאן
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    תמונות ווידאו עד 10MB לכל קובץ
-                  </p>
-                </label>
+                <span className="text-xs text-gray-500">מקסימום 5 קבצים, עד 5MB לקובץ</span>
               </div>
               
               {formData.attachments.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">קבצים שנבחרו:</p>
+                <div className="mt-2 space-y-2">
                   {formData.attachments.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
-                      <span className="text-sm">{file.name}</span>
+                    <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
+                      <span className="text-xs truncate max-w-[200px]">{file.name}</span>
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
+                        className="h-6 w-6 p-0"
                         onClick={() => removeFile(index)}
                       >
-                        הסר
+                        &times;
                       </Button>
                     </div>
                   ))}
@@ -285,21 +287,24 @@ const ReportIssue = () => {
               )}
             </div>
 
-            <div className="flex gap-4 pt-4">
-              <Button 
-                type="submit" 
-                className="flex-1" 
+            <div className="flex justify-end pt-2 sm:pt-4">
+              <Button
+                type="submit"
+                className="bg-gradient-to-r from-red-500 to-pink-500 text-white w-full sm:w-auto"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'שולח...' : 'שלח דיווח תקלה'}
-              </Button>
-              <Button type="button" variant="outline" className="px-8">
-                ביטול
               </Button>
             </div>
           </form>
         </CardContent>
       </Card>
+      
+      <div className="mt-4 sm:mt-8 text-center">
+        <p className="text-xs sm:text-sm text-gray-500">
+          צריך עזרה דחופה? התקשר למוקד התמיכה: <a href="tel:+972501234567" className="text-blue-600 font-medium">050-1234567</a>
+        </p>
+      </div>
     </div>
   );
 };

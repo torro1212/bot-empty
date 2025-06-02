@@ -1,52 +1,139 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, MessageCircle, FileText, Monitor, Printer, Wifi, Users, Settings, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import { AlertCircle, MessageCircle, FileText, Monitor, Printer, Wifi, Users, Settings, CheckCircle, Clock, AlertTriangle, Menu, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import TechSupportBot from '@/components/TechSupportBot';
 import SupportCategories from '@/components/SupportCategories';
 import StatusPage from '@/components/StatusPage';
 import ReportIssue from '@/components/ReportIssue';
+import AutomatedSolutionWizard from '@/components/AutomatedSolutionWizard';
+import { CSSProperties } from 'react';
+
+// Direct style objects with explicit colors
+const styles: Record<string, CSSProperties> = {
+  pageBackground: {
+    background: 'linear-gradient(to bottom right, #eef2ff, #ffffff, #faf5ff)',
+    minHeight: '100vh'
+  },
+  header: {
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    backdropFilter: 'blur(8px)',
+    borderBottom: '1px solid #e5e7eb',
+    position: 'sticky' as 'sticky',
+    top: 0,
+    zIndex: 50,
+    boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+  },
+  logoContainer: {
+    background: 'linear-gradient(to right, #4f46e5, #9333ea)',
+    borderRadius: '0.75rem',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+  },
+  statBox: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    padding: '0.5rem 0.75rem',
+    borderRadius: '0.5rem',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
+  },
+  heroSection: {
+    padding: '2rem 1rem'
+  },
+  heroCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backdropFilter: 'blur(8px)',
+    borderRadius: '1rem',
+    padding: '1rem',
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+    border: '1px solid #e0e7ff'
+  },
+  heroCardGlow: {
+    background: 'linear-gradient(to right, #4f46e5, #9333ea)',
+    opacity: 0.1,
+    borderRadius: '1rem'
+  },
+  logoCircle: {
+    background: 'linear-gradient(to right, #6366f1, #9333ea)',
+    borderRadius: '9999px',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+  },
+  gradientText: {
+    background: 'linear-gradient(to right, #4f46e5, #9333ea)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent'
+  },
+  tabsList: {
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backdropFilter: 'blur(8px)',
+    padding: '0.25rem',
+    borderRadius: '0.75rem',
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+  },
+  activeTab: {
+    background: 'linear-gradient(to right, #6366f1, #a855f7)',
+    color: 'white',
+    borderRadius: '0.5rem'
+  },
+  footer: {
+    background: 'linear-gradient(to right, #312e81, #581c87)',
+    color: 'white',
+    paddingTop: '2rem',
+    paddingBottom: '2rem',
+    marginTop: '2rem',
+    boxShadow: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
+  },
+  footerHeading: {
+    fontSize: '1rem',
+    fontWeight: 'bold',
+    marginBottom: '0.75rem'
+  },
+  footerText: {
+    color: '#c7d2fe'
+  },
+  footerLink: {
+    color: '#c7d2fe'
+  },
+  footerBorder: {
+    borderColor: '#4338ca',
+    marginTop: '1.5rem',
+    paddingTop: '1.5rem'
+  }
+};
+
+// Media query styles can be applied using CSS classes or conditional rendering
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('chat');
+  const [menuOpen, setMenuOpen] = useState(false);
   const { toast } = useToast();
 
   const stats = [
-    { label: 'תקלות נפתרו היום', value: '47', icon: CheckCircle, color: 'text-green-600' },
-    { label: 'זמן תגובה ממוצע', value: '2 דק׳', icon: Clock, color: 'text-blue-600' },
-    { label: 'תקלות פעילות', value: '3', icon: AlertTriangle, color: 'text-yellow-600' },
-  ];
-
-  const quickActions = [
-    { title: 'בעיה בקופה', description: 'תקלות POS ומערכות תשלום', icon: Monitor, color: 'bg-blue-500' },
-    { title: 'בעיית מדפסת', description: 'מדפסות וסורקי ברקוד', icon: Printer, color: 'bg-green-500' },
-    { title: 'בעיית רשת', description: 'אינטרנט וחיבורים', icon: Wifi, color: 'bg-purple-500' },
-    { title: 'ניהול משתמשים', description: 'סיסמאות וגישות', icon: Users, color: 'bg-orange-500' },
+    { label: 'תקלות נפתרו היום', value: '47', icon: CheckCircle, color: '#10b981' },
+    { label: 'זמן תגובה ממוצע', value: '2 דק׳', icon: Clock, color: '#3b82f6' },
+    { label: 'תקלות פעילות', value: '3', icon: AlertTriangle, color: '#f59e0b' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div style={styles.pageBackground}>
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
+      <header style={styles.header}>
+        <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <Settings className="w-6 h-6 text-white animate-spin" />
+            <div className="flex items-center gap-2">
+              <div style={styles.logoContainer} className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center">
+                <Settings className="w-5 h-5 sm:w-6 sm:h-6 text-white animate-spin" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">מרכז תמיכה טכנית</h1>
-                <p className="text-sm text-gray-600">טיפ - העוזר החכם שלך</p>
+                <h1 className="text-lg sm:text-xl font-bold text-gray-900">מרכז תמיכה טכנית</h1>
+                <p className="text-xs sm:text-sm text-gray-600">טיפ - העוזר החכם שלך</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-4">
               {stats.map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className={`flex items-center gap-1 ${stat.color}`}>
+                <div key={index} style={styles.statBox} className="text-center">
+                  <div className="flex items-center gap-1" style={{ color: stat.color }}>
                     <stat.icon className="w-4 h-4" />
                     <span className="font-bold">{stat.value}</span>
                   </div>
@@ -54,80 +141,120 @@ const Index = () => {
                 </div>
               ))}
             </div>
+            <div className="sm:hidden">
+              <Button variant="ghost" size="icon" onClick={() => setMenuOpen(!menuOpen)}>
+                <Menu className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
+          {menuOpen && (
+            <div className="sm:hidden pt-2 pb-3 border-t mt-2 space-y-2">
+              {stats.map((stat, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <p className="text-xs text-gray-600">{stat.label}</p>
+                  <div className="flex items-center gap-1" style={{ color: stat.color }}>
+                    <stat.icon className="w-4 h-4" />
+                    <span className="font-bold">{stat.value}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="py-16 px-4">
+      <section style={styles.heroSection} className="py-8 sm:py-16 px-4">
         <div className="container mx-auto text-center">
           <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl opacity-10 animate-pulse-slow"></div>
-            <div className="relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-xl">
-              <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center animate-float">
-                  <MessageCircle className="w-10 h-10 text-white" />
+            <div className="absolute inset-0" style={styles.heroCardGlow}></div>
+            <div style={{...styles.heroCard}} className="relative sm:p-8 sm:rounded-3xl">
+              <div className="flex justify-center mb-4 sm:mb-6">
+                <div style={styles.logoCircle} className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center animate-float">
+                  <MessageCircle className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                 </div>
               </div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                שלום! אני <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">טיפ</span> 🤖
+              <h2 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
+                שלום! אני <span style={styles.gradientText}>טיפ</span> 🤖
               </h2>
-              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+              <p className="text-base sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto">
                 העוזר החכם שלך לפתרון תקלות טכניות. אני כאן לעזור לך לפתור כל בעיה במהירות ויעילות!
               </p>
               
-              {/* Quick Action Buttons */}
-              <div className="grid md:grid-cols-4 gap-4 mb-8">
-                {quickActions.map((action, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    className="h-20 flex-col gap-2 hover:scale-105 transition-transform"
-                    onClick={() => {
-                      setActiveTab('chat');
-                      toast({
-                        title: "טיפ מוכן לעזור!",
-                        description: `אני אעזור לך עם ${action.title}`,
-                      });
-                    }}
-                  >
-                    <div className={`w-8 h-8 ${action.color} rounded-lg flex items-center justify-center`}>
-                      <action.icon className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-sm font-medium">{action.title}</span>
-                  </Button>
-                ))}
-              </div>
+              {/* Automated Solution Wizard */}
+              <AutomatedSolutionWizard 
+                onComplete={() => {
+                  toast({
+                    title: "פתרון הושלם!",
+                    description: "תודה שהשתמשת באשף הפתרון המהיר",
+                  });
+                }}
+              />
             </div>
           </div>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="py-8 px-4">
+      <section className="py-6 sm:py-8 px-4">
         <div className="container mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
-              <TabsTrigger value="chat" className="flex items-center gap-2">
-                <MessageCircle className="w-4 h-4" />
+            <TabsList style={styles.tabsList} className="grid w-full grid-cols-2 sm:grid-cols-5 mb-6 sm:mb-8">
+              <TabsTrigger 
+                value="chat" 
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-base py-2"
+                style={activeTab === 'chat' ? styles.activeTab : {}}
+              >
+                <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                 צ׳אט עם טיפ
               </TabsTrigger>
-              <TabsTrigger value="categories" className="flex items-center gap-2">
-                <FileText className="w-4 h-4" />
+              <TabsTrigger 
+                value="wizard" 
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-base py-2"
+                style={activeTab === 'wizard' ? styles.activeTab : {}}
+              >
+                <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
+                פתרון מהיר
+              </TabsTrigger>
+              <TabsTrigger 
+                value="categories" 
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-base py-2"
+                style={activeTab === 'categories' ? styles.activeTab : {}}
+              >
+                <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
                 מדריכים
               </TabsTrigger>
-              <TabsTrigger value="report" className="flex items-center gap-2">
-                <AlertCircle className="w-4 h-4" />
+              <TabsTrigger 
+                value="report" 
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-base py-2"
+                style={activeTab === 'report' ? styles.activeTab : {}}
+              >
+                <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                 דיווח תקלה
               </TabsTrigger>
-              <TabsTrigger value="status" className="flex items-center gap-2">
-                <Monitor className="w-4 h-4" />
+              <TabsTrigger 
+                value="status" 
+                className="flex items-center gap-1 sm:gap-2 text-xs sm:text-base py-2"
+                style={activeTab === 'status' ? styles.activeTab : {}}
+              >
+                <Monitor className="w-3 h-3 sm:w-4 sm:h-4" />
                 מצב מערכות
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="chat" className="space-y-6">
               <TechSupportBot />
+            </TabsContent>
+
+            <TabsContent value="wizard" className="space-y-6">
+              <AutomatedSolutionWizard 
+                onComplete={() => {
+                  toast({
+                    title: "פתרון הושלם!",
+                    description: "תודה שהשתמשת באשף הפתרון המהיר",
+                  });
+                }} 
+              />
             </TabsContent>
 
             <TabsContent value="categories" className="space-y-6">
@@ -146,35 +273,35 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 mt-16">
+      <footer style={styles.footer} className="py-8 sm:py-12 mt-8 sm:mt-16">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
             <div>
-              <h3 className="text-lg font-bold mb-4">מרכז תמיכה טכנית</h3>
-              <p className="text-gray-400">
+              <h3 style={styles.footerHeading} className="sm:text-lg sm:mb-4">מרכז תמיכה טכנית</h3>
+              <p style={styles.footerText} className="text-sm">
                 פתרונות מהירים ומקצועיים לכל התקלות הטכניות שלך
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-4">קישורים מהירים</h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>מדריכי פתרון בעיות</li>
-                <li>שאלות נפוצות</li>
-                <li>צור קשר</li>
-                <li>מצב מערכות</li>
+              <h3 style={styles.footerHeading} className="sm:text-lg sm:mb-4">קישורים מהירים</h3>
+              <ul className="space-y-1 sm:space-y-2 text-sm">
+                <li style={styles.footerLink}>מדריכי פתרון בעיות</li>
+                <li style={styles.footerLink}>שאלות נפוצות</li>
+                <li style={styles.footerLink}>צור קשר</li>
+                <li style={styles.footerLink}>מצב מערכות</li>
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-4">זמינות</h3>
-              <p className="text-gray-400">
+              <h3 style={styles.footerHeading} className="sm:text-lg sm:mb-4">זמינות</h3>
+              <p style={styles.footerText} className="text-sm">
                 ראשון-חמישי: 08:00-18:00<br />
                 שישי: 08:00-14:00<br />
                 שבת: סגור
               </p>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 מרכז תמיכה טכנית. כל הזכויות שמורות.</p>
+          <div style={styles.footerBorder} className="border-t text-center text-xs sm:text-sm sm:mt-8 sm:pt-8">
+            <p style={styles.footerText}>&copy; 2024 מרכז תמיכה טכנית. כל הזכויות שמורות.</p>
           </div>
         </div>
       </footer>
