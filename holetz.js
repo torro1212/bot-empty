@@ -2,7 +2,7 @@ const flowData = {
   start: "HOLETZ",
   HOLETZ: {
     type: "question",
-    text: "האם החולץ דלוק?",
+    text: "האם החולץ חלוקקקק?",
     image: "https://i.imgur.com/WgaaVDE.jpeg",
     options: {
       "דלוק": "Holetz-dlok",
