@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { MessageCircle, Settings, Star, Send, X, AlertCircle } from 'lucide-react';
+import { MessageCircle, MessageSquare, Settings, Star, Send, X, AlertCircle, CheckCircle, AlertTriangle, User, Store, Hash, Phone } from 'lucide-react';
 import AutomatedSolutionWizard from '@/components/AutomatedSolutionWizard';
 import { CSSProperties } from 'react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import FeedbackPrompt from '@/components/ui/feedback-prompt';
+import emailjs from '@emailjs/browser';
+import { DEMO_MODE, EMAIL_CONFIG } from '@/lib/config';
 
 // Add global keyframe animations
 const keyframes = `
@@ -82,15 +85,16 @@ const styles: Record<string, CSSProperties> = {
     position: 'relative'
   },
   heroCard: {
-    background: 'rgba(255, 255, 255, 0.85)',
+    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.9)), url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.05\' numOctaves=\'2\' stitchTiles=\'stitch\'/%3E%3CfeColorMatrix type=\'saturate\' values=\'0\'/%3E%3C/filter%3E%3Crect width=\'100\' height=\'100\' filter=\'url(%23noise)\' opacity=\'0.3\'/%3E%3C/svg%3E")',
     backdropFilter: 'blur(10px)',
     borderRadius: '1.5rem',
     padding: '1.5rem',
-    boxShadow: '0 25px 50px -12px rgba(79, 70, 229, 0.35)',
-    border: '1px solid rgba(255, 255, 255, 0.7)',
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
     textAlign: 'center',
     overflow: 'hidden',
-    position: 'relative'
+    position: 'relative',
+    color: 'white'
   },
   heroCardGlow: {
     background: 'radial-gradient(circle at center, rgba(99, 102, 241, 0.8), rgba(79, 70, 229, 0.4), transparent)',
@@ -127,25 +131,27 @@ const styles: Record<string, CSSProperties> = {
     padding: '5px'
   },
   feedbackCard: {
-    backgroundColor: 'white',
-    borderRadius: '1rem',
+    borderRadius: '16px',
     padding: '1.5rem',
-    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
-    border: '1px solid #e0e7ff',
+    backgroundColor: '#ffffff',
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    position: 'relative',
     maxWidth: '500px',
-    margin: '2rem auto 0',
-    position: 'relative' as 'relative',
-    textAlign: 'center',
-    background: 'linear-gradient(to bottom, #ffffff, #f9faff)'
+    margin: '0 auto',
+    background: 'linear-gradient(145deg, #ffffff, #f9fafb)',
+    border: '1px solid rgba(59, 130, 246, 0.1)',
+    overflow: 'hidden',
+    direction: 'rtl',
+    textAlign: 'right',
+    fontFamily: "'Heebo', sans-serif"
   },
   feedbackButton: {
-    background: 'linear-gradient(to right, #3b82f6, #6366f1)',
+    background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
     color: 'white',
-    borderRadius: '0.5rem',
-    padding: '0.5rem 1rem',
-    fontWeight: 'bold',
+    boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.4)',
     border: 'none',
-    cursor: 'pointer',
+    borderRadius: '8px',
+    fontWeight: 'bold',
     transition: 'all 0.2s ease'
   },
   starActive: {
@@ -166,127 +172,344 @@ const styles: Record<string, CSSProperties> = {
   }
 };
 
+// EmailJS configuration - המידע האמיתי שלך
+const EMAILJS_SERVICE_ID = 'SendMail'; // Service ID שלך
+const EMAILJS_TEMPLATE_ID = 'IssueReport'; // Template ID לטופס דיווח תקלה
+const EMAILJS_FEEDBACK_TEMPLATE_ID = 'Feedback'; // Template ID לטופס המשוב
+const EMAILJS_PUBLIC_KEY = '6RjrhWpav2fs1C9Dq'; // Public Key שלך
+const RECIPIENT_EMAIL = 'Support@mutagim.com'; // המייל שאליו ישלח הטופס
+
+// אתחול EmailJS מוקדם עם בדיקות
+if (typeof window !== 'undefined') {
+  try {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+    console.log('EmailJS initialized successfully with public key:', EMAILJS_PUBLIC_KEY);
+    console.log('Service ID:', EMAILJS_SERVICE_ID);
+    console.log('Feedback Template ID:', EMAILJS_FEEDBACK_TEMPLATE_ID);
+    console.log('Issue Report Template ID:', EMAILJS_TEMPLATE_ID);
+    console.log('Recipient Email:', RECIPIENT_EMAIL);
+  } catch (error) {
+    console.error('Failed to initialize EmailJS:', error);
+  }
+}
+
 const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [name, setName] = useState('');
+  const [clarity, setClarity] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // כאן יהיה הקוד לשליחת המשוב לשרת
-    console.log({ rating, comment, name });
+    // אם לא דורגו כוכבים, מציג הודעת שגיאה
+    if (rating === 0) {
+      toast({
+        title: "נא לדרג את החוויה",
+        description: "אנא דרג את החוויה שלך באמצעות הכוכבים",
+        variant: "destructive"
+      });
+      return;
+    }
     
-    toast({
-      title: "תודה על המשוב!",
-      description: "המשוב שלך התקבל בהצלחה",
-    });
+    setIsSubmitting(true);
     
-    onClose();
+    // בדיקה אם להשתמש במצב הדגמה
+    if (DEMO_MODE) {
+      console.log('DEMO MODE: Simulating feedback submission...');
+      console.log('Feedback data:', {
+        rating,
+        clarity: clarity || 'לא צוין',
+        comments: comment || 'אין הערות נוספות',
+        from_name: name || 'משתמש אנונימי'
+      });
+      
+      // סימולציה של טעינה
+      setTimeout(() => {
+        toast({
+          title: "תודה על המשוב!",
+          description: "המשוב שלך התקבל בהצלחה (מצב הדגמה)",
+          style: { 
+            background: 'linear-gradient(to right, #3b82f6, #6366f1)',
+            color: 'white',
+            border: 'none',
+          }
+        });
+        
+        setIsSubmitting(false);
+        onClose();
+      }, 1500);
+      
+      return;
+    }
+    
+    try {
+      console.log('Starting email submission with form:', formRef.current);
+      console.log('Using service ID:', EMAILJS_SERVICE_ID);
+      console.log('Using template ID:', EMAILJS_FEEDBACK_TEMPLATE_ID);
+      
+      // שליחה ישירה ללא שימוש ב-sendForm
+      console.log('Sending feedback email directly...');
+      
+      // יצירת תוכן מסודר עבור המייל
+      const clarityText = clarity === 'clear' ? 'כן, מאוד ברורים' : 
+                         clarity === 'partial' ? 'חלקית' : 
+                         clarity === 'unclear' ? 'לא מספיק ברורים' : 'לא צוין';
+      
+      const templateParams = {
+        to_name: "צוות התמיכה",
+        reply_to: RECIPIENT_EMAIL,
+        from_name: name || "משתמש אנונימי",
+        user_rating: `${rating}/5`,
+        clarity_rating: clarityText,
+        user_comments: comment || "אין הערות נוספות",
+        from_phone: "לא צוין",
+        brand: "משוב כללי",
+        branch_name: "מערכת המשוב",
+        register_number: "N/A",
+        date: new Date().toLocaleString('he-IL', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Asia/Jerusalem'
+        }),
+        browser_info: `${navigator.userAgent}`,
+        description: `משוב חדש מהאתר
+
+דירוג החוויה:
+${rating}/5 כוכבים
+
+בהירות ההסברים:
+${clarityText}
+
+שם המשתמש:
+${name || "משתמש אנונימי"}
+
+הערות נוספות:
+${comment || "אין הערות נוספות"}
+
+תאריך ושעה:
+${new Date().toLocaleString('he-IL', {
+  year: 'numeric',
+  month: 'long', 
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'Asia/Jerusalem'
+})}
+
+---
+תודה על המשוב!`,
+        subject: `⭐ התקבל משוב חדש מבוטקס`
+      };
+      
+      console.log('Sending with params:', templateParams);
+      console.log('Using EmailJS configuration:', {
+        serviceId: EMAILJS_SERVICE_ID,
+        templateId: EMAILJS_FEEDBACK_TEMPLATE_ID,
+        publicKey: EMAILJS_PUBLIC_KEY
+      });
+      
+      const result = await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_FEEDBACK_TEMPLATE_ID,
+        templateParams
+      );
+      
+      console.log('Email sent successfully with send method:', result);
+      
+      toast({
+        title: "תודה על המשוב!",
+        description: "המשוב שלך התקבל בהצלחה",
+        style: { 
+          background: 'linear-gradient(to right, #3b82f6, #6366f1)',
+          color: 'white',
+          border: 'none',
+        }
+      });
+      
+      onClose();
+    } catch (error) {
+      console.error('Error sending feedback email:', error);
+      
+      // לוג מפורט יותר
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        });
+      }
+      
+      toast({
+        title: "שגיאה בשליחה",
+        description: "אירעה שגיאה בשליחת המשוב. אנא נסה שנית.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <div style={styles.feedbackCard}>
+    <div style={{...styles.feedbackCard}} className="animate-in zoom-in-95 duration-300">
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+      
       <Button 
         variant="ghost" 
         size="icon" 
-        className="absolute left-2 top-2" 
+        className="absolute left-2 top-2 hover:bg-gray-100 transition-all duration-200" 
         onClick={onClose}
       >
         <X size={18} />
       </Button>
       
-      <h3 className="text-xl font-bold text-center mb-4" style={{color: '#3b82f6'}}>משוב על השירות</h3>
+      <h3 className="text-2xl font-bold text-center mb-5 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">המשוב שלך חשוב לנו!</h3>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
         <div className="text-center">
-          <p className="mb-2" style={{color: '#4b5563'}}>איך היית מדרג את החוויה שלך?</p>
-          <div className="flex justify-center gap-2">
+          <p className="mb-3 font-medium text-gray-700">איך היית מדרג את החוויה שלך?</p>
+          <div className="flex justify-center gap-3">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
                 type="button"
                 onClick={() => setRating(star)}
-                className="focus:outline-none transition-transform hover:scale-110"
+                className="focus:outline-none transition-all duration-200 hover:scale-125"
               >
                 <Star 
-                  size={24} 
+                  size={28} 
+                  strokeWidth={1.5}
                   style={rating >= star ? styles.starActive : styles.starInactive} 
-                  fill={rating >= star ? "#3b82f6" : "none"}
+                  fill={rating >= star ? "#f59e0b" : "none"}
+                  className={rating >= star ? "animate-pulse" : ""}
                 />
               </button>
             ))}
           </div>
         </div>
         
-        <div className="mt-4">
-          <p className="block text-sm font-medium mb-2" style={{color: '#4b5563'}}>האם ההסברים היו ברורים ומובנים?</p>
-          <div className="flex flex-col gap-2 items-center" style={{maxWidth: '300px', margin: '0 auto'}}>
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="sm"
-              className="text-xs px-2 py-0.5 h-6 rounded-full border hover:bg-blue-50 w-full"
-              style={{fontWeight: 'normal', borderColor: '#bfdbfe', color: '#3b82f6'}}
-              onClick={() => console.log("כן, מאוד ברורים")}
-            >
-              כן, מאוד ברורים
-            </Button>
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="sm"
-              className="text-xs px-2 py-0.5 h-6 rounded-full border hover:bg-blue-50 w-full"
-              style={{fontWeight: 'normal', borderColor: '#bfdbfe', color: '#3b82f6'}}
-              onClick={() => console.log("חלקית")}
-            >
-              חלקית
-            </Button>
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="sm"
-              className="text-xs px-2 py-0.5 h-6 rounded-full border hover:bg-blue-50 w-full"
-              style={{fontWeight: 'normal', borderColor: '#bfdbfe', color: '#3b82f6'}}
-              onClick={() => console.log("לא מספיק ברורים")}
-            >
-              לא מספיק ברורים
-            </Button>
+        <div className="mt-5">
+          <p className="text-base font-semibold mb-4 text-gray-800 text-center bg-blue-50 py-2 px-4 rounded-lg mx-auto shadow-sm border border-blue-100 w-fit">האם ההסברים היו ברורים ומובנים?</p>
+          <div className="flex flex-col gap-4 items-center">
+            <div className="flex justify-center gap-4 w-full">
+              <div 
+                className={`relative cursor-pointer w-auto max-w-[140px] h-[60px] rounded-lg border-2 flex items-center justify-center px-3 transition-all duration-200 ${
+                  clarity === 'clear' 
+                    ? 'bg-white border-green-500 shadow-md' 
+                    : 'bg-white border-green-200 hover:border-green-400'
+                }`}
+                onClick={() => setClarity('clear')}
+              >
+                <div className="flex flex-col items-center">
+                  <CheckCircle className="h-5 w-5 mb-1 text-green-500" />
+                  <span className="font-medium text-xs text-center text-gray-800">כן, מאוד ברורים</span>
+                </div>
+                {clarity === 'clear' && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border border-white" />
+                )}
+              </div>
+              
+              <div 
+                className={`relative cursor-pointer w-auto max-w-[120px] h-[60px] rounded-lg border-2 flex items-center justify-center px-3 transition-all duration-200 ${
+                  clarity === 'partial' 
+                    ? 'bg-white border-amber-500 shadow-md' 
+                    : 'bg-white border-amber-200 hover:border-amber-400'
+                }`}
+                onClick={() => setClarity('partial')}
+              >
+                <div className="flex flex-col items-center">
+                  <AlertTriangle className="h-5 w-5 mb-1 text-amber-500" />
+                  <span className="font-medium text-xs text-center text-gray-800">חלקית</span>
+                </div>
+                {clarity === 'partial' && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full border border-white" />
+                )}
+              </div>
+              
+              <div 
+                className={`relative cursor-pointer w-auto max-w-[140px] h-[60px] rounded-lg border-2 flex items-center justify-center px-3 transition-all duration-200 ${
+                  clarity === 'unclear' 
+                    ? 'bg-white border-red-500 shadow-md' 
+                    : 'bg-white border-red-200 hover:border-red-400'
+                }`}
+                onClick={() => setClarity('unclear')}
+              >
+                <div className="flex flex-col items-center">
+                  <AlertCircle className="h-5 w-5 mb-1 text-red-500" />
+                  <span className="font-medium text-xs text-center text-gray-800">לא מספיק ברורים</span>
+                </div>
+                {clarity === 'unclear' && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border border-white" />
+                )}
+              </div>
+            </div>
           </div>
         </div>
         
-        <div>
-          <label className="block text-sm font-medium mb-1">הערות נוספות</label>
-          <Textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="ספר לנו על החוויה שלך..."
-            className="w-full"
-          />
+        <div className="relative">
+          <label className="block text-sm font-medium mb-2 text-gray-700">הערות נוספות</label>
+          <div className="relative">
+            <Textarea
+              name="comments"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="ספר לנו על החוויה שלך..."
+              className="w-full pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right text-gray-800 input-with-icon-rtl"
+            />
+            <MessageSquare className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
+          </div>
         </div>
         
-        <div>
-          <label className="block text-sm font-medium mb-1">שם (לא חובה)</label>
-          <Input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="השם שלך"
-            className="w-full"
-          />
+        <div className="relative">
+          <label className="block text-sm font-medium mb-2 text-gray-700">שם (לא חובה)</label>
+          <div className="relative">
+            <Input
+              name="from_name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="השם שלך"
+              className="w-full pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right text-gray-800 input-with-icon-rtl"
+            />
+            <User className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
+          </div>
         </div>
         
         <div className="text-center">
           <Button 
             type="submit"
-            style={styles.feedbackButton}
-            className="px-6 py-2"
+            className="px-8 py-3 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg"
+            style={{
+              background: 'linear-gradient(135deg, #3b82f6, #6366f1, #8b5cf6)',
+              color: 'white',
+              boxShadow: '0 4px 6px -1px rgba(99, 102, 241, 0.4)',
+              border: 'none',
+            }}
+            disabled={isSubmitting}
           >
-            <Send size={16} className="ml-2" />
-            שלח משוב
+            {isSubmitting ? (
+              <>
+                <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                שולח...
+              </>
+            ) : (
+              <>
+                <Send size={16} className="ml-2" />
+                שלח משוב
+              </>
+            )}
           </Button>
         </div>
       </form>
+      
+      {/* Decorative elements */}
+      <div className="absolute -z-10 top-20 right-0 w-20 h-20 rounded-full bg-blue-100 opacity-30 blur-xl"></div>
+      <div className="absolute -z-10 bottom-10 left-5 w-24 h-24 rounded-full bg-indigo-100 opacity-30 blur-xl"></div>
     </div>
   );
 };
@@ -315,6 +538,7 @@ const Index = () => {
     name: '',
     phone: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // יצירת בועות המותגים בטעינת העמוד
   useEffect(() => {
@@ -351,32 +575,192 @@ const Index = () => {
     setBrandBubbles(bubbles);
   }, []);
 
-  const handleSolutionComplete = () => {
+  const handleSolutionComplete = (showFeedbackForm?: boolean, showReportForm?: boolean) => {
     setSolutionCompleted(true);
     
-    // מסיר את הודעת ה-toast
-    // toast({
-    //   title: "פתרון הושלם!",
-    //   description: "תודה שהשתמשת באשף הפתרון המהיר",
-    // });
+    // אם התבקש להציג טופס משוב, נציג אותו ישירות
+    if (showFeedbackForm) {
+      setShowFeedbackForm(true);
+      return;
+    }
     
-    // הצג שאלה האם הפתרון עזר
+    // אם התבקש להציג טופס דיווח תקלה, נציג אותו ישירות
+    if (showReportForm) {
+      setShowReportForm(true);
+      return;
+    }
+    
+    // אחרת, נציג את שאלת המשוב הרגילה
     setShowFeedbackPrompt(true);
   };
 
-  const handleReportFormSubmit = (e: React.FormEvent) => {
+  const handleReportFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // כאן יהיה הקוד לשליחת הטופס לשרת
-    console.log(reportForm);
-    
-    toast({
-      title: "דיווח נשלח",
-      description: "תודה על הדיווח! צוות התמיכה יצור איתך קשר בהקדם.",
-    });
-    
-    setShowReportForm(false);
-    setShowReportPrompt(false);
-    setSolutionCompleted(false);
+    setIsSubmitting(true);
+
+    // בדיקה אם להשתמש במצב הדגמה
+    if (DEMO_MODE) {
+      console.log('DEMO MODE: Simulating issue report submission...');
+      console.log('Report data:', {
+        brand: reportForm.brand,
+        branchName: reportForm.branchName,
+        registerNumber: reportForm.registerNumber,
+        issueDetails: reportForm.issueDetails,
+        name: reportForm.name,
+        phone: reportForm.phone
+      });
+      
+      // סימולציה של טעינה
+      setTimeout(() => {
+        toast({
+          title: "דיווח נשלח בהצלחה",
+          description: "תודה על הדיווח! צוות התמיכה יצור איתך קשר בהקדם. (מצב הדגמה)",
+        });
+        
+        setShowReportForm(false);
+        setShowReportPrompt(false);
+        setSolutionCompleted(false);
+        
+        // Reset form
+        setReportForm({
+          brand: '',
+          branchName: '',
+          registerNumber: '',
+          issueDetails: '',
+          name: '',
+          phone: ''
+        });
+        
+        setIsSubmitting(false);
+      }, 1500);
+      
+      return;
+    }
+
+    try {
+      console.log('Sending issue report email directly...');
+      
+      // Prepare template parameters for EmailJS
+      const templateParams = {
+        to_name: "צוות התמיכה",
+        reply_to: RECIPIENT_EMAIL,
+        from_name: reportForm.name || "משתמש אנונימי",
+        from_phone: reportForm.phone || "לא צוין",
+        brand: reportForm.brand || "לא צוין",
+        branch_name: reportForm.branchName || "לא צוין",
+        register_number: reportForm.registerNumber || "לא צוין",
+        user_rating: "N/A",
+        clarity_rating: "N/A", 
+        user_comments: reportForm.issueDetails || "לא צוין",
+        date: new Date().toLocaleString('he-IL', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Asia/Jerusalem'
+        }),
+        browser_info: `${navigator.userAgent}`,
+        priority: "גבוהה", // ניתן להוסיף שדה בחירה בעתיד
+        description: `דיווח תקלה חדשה
+
+פרטי התקלה:
+
+מותג:
+${reportForm.brand || "לא צוין"}
+
+סניף:
+${reportForm.branchName || "לא צוין"}
+
+מספר קופה:
+${reportForm.registerNumber || "לא צוין"}
+
+פרטי המדווח:
+
+שם:
+${reportForm.name || "לא צוין"}
+
+טלפון:
+${reportForm.phone || "לא צוין"}
+
+תיאור התקלה:
+${reportForm.issueDetails || "לא צוין"}
+
+תאריך ושעה:
+${new Date().toLocaleString('he-IL', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'Asia/Jerusalem'
+})}
+
+מידע טכני:
+${navigator.userAgent}
+
+---
+⚠️ נא לטפל בהקדם האפשרי! ⚠️`,
+        subject: `🚨 תקלה חדשה\u200F : ${reportForm.brand || "לא צוין"} - ${reportForm.branchName || "לא צוין"}`
+      };
+      
+      console.log('Sending with params:', templateParams);
+      console.log('Using EmailJS configuration:', {
+        serviceId: EMAILJS_SERVICE_ID,
+        templateId: EMAILJS_TEMPLATE_ID,
+        publicKey: EMAILJS_PUBLIC_KEY
+      });
+
+      // Initialize EmailJS in case it wasn't already
+      if (typeof emailjs.init === 'function') {
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+      }
+      
+      // Send the email
+      const result = await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams
+      );
+      
+      console.log('Email sent successfully:', result);
+      
+      toast({
+        title: "דיווח נשלח בהצלחה",
+        description: "תודה על הדיווח! צוות התמיכה יצור איתך קשר בהקדם.",
+      });
+      
+      setShowReportForm(false);
+      setShowReportPrompt(false);
+      setSolutionCompleted(false);
+      
+      // Reset form
+      setReportForm({
+        brand: '',
+        branchName: '',
+        registerNumber: '',
+        issueDetails: '',
+        name: '',
+        phone: ''
+      });
+    } catch (error) {
+      console.error('Error sending email:', error);
+      // שיפור הלוגים לדיבוג
+      if (error instanceof Error) {
+        console.error('Error details:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack
+        });
+      }
+      toast({
+        title: "שגיאה בשליחה",
+        description: "אירעה שגיאה בשליחת הדיווח. אנא נסה שנית.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -419,23 +803,15 @@ const Index = () => {
           <div className="relative">
             <div className="absolute inset-0" style={styles.heroCardGlow}></div>
             <div style={{...styles.heroCard}} className="relative sm:p-8 sm:rounded-3xl">
-              {/* Decorative elements */}
-              <div className="absolute top-0 left-0 w-20 h-20 bg-purple-100 rounded-full opacity-20 -translate-x-1/2 -translate-y-1/2"></div>
-              <div className="absolute bottom-0 right-0 w-32 h-32 bg-blue-100 rounded-full opacity-30 translate-x-1/4 translate-y-1/4"></div>
-              
-              <div className="flex justify-center mb-6 sm:mb-8">
-                <div style={styles.logoCircle} className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
-                  <MessageCircle className="w-10 h-10 sm:w-12 sm:h-12 text-white drop-shadow-lg" />
-                </div>
-              </div>
               <h2 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6 relative" dir="rtl">
-                שלום! אני <span style={styles.gradientText} className="relative inline-block">
+                שלום!<br />
+                אני <span style={styles.gradientText} className="relative inline-block">
                   בוטקס
                   <span className="absolute -bottom-1 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></span>
                 </span> <span className="inline-block mr-1 animate-bounce">🤖</span>
               </h2>
-              <p className="text-lg sm:text-2xl text-gray-700 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed relative" dir="rtl">
-                <span className="bg-gradient-to-r from-indigo-100 to-purple-100 px-2 py-1 rounded-lg" dir="rtl">
+              <p className="text-lg sm:text-2xl text-gray-200 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed relative" dir="rtl">
+                <span className="bg-gradient-to-r from-gray-900 to-gray-800 px-2 py-1 rounded-lg" dir="rtl">
                   העוזר החכם שלך לפתרון תקלות טכניות<br />
                   אני כאן לעזור לך לפתור כל בעיה במהירות ויעילות!
                 </span>
@@ -452,131 +828,171 @@ const Index = () => {
               {/* Report Form */}
               {showReportForm && (
                 <Card style={{
-                  backgroundColor: '#f0f7ff',
-                  borderRadius: '1rem',
-                  padding: '1rem',
-                  boxShadow: '0 25px 50px -12px rgba(59, 130, 246, 0.3)',
-                  border: '1px solid #e0e7ff',
-                  textAlign: 'center'
-                }}>
+                  borderRadius: '16px',
+                  backgroundColor: '#ffffff',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+                  border: '1px solid rgba(99, 102, 241, 0.1)',
+                  overflow: 'hidden',
+                  maxWidth: '500px',
+                  margin: '0 auto',
+                  position: 'relative'
+                }} className="animate-in zoom-in-95 duration-300">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+                  
+                  {/* Decorative elements */}
+                  <div className="absolute -z-10 top-20 right-0 w-20 h-20 rounded-full bg-blue-100 opacity-30 blur-xl"></div>
+                  <div className="absolute -z-10 bottom-10 left-5 w-24 h-24 rounded-full bg-indigo-100 opacity-30 blur-xl"></div>
+                  
                   <CardHeader style={{
-                    background: 'linear-gradient(to right, #4f46e5, #9333ea)',
+                    background: 'linear-gradient(135deg, #3b82f6, #6366f1, #8b5cf6)',
                     color: 'white',
-                    borderTopLeftRadius: '0.5rem',
-                    borderTopRightRadius: '0.5rem'
+                    padding: '1.5rem 1rem'
                   }}>
-                    <CardTitle className="text-xl text-white">טופס דיווח תקלה</CardTitle>
-                    <CardDescription className="text-indigo-100">אנא מלא את הפרטים הבאים</CardDescription>
+                    <CardTitle className="text-xl font-bold">דיווח על תקלה</CardTitle>
+                    <CardDescription className="text-gray-100">אנא מלא את הפרטים הבאים כדי שנוכל לעזור לך</CardDescription>
                   </CardHeader>
-                  <CardContent className="p-6">
-                    <form onSubmit={handleReportFormSubmit} className="space-y-4" style={styles.formContainer}>
+                  
+                  <CardContent className="p-6 pt-8">
+                    <form onSubmit={handleReportFormSubmit} className="space-y-6" style={styles.formContainer}>
                       <div className="space-y-2">
-                        <Label htmlFor="brand" className="text-center block">מותג:</Label>
-                        <Select 
-                          name="brand"
-                          value={reportForm.brand}
-                          onValueChange={(value) => {
-                            setReportForm(prev => ({
-                              ...prev,
-                              brand: value
-                            }));
-                          }}
-                          required
-                        >
-                          <SelectTrigger className="text-center mx-auto" style={{maxWidth: '400px'}}>
-                            <SelectValue placeholder="בחר מותג" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="ZARA">ZARA</SelectItem>
-                            <SelectItem value="PULL&BEAR">PULL&BEAR</SelectItem>
-                            <SelectItem value="Massimo Dutti">Massimo Dutti</SelectItem>
-                            <SelectItem value="BERSHKA">BERSHKA</SelectItem>
-                            <SelectItem value="STRADIVARIUS">STRADIVARIUS</SelectItem>
-                            <SelectItem value="ZARA HOME">ZARA HOME</SelectItem>
-                            <SelectItem value="Lefties">Lefties</SelectItem>
-                            <SelectItem value="OYSHO">OYSHO</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <Label htmlFor="brand" className="text-center block font-medium text-gray-700">מותג:</Label>
+                        <div className="mx-auto" style={{maxWidth: '400px'}}>
+                          <Select 
+                            name="brand"
+                            value={reportForm.brand}
+                            onValueChange={(value) => {
+                              setReportForm(prev => ({
+                                ...prev,
+                                brand: value
+                              }));
+                            }}
+                            required
+                          >
+                            <SelectTrigger 
+                              className="h-10 rounded-lg border border-gray-300 bg-white px-3 py-2 text-base transition-all focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" 
+                              id="brand-select-trigger"
+                            >
+                              <div className="w-full text-center">
+                                {reportForm.brand || "בחר מותג"}
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent className="border-blue-200 shadow-lg animation-pulse">
+                              <SelectItem value="ZARA">ZARA</SelectItem>
+                              <SelectItem value="PULL&BEAR">PULL&BEAR</SelectItem>
+                              <SelectItem value="Massimo Dutti">Massimo Dutti</SelectItem>
+                              <SelectItem value="BERSHKA">BERSHKA</SelectItem>
+                              <SelectItem value="STRADIVARIUS">STRADIVARIUS</SelectItem>
+                              <SelectItem value="ZARA HOME">ZARA HOME</SelectItem>
+                              <SelectItem value="Lefties">Lefties</SelectItem>
+                              <SelectItem value="OYSHO">OYSHO</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <style dangerouslySetInnerHTML={{__html: `
+                          #brand-select-trigger {
+                            display: flex;
+                            align-items: center;
+                            padding-right: 30px;
+                            text-align: right;
+                          }
+                          
+                          #brand-select-trigger svg {
+                            position: absolute;
+                            left: 10px;
+                            right: auto;
+                          }
+                        `}} />
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="branchName" className="text-center block">שם סניף:</Label>
-                        <Input 
-                          id="branchName" 
-                          name="branchName" 
-                          value={reportForm.branchName} 
-                          onChange={handleInputChange} 
-                          placeholder="שם הסניף"
-                          required
-                          className="text-center mx-auto"
-                          style={{maxWidth: '400px'}}
-                        />
+                        <Label htmlFor="branchName" className="text-center block font-medium text-gray-700">שם סניף:</Label>
+                        <div className="relative mx-auto" style={{maxWidth: '400px'}}>
+                          <Input 
+                            id="branchName" 
+                            name="branchName" 
+                            value={reportForm.branchName} 
+                            onChange={handleInputChange} 
+                            placeholder="שם הסניף"
+                            required
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl"
+                          />
+                          <Store className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
+                        </div>
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="registerNumber" className="text-center block">מספר קופה:</Label>
-                        <Input 
-                          id="registerNumber" 
-                          name="registerNumber" 
-                          value={reportForm.registerNumber} 
-                          onChange={handleInputChange} 
-                          placeholder="מספר הקופה"
-                          required
-                          className="text-center mx-auto"
-                          style={{maxWidth: '400px'}}
-                        />
+                        <Label htmlFor="registerNumber" className="text-center block font-medium text-gray-700">מספר קופה:</Label>
+                        <div className="relative mx-auto" style={{maxWidth: '400px'}}>
+                          <Input 
+                            id="registerNumber" 
+                            name="registerNumber" 
+                            value={reportForm.registerNumber} 
+                            onChange={handleInputChange} 
+                            placeholder="מספר הקופה"
+                            required
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl"
+                          />
+                          <Hash className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
+                        </div>
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="issueDetails" className="text-center block">פירוט התקלה:</Label>
-                        <Textarea 
-                          id="issueDetails" 
-                          name="issueDetails" 
-                          value={reportForm.issueDetails} 
-                          onChange={handleInputChange} 
-                          placeholder="תיאור מפורט של התקלה"
-                          required
-                          className="min-h-[100px] text-center mx-auto"
-                          style={{maxWidth: '400px'}}
-                        />
+                        <Label htmlFor="issueDetails" className="text-center block font-medium text-gray-700">פירוט התקלה:</Label>
+                        <div className="relative mx-auto" style={{maxWidth: '400px'}}>
+                          <Textarea 
+                            id="issueDetails" 
+                            name="issueDetails" 
+                            value={reportForm.issueDetails} 
+                            onChange={handleInputChange} 
+                            placeholder="תיאור מפורט של התקלה"
+                            required
+                            className="min-h-[120px] pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl"
+                          />
+                          <AlertTriangle className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
+                        </div>
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="name" className="text-center block">שם:</Label>
-                        <Input 
-                          id="name" 
-                          name="name" 
-                          value={reportForm.name} 
-                          onChange={handleInputChange} 
-                          placeholder="השם שלך"
-                          required
-                          className="text-center mx-auto"
-                          style={{maxWidth: '400px'}}
-                        />
+                        <Label htmlFor="name" className="text-center block font-medium text-gray-700">שם:</Label>
+                        <div className="relative mx-auto" style={{maxWidth: '400px'}}>
+                          <Input 
+                            id="name" 
+                            name="name" 
+                            value={reportForm.name} 
+                            onChange={handleInputChange} 
+                            placeholder="השם שלך"
+                            required
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl"
+                          />
+                          <User className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
+                        </div>
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-center block">מספר טלפון:</Label>
-                        <Input 
-                          id="phone" 
-                          name="phone" 
-                          value={reportForm.phone} 
-                          onChange={handleInputChange} 
-                          placeholder="מספר הטלפון שלך"
-                          required
-                          className="text-center mx-auto"
-                          style={{maxWidth: '400px'}}
-                        />
+                        <Label htmlFor="phone" className="text-center block font-medium text-gray-700">מספר טלפון:</Label>
+                        <div className="relative mx-auto" style={{maxWidth: '400px'}}>
+                          <Input 
+                            id="phone" 
+                            name="phone" 
+                            value={reportForm.phone} 
+                            onChange={handleInputChange} 
+                            placeholder="מספר הטלפון שלך"
+                            required
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl"
+                          />
+                          <Phone className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
+                        </div>
                       </div>
                       
-                      <div style={styles.buttonContainer}>
+                      <div className="flex justify-center gap-4 mt-6">
                         <Button 
                           type="button"
-                          variant="ghost" 
+                          variant="outline" 
                           onClick={() => {
                             setShowReportForm(false);
                             setSolutionCompleted(false);
                           }}
+                          className="px-5 py-2 transition-all duration-200 hover:bg-gray-100 border-gray-300"
                         >
                           <X className="mr-2 h-4 w-4" />
                           ביטול
@@ -584,13 +1000,26 @@ const Index = () => {
                         
                         <Button 
                           type="submit"
+                          className="px-8 py-2 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg"
                           style={{
-                            background: 'linear-gradient(to right, #4f46e5, #9333ea)',
-                            color: 'white'
+                            background: 'linear-gradient(135deg, #3b82f6, #6366f1, #8b5cf6)',
+                            color: 'white',
+                            boxShadow: '0 4px 6px -1px rgba(99, 102, 241, 0.4)',
+                            border: 'none',
                           }}
+                          disabled={isSubmitting}
                         >
-                          <Send className="ml-2 h-4 w-4" />
-                          שלח דיווח
+                          {isSubmitting ? (
+                            <>
+                              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                              שולח...
+                            </>
+                          ) : (
+                            <>
+                              <Send className="ml-2 h-4 w-4" />
+                              שלח דיווח
+                            </>
+                          )}
                         </Button>
                       </div>
                     </form>
@@ -598,55 +1027,16 @@ const Index = () => {
                 </Card>
               )}
               
-              {/* Feedback Prompt - מחזיר את המסך */}
+              {/* Feedback Prompt */}
               {showFeedbackPrompt && !showFeedbackForm && !showReportForm && !showReportPrompt && (
-                <div className="mt-6 p-4 bg-white rounded-lg shadow-md border border-indigo-100 text-center">
-                  <h3 className="text-lg font-medium mb-2">האם הצלחת לפתור את התקלה?</h3>
-                  <p className="text-gray-600 mb-4">בחר באפשרות המתאימה:</p>
-                  <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center', width: '100%', maxWidth: '300px', margin: '0 auto'}}>
-                    <Button 
-                      onClick={() => {
-                        // שמירת מידע שהתקלה נפתרה
-                        console.log("התקלה נפתרה בהצלחה");
-                        setShowFeedbackForm(true);
-                      }}
-                      variant="ghost"
-                      size="sm"
-                      className="text-xs px-3 py-1 h-8 rounded-lg w-full transition-all duration-300 hover:scale-105"
-                      style={{
-                        fontWeight: 'bold',
-                        background: 'linear-gradient(45deg, #22c55e, #16a34a)',
-                        color: 'white',
-                        boxShadow: '0 4px 6px -1px rgba(34, 197, 94, 0.3)',
-                        border: 'none'
-                      }}
-                    >
-                      <Star className="mr-1 h-3 w-3" fill="white" />
-                      כן, הבעיה נפתרה
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      onClick={() => {
-                        // שמירת מידע שהתקלה לא נפתרה
-                        console.log("התקלה לא נפתרה");
-                        setShowFeedbackPrompt(false);
-                        setShowReportForm(true);
-                      }}
-                      size="sm"
-                      className="text-xs px-3 py-1 h-8 rounded-lg w-full transition-all duration-300 hover:scale-105"
-                      style={{
-                        fontWeight: 'bold',
-                        background: 'linear-gradient(45deg, #f97316, #ea580c)',
-                        color: 'white',
-                        boxShadow: '0 4px 6px -1px rgba(249, 115, 22, 0.3)',
-                        border: 'none'
-                      }}
-                    >
-                      <AlertCircle className="mr-1 h-3 w-3" />
-                      לא, אני רוצה לפתוח קריאת שירות
-                    </Button>
-                  </div>
-                </div>
+                <FeedbackPrompt onResponse={(wantsToGiveFeedback) => {
+                  if (wantsToGiveFeedback) {
+                    handleSolutionComplete(true);
+                  } else {
+                    setShowFeedbackPrompt(false);
+                    setSolutionCompleted(false);
+                  }
+                }} />
               )}
               
               {/* Feedback Form */}
@@ -669,7 +1059,7 @@ const Index = () => {
               )}
               
               {/* Developer Credit */}
-              <div className="mt-8 pt-4 text-xs text-gray-400 border-t border-gray-100">
+              <div className="mt-4 mb-6 pb-4 text-sm md:text-xs text-gray-400 border-t border-gray-100 sm:block block font-bold">
                 Developed by Shahar Barsheshet
               </div>
             </div>

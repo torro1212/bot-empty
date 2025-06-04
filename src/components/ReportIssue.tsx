@@ -7,6 +7,15 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertCircle, Upload, Phone, Mail, Clock, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import emailjs from '@emailjs/browser';
+
+// EmailJS configuration
+// You need to create an account at https://www.emailjs.com/
+// And set up a Gmail service and email template
+const EMAILJS_SERVICE_ID = 'default_service'; // שימוש בשירות ברירת המחדל
+const EMAILJS_TEMPLATE_ID = 'template_94n4ms8'; // Replace with your template ID
+const EMAILJS_PUBLIC_KEY = '6RjrhWpav2fs1C9Dq'; // Replace with your public key
+const RECIPIENT_EMAIL = 'Support@Mutagim.com'; // Replace with the email you want to send to
 
 const ReportIssue = () => {
   const [formData, setFormData] = useState({
@@ -59,16 +68,47 @@ const ReportIssue = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    setTimeout(() => {
-      const ticketNumber = Math.random().toString(36).substr(2, 9).toUpperCase();
+    // Get issue type label
+    const issueTypeLabel = issueTypes.find(type => type.value === formData.issueType)?.label || formData.issueType;
+    
+    // Get priority label
+    const priorityLabel = priorities.find(priority => priority.value === formData.priority)?.label || formData.priority;
+
+    try {
+      // Prepare template parameters
+      const templateParams = {
+        to_email: RECIPIENT_EMAIL,
+        from_name: formData.name,
+        from_email: formData.email,
+        from_phone: formData.phone,
+        issue_type: issueTypeLabel,
+        priority: priorityLabel,
+        description: formData.description,
+        steps_attempted: formData.stepsAttempted || 'לא צוינו צעדים קודמים',
+        attachments_info: formData.attachments.length > 0 
+          ? `צורפו ${formData.attachments.length} קבצים` 
+          : 'לא צורפו קבצים',
+        subject: `דיווח תקלה חדשה: ${issueTypeLabel} (${priorityLabel})`,
+        response_time: getEstimatedResponseTime(formData.priority)
+      };
+
+      // Initialize EmailJS with your public key
+      emailjs.init(EMAILJS_PUBLIC_KEY);
       
+      // Send the email
+      const result = await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams
+      );
+      
+      console.log('Email sent successfully:', result);
       toast({
-        title: "תקלה דווחה בהצלחה!",
-        description: `מספר טיקט: ${ticketNumber}. נחזור אליך בקרוב.`,
+        title: 'דיווח נשלח בהצלחה!',
+        description: 'התקלה דווחה ותטופל בקרוב.',
       });
 
-      // Reset form
+      // Reset form after successful submission
       setFormData({
         name: '',
         phone: '',
@@ -79,9 +119,16 @@ const ReportIssue = () => {
         stepsAttempted: '',
         attachments: []
       });
-
+    } catch (error) {
+      console.error('Error sending email:', error);
+      toast({
+        title: 'שגיאה בשליחה',
+        description: 'לא הצלחנו לשלוח את הדיווח. נסה שוב.',
+        variant: 'destructive',
+      });
+    } finally {
       setIsSubmitting(false);
-    }, 2000);
+    }
   };
 
   const getEstimatedResponseTime = (priority: string) => {

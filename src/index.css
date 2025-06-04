@@ -81,6 +81,24 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Heebo', sans-serif;
+    direction: rtl;
+  }
+  
+  /* RTL form element adjustments */
+  input, textarea, select {
+    text-align: right;
+  }
+  
+  /* Fix LTR elements in RTL layout */
+  .ltr {
+    direction: ltr;
+  }
+  
+  /* Improve Hebrew text clarity */
+  h1, h2, h3, h4, h5, h6, p, span, div, label, button {
+    font-family: 'Heebo', sans-serif;
+    letter-spacing: normal;
   }
 }
 
@@ -108,6 +126,15 @@
   .animate-pulse-slow {
     animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+  
+  /* RTL utility classes */
+  .rtl {
+    direction: rtl;
+  }
+  
+  .text-right {
+    text-align: right;
+  }
 }
 
 @keyframes float {
@@ -117,4 +144,15 @@
   50% {
     transform: translateY(-10px);
   }
+}
+
+/* Fix for RTL input with icons */
+.input-with-icon-rtl {
+  padding-right: 2.5rem !important;
+  padding-left: 0.75rem !important;
+}
+
+.icon-rtl {
+  right: 0.75rem !important;
+  left: auto !important;
 }

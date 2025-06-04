@@ -355,20 +355,14 @@ const kupaFlow: FlowData = {
       video: getMediaUrl("YdXOElL.mp4"),
       options: {
         "מחובר ונדלקה הקופה": "K-CAB-OVED",
-        "מחובר לא נדלקה": "K-CAB-LOVED"
+        "מחובר לא נדלקה": "SEND"
       }
     },
     "K-CAB-OVED": {
       type: "end",
       text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
     },
-    "K-CAB-LOVED": {
-      type: "question",
-      text: "לא הצלחת לפתור את התקלה? לחצו על \"שליחת תקלה\" ונחזור אליכם בהקדם 😊",
-      options: {
-        "שליחת תקלה": "SEND"
-      }
-    },
+
     "SEND": {
       type: "end",
       text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻"
