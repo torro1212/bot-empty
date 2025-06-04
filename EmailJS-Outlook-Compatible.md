@@ -67,11 +67,35 @@
                     </tr>
                 </table>
                 
-                <table width="100%" cellpadding="0" cellspacing="0">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
                     <tr>
                         <td style="background-color: #f8fafc; padding: 15px; border-radius: 6px; text-align: center;">
                             <strong style="color: #374151; font-size: 16px;">תאריך ושעה:</strong><br>
                             <span style="color: #6b7280; font-size: 15px;">{{date}}</span>
+                        </td>
+                    </tr>
+                </table>
+                
+                <!-- Action Buttons - Mobile Optimized -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
+                    <tr>
+                        <td style="padding: 0 10px;">
+                            <!-- First Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 8px;">
+                                <tr>
+                                    <td style="background-color: #10b981; border-radius: 15px; text-align: center; padding: 0;">
+                                        <a href="{{approve_link}}" style="display: block; color: white; font-weight: bold; text-decoration: none; padding: 10px 12px; font-size: 13px;">👍 כן</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- Second Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="background-color: #ef4444; border-radius: 15px; text-align: center; padding: 0;">
+                                        <a href="{{reject_link}}" style="display: block; color: white; font-weight: bold; text-decoration: none; padding: 10px 12px; font-size: 13px;">👎 לא</a>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
@@ -173,9 +197,9 @@
                 </table>
                 
                 <!-- Contact Info -->
-                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
                     <tr>
-                        <td style="background-color: #ecfdf5; border: 2px solidrgb(235, 240, 239); padding: 15px; border-radius: 6px; text-align: center;">
+                        <td style="background-color: #ecfdf5; border: 2px solid rgb(235, 240, 239); padding: 15px; border-radius: 6px; text-align: center;">
                             <strong style="color: #374151; font-size: 16px;">פרטי קשר:</strong><br>
                             <span style="color: #1f2937; font-size: 15px;">
                                 שם: {{from_name}}<br>
@@ -185,11 +209,35 @@
                     </tr>
                 </table>
                 
-                <table width="100%" cellpadding="0" cellspacing="0">
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
                     <tr>
                         <td style="background-color: #f8fafc; padding: 15px; border-radius: 6px; text-align: center;">
                             <strong style="color: #374151; font-size: 16px;">תאריך ושעה:</strong><br>
                             <span style="color: #1f2937; font-size: 15px;">{{date}}</span>
+                        </td>
+                    </tr>
+                </table>
+                
+                <!-- Action Buttons - Mobile Optimized -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
+                    <tr>
+                        <td style="padding: 0 10px;">
+                            <!-- First Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 8px;">
+                                <tr>
+                                    <td style="background-color: #10b981; border-radius: 15px; text-align: center; padding: 0;">
+                                        <a href="{{approve_link}}" style="display: block; color: white; font-weight: bold; text-decoration: none; padding: 10px 12px; font-size: 13px;">✅ אישור</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- Second Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="background-color: #f59e0b; border-radius: 15px; text-align: center; padding: 0;">
+                                        <a href="{{escalate_link}}" style="display: block; color: white; font-weight: bold; text-decoration: none; padding: 10px 12px; font-size: 13px;">⚡ דחוף</a>
+                                    </td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
@@ -219,6 +267,7 @@
 ✅ **צבעים פשוטים** - ללא גרדיאנטים מורכבים
 ✅ **מבנה פשוט** - ללא CSS מתקדם
 ✅ **תמיכה ב-RTL** - עובד טוב ב-Outlook
+✅ **כפתורים מותאמים לנייד** - מלאים, עגולים ומסודרים אנכית
 
 ## הוראות עדכון:
 
@@ -227,4 +276,4 @@
 3. החלף את כל התוכן HTML בתבניות החדשות מלמעלה
 4. שמור
 
-עכשיו המיילים יראו הרבה יותר טוב ב-Outlook! 📧 
+עכשיו המיילים יראו הרבה יותר טוב ב-Outlook ובטלפון הנייד! 📧 📱 
