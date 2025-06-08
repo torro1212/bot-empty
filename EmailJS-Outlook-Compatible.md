@@ -15,26 +15,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body style="font-family: Arial, sans-serif; direction: rtl; text-align: center; background-color: #f5f5f5; margin: 0; padding: 20px;">
+<body style="font-family: Arial, sans-serif; direction: rtl; text-align: center; background-color: #f5f5f5; margin: 0; padding: 5px;">
     
-    <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background-color: white; border-radius: 8px;">
-        
-        <!-- Header -->
-        <tr>
-            <td style="background-color: #3b82f6; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-                <h1 style="margin: 0; font-size: 24px; font-weight: bold;">⭐ משוב חדש מבוטקס</h1>
-            </td>
-        </tr>
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 700px; margin: 5px auto; background-color: white; border-radius: 8px;">
         
         <!-- Content -->
         <tr>
-            <td style="padding: 30px;">
+            <td style="padding: 25px;">
                 
                 <!-- Rating -->
                 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
                     <tr>
-                        <td style="background-color: #f0f9ff; border: 2px solid #3b82f6; padding: 20px; text-align: center; border-radius: 8px;">
-                            <h2 style="margin: 0; color: #1e40af; font-size: 20px;">דירוג החוויה: {{user_rating}}</h2>
+                        <td style="background-color: #f0f9ff; border: 2px solid #3b82f6; padding: 25px; text-align: center; border-radius: 12px;">
+                            <h2 style="margin: 0; color: #1e40af; font-size: 22px;">דירוג החוויה: {{user_rating}}</h2>
                         </td>
                     </tr>
                 </table>
@@ -42,36 +35,36 @@
                 <!-- Info Sections -->
                 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
                     <tr>
-                        <td style="background-color: #f8fafc; padding: 15px; border-radius: 6px; text-align: center;">
-                            <strong style="color: #374151; font-size: 16px;">בהירות ההסברים:</strong><br>
-                            <span style="color: #6b7280; font-size: 15px;">{{clarity_rating}}</span>
+                        <td style="background-color: #f8fafc; padding: 20px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #374151; font-size: 18px;">בהירות ההסברים:</strong><br>
+                            <span style="color: #6b7280; font-size: 16px;">{{clarity_rating}}</span>
                         </td>
                     </tr>
                 </table>
                 
                 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
                     <tr>
-                        <td style="background-color: #f8fafc; padding: 15px; border-radius: 6px; text-align: center;">
-                            <strong style="color: #374151; font-size: 16px;">שם המשתמש:</strong><br>
-                            <span style="color: #6b7280; font-size: 15px;">{{from_name}}</span>
+                        <td style="background-color: #f8fafc; padding: 20px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #374151; font-size: 18px;">שם המשתמש:</strong><br>
+                            <span style="color: #6b7280; font-size: 16px;">{{from_name}}</span>
                         </td>
                     </tr>
                 </table>
                 
                 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 15px;">
                     <tr>
-                        <td style="background-color: #f8fafc; padding: 15px; border-radius: 6px; text-align: center;">
-                            <strong style="color: #374151; font-size: 16px;">הערות נוספות:</strong><br>
-                            <span style="color: #6b7280; font-size: 15px;">{{user_comments}}</span>
+                        <td style="background-color: #f8fafc; padding: 20px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #374151; font-size: 18px;">הערות נוספות:</strong><br>
+                            <span style="color: #6b7280; font-size: 16px;">{{user_comments}}</span>
                         </td>
                     </tr>
                 </table>
                 
                 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 20px;">
                     <tr>
-                        <td style="background-color: #f8fafc; padding: 15px; border-radius: 6px; text-align: center;">
-                            <strong style="color: #374151; font-size: 16px;">תאריך ושעה:</strong><br>
-                            <span style="color: #6b7280; font-size: 15px;">{{date}}</span>
+                        <td style="background-color: #f8fafc; padding: 20px; border-radius: 10px; text-align: center;">
+                            <strong style="color: #374151; font-size: 18px;">תאריך ושעה:</strong><br>
+                            <span style="color: #6b7280; font-size: 16px;">{{date}}</span>
                         </td>
                     </tr>
                 </table>
@@ -81,18 +74,18 @@
                     <tr>
                         <td style="padding: 0 10px;">
                             <!-- First Button -->
-                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 8px;">
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 10px;">
                                 <tr>
-                                    <td style="background-color: #10b981; border-radius: 15px; text-align: center; padding: 0;">
-                                        <a href="{{approve_link}}" style="display: block; color: white; font-weight: bold; text-decoration: none; padding: 10px 12px; font-size: 13px;">👍 כן</a>
+                                    <td style="background-color: #10b981; border-radius: 20px; text-align: center; padding: 0;">
+                                        <a href="{{approve_link}}" style="display: block; color: white; font-weight: bold; text-decoration: none; padding: 15px 20px; font-size: 16px;">👍 כן</a>
                                     </td>
                                 </tr>
                             </table>
                             <!-- Second Button -->
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td style="background-color: #ef4444; border-radius: 15px; text-align: center; padding: 0;">
-                                        <a href="{{reject_link}}" style="display: block; color: white; font-weight: bold; text-decoration: none; padding: 10px 12px; font-size: 13px;">👎 לא</a>
+                                    <td style="background-color: #ef4444; border-radius: 20px; text-align: center; padding: 0;">
+                                        <a href="{{reject_link}}" style="display: block; color: white; font-weight: bold; text-decoration: none; padding: 15px 20px; font-size: 16px;">👎 לא</a>
                                     </td>
                                 </tr>
                             </table>
@@ -105,7 +98,7 @@
         
         <!-- Footer -->
         <tr>
-            <td style="background-color: #f1f5f9; padding: 20px; text-align: center; color: #64748b; font-size: 14px; border-radius: 0 0 8px 8px;">
+            <td style="background-color: #f1f5f9; padding: 20px; text-align: center; color: #64748b; font-size: 15px; border-radius: 0 0 8px 8px;">
                 נשלח ממערכת בוטקס - העוזר החכם לפתרון תקלות
             </td>
         </tr>

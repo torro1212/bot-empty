@@ -135,12 +135,17 @@ const styles: Record<string, CSSProperties> = {
     padding: '1.5rem',
     backgroundColor: '#ffffff',
     boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-    position: 'relative',
-    maxWidth: '500px',
-    margin: '0 auto',
+    position: 'fixed',
+    top: '2vh',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '95vw',
+    maxWidth: '800px',
+    height: '90vh',
+    overflowY: 'auto',
+    zIndex: 1000,
     background: 'linear-gradient(145deg, #ffffff, #f9fafb)',
     border: '1px solid rgba(59, 130, 246, 0.1)',
-    overflow: 'hidden',
     direction: 'rtl',
     textAlign: 'right',
     fontFamily: "'Heebo', sans-serif"
@@ -519,6 +524,7 @@ const Index = () => {
   const [showFeedbackPrompt, setShowFeedbackPrompt] = useState(false);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [solutionCompleted, setSolutionCompleted] = useState(false);
+  const [wizardStarted, setWizardStarted] = useState(false);
   const [showReportForm, setShowReportForm] = useState(false);
   const [showReportPrompt, setShowReportPrompt] = useState(false);
   const [brandBubbles, setBrandBubbles] = useState<Array<{
@@ -577,6 +583,7 @@ const Index = () => {
 
   const handleSolutionComplete = (showFeedbackForm?: boolean, showReportForm?: boolean) => {
     setSolutionCompleted(true);
+    setWizardStarted(false);
     
     // אם התבקש להציג טופס משוב, נציג אותו ישירות
     if (showFeedbackForm) {
@@ -798,45 +805,91 @@ ${navigator.userAgent}
       </div>
 
       {/* Hero Section */}
-      <section style={styles.heroSection} className="py-8 sm:py-16 px-4" aria-label="אזור הגיבור" data-section-name="אזור הגיבור (Hero Section)">
-        <div className="container mx-auto text-center">
+      <section style={styles.heroSection} className="w-full min-h-screen" aria-label="אזור הגיבור" data-section-name="אזור הגיבור (Hero Section)">
+        <div className="w-full text-center">
           <div className="relative">
             <div className="absolute inset-0" style={styles.heroCardGlow}></div>
-            <div style={{...styles.heroCard}} className="relative sm:p-8 sm:rounded-3xl">
-              <h2 className="text-3xl sm:text-5xl font-bold mb-4 sm:mb-6 relative" dir="rtl">
-                שלום!<br />
-                אני <span style={styles.gradientText} className="relative inline-block">
-                  בוטקס
-                  <span className="absolute -bottom-1 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></span>
-                </span> <span className="inline-block mr-1 animate-bounce">🤖</span>
-              </h2>
-              <p className="text-lg sm:text-2xl text-gray-200 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed relative" dir="rtl">
-                <span className="bg-gradient-to-r from-gray-900 to-gray-800 px-2 py-1 rounded-lg" dir="rtl">
-                  העוזר החכם שלך לפתרון תקלות טכניות<br />
-                  אני כאן לעזור לך לפתור כל בעיה במהירות ויעילות!
-                </span>
-              </p>
-              
-              {/* Automated Solution Wizard */}
-              {!solutionCompleted && !showReportForm && !showReportPrompt && (
-                <AutomatedSolutionWizard 
-                  onComplete={handleSolutionComplete} 
-                  onReportIssue={() => setShowReportForm(true)}
-                />
+            <div style={{
+              ...styles.heroCard,
+              width: '100vw',
+              height: '100vh',
+              position: 'fixed',
+              top: '0',
+              left: '0',
+              zIndex: 1000,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              padding: '20px'
+                          }}>
+              {/* כותרת תוצג רק כשהאשף לא התחיל וטופס המשוב לא פתוח */}
+              {!wizardStarted && !showFeedbackForm && (
+                <div className="text-center mb-4" style={{marginTop: '10px'}}>
+                  <h2 className="text-2xl sm:text-4xl font-bold mb-2 sm:mb-4 relative" dir="rtl">
+                    שלום!<br />
+                    אני <span style={styles.gradientText} className="relative inline-block">
+                      בוטקס
+                      <span className="absolute -bottom-1 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></span>
+                    </span> <span className="inline-block mr-1 animate-bounce">🤖</span>
+                  </h2>
+                  <p className="text-sm sm:text-lg text-gray-200 mb-4 sm:mb-6 max-w-2xl mx-auto leading-relaxed relative" dir="rtl">
+                    <span className="bg-gradient-to-r from-gray-900 to-gray-800 px-2 py-1 rounded-lg" dir="rtl">
+                      העוזר החכם שלך לפתרון תקלות טכניות<br />
+                      אני כאן לעזור לך לפתור כל בעיה במהירות ויעילות!
+                    </span>
+                  </p>
+                </div>
               )}
+                
+                {/* Automated Solution Wizard */}
+              <div style={{flexGrow: 1, width: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '10px'}}>
+                {!solutionCompleted && !showReportForm && !showReportPrompt && (
+                  <AutomatedSolutionWizard 
+                    onComplete={handleSolutionComplete} 
+                    onReportIssue={() => setShowReportForm(true)}
+                    onWizardStart={() => setWizardStarted(true)}
+                    onWizardReset={() => setWizardStarted(false)}
+                    isWizardStarted={wizardStarted}
+                  />
+                )}
+              </div>
               
               {/* Report Form */}
               {showReportForm && (
-                <Card style={{
-                  borderRadius: '16px',
-                  backgroundColor: '#ffffff',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
-                  border: '1px solid rgba(99, 102, 241, 0.1)',
-                  overflow: 'hidden',
-                  maxWidth: '500px',
-                  margin: '0 auto',
-                  position: 'relative'
-                }} className="animate-in zoom-in-95 duration-300">
+                <>
+                  {/* Dark overlay behind report form */}
+                  <div 
+                    style={{
+                      position: 'fixed',
+                      top: 0,
+                      left: 0,
+                      width: '100vw',
+                      height: '100vh',
+                      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                      zIndex: 999,
+                      backdropFilter: 'blur(5px)'
+                    }}
+                    onClick={() => {
+                      setShowReportForm(false);
+                      setSolutionCompleted(false);
+                    }}
+                  />
+                  <Card style={{
+                    borderRadius: '16px',
+                    backgroundColor: '#ffffff',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+                    border: '1px solid rgba(99, 102, 241, 0.1)',
+                    position: 'fixed',
+                    top: '2vh',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '95vw',
+                    maxWidth: '800px',
+                    height: '90vh',
+                    overflowY: 'auto',
+                    zIndex: 1000
+                  }} className="animate-in zoom-in-95 duration-300">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
                   
                   {/* Decorative elements */}
@@ -856,7 +909,7 @@ ${navigator.userAgent}
                     <form onSubmit={handleReportFormSubmit} className="space-y-6" style={styles.formContainer}>
                       <div className="space-y-2">
                         <Label htmlFor="brand" className="text-center block font-medium text-gray-700">מותג:</Label>
-                        <div className="mx-auto" style={{maxWidth: '400px'}}>
+                        <div className="mx-auto" style={{maxWidth: '600px'}}>
                           <Select 
                             name="brand"
                             value={reportForm.brand}
@@ -876,15 +929,15 @@ ${navigator.userAgent}
                                 {reportForm.brand || "בחר מותג"}
                               </div>
                             </SelectTrigger>
-                            <SelectContent className="border-blue-200 shadow-lg animation-pulse">
-                              <SelectItem value="ZARA">ZARA</SelectItem>
-                              <SelectItem value="PULL&BEAR">PULL&BEAR</SelectItem>
-                              <SelectItem value="Massimo Dutti">Massimo Dutti</SelectItem>
-                              <SelectItem value="BERSHKA">BERSHKA</SelectItem>
-                              <SelectItem value="STRADIVARIUS">STRADIVARIUS</SelectItem>
-                              <SelectItem value="ZARA HOME">ZARA HOME</SelectItem>
-                              <SelectItem value="Lefties">Lefties</SelectItem>
-                              <SelectItem value="OYSHO">OYSHO</SelectItem>
+                            <SelectContent className="border-blue-200 shadow-lg animation-pulse" style={{textAlign: 'center'}}>
+                              <SelectItem value="ZARA" className="text-center justify-center">ZARA</SelectItem>
+                              <SelectItem value="PULL&BEAR" className="text-center justify-center">PULL&BEAR</SelectItem>
+                              <SelectItem value="Massimo Dutti" className="text-center justify-center">Massimo Dutti</SelectItem>
+                              <SelectItem value="BERSHKA" className="text-center justify-center">BERSHKA</SelectItem>
+                              <SelectItem value="STRADIVARIUS" className="text-center justify-center">STRADIVARIUS</SelectItem>
+                              <SelectItem value="ZARA HOME" className="text-center justify-center">ZARA HOME</SelectItem>
+                              <SelectItem value="Lefties" className="text-center justify-center">Lefties</SelectItem>
+                              <SelectItem value="OYSHO" className="text-center justify-center">OYSHO</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -897,16 +950,14 @@ ${navigator.userAgent}
                           }
                           
                           #brand-select-trigger svg {
-                            position: absolute;
-                            left: 10px;
-                            right: auto;
+                            display: none;
                           }
                         `}} />
                       </div>
                       
                       <div className="space-y-2">
                         <Label htmlFor="branchName" className="text-center block font-medium text-gray-700">שם סניף:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '400px'}}>
+                        <div className="relative mx-auto" style={{maxWidth: '600px'}}>
                           <Input 
                             id="branchName" 
                             name="branchName" 
@@ -922,7 +973,7 @@ ${navigator.userAgent}
                       
                       <div className="space-y-2">
                         <Label htmlFor="registerNumber" className="text-center block font-medium text-gray-700">מספר קופה:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '400px'}}>
+                        <div className="relative mx-auto" style={{maxWidth: '600px'}}>
                           <Input 
                             id="registerNumber" 
                             name="registerNumber" 
@@ -938,7 +989,7 @@ ${navigator.userAgent}
                       
                       <div className="space-y-2">
                         <Label htmlFor="issueDetails" className="text-center block font-medium text-gray-700">פירוט התקלה:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '400px'}}>
+                        <div className="relative mx-auto" style={{maxWidth: '600px'}}>
                           <Textarea 
                             id="issueDetails" 
                             name="issueDetails" 
@@ -954,7 +1005,7 @@ ${navigator.userAgent}
                       
                       <div className="space-y-2">
                         <Label htmlFor="name" className="text-center block font-medium text-gray-700">שם:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '400px'}}>
+                        <div className="relative mx-auto" style={{maxWidth: '600px'}}>
                           <Input 
                             id="name" 
                             name="name" 
@@ -970,7 +1021,7 @@ ${navigator.userAgent}
                       
                       <div className="space-y-2">
                         <Label htmlFor="phone" className="text-center block font-medium text-gray-700">מספר טלפון:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '400px'}}>
+                        <div className="relative mx-auto" style={{maxWidth: '600px'}}>
                           <Input 
                             id="phone" 
                             name="phone" 
@@ -1025,6 +1076,7 @@ ${navigator.userAgent}
                     </form>
                   </CardContent>
                 </Card>
+                </>
               )}
               
               {/* Feedback Prompt */}
@@ -1041,11 +1093,31 @@ ${navigator.userAgent}
               
               {/* Feedback Form */}
               {showFeedbackForm && !showReportForm && (
-                <FeedbackForm onClose={() => {
-                  setShowFeedbackForm(false);
-                  setShowFeedbackPrompt(false);
-                  setSolutionCompleted(false);
-                }} />
+                <>
+                  {/* Dark overlay behind feedback form */}
+                  <div 
+                    style={{
+                      position: 'fixed',
+                      top: 0,
+                      left: 0,
+                      width: '100vw',
+                      height: '100vh',
+                      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                      zIndex: 999,
+                      backdropFilter: 'blur(5px)'
+                    }}
+                    onClick={() => {
+                      setShowFeedbackForm(false);
+                      setShowFeedbackPrompt(false);
+                      setSolutionCompleted(false);
+                    }}
+                  />
+                  <FeedbackForm onClose={() => {
+                    setShowFeedbackForm(false);
+                    setShowFeedbackPrompt(false);
+                    setSolutionCompleted(false);
+                  }} />
+                </>
               )}
               
               {/* Return to Solution Button */}
@@ -1059,9 +1131,21 @@ ${navigator.userAgent}
               )}
               
               {/* Developer Credit */}
-              <div className="mt-4 mb-6 pb-4 text-sm md:text-xs text-gray-400 border-t border-gray-100 sm:block block font-bold">
-                Developed by Shahar Barsheshet
-              </div>
+                              <div 
+                  className="text-sm md:text-xs text-gray-400 font-bold"
+                  style={{
+                    position: 'absolute',
+                    bottom: '10px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    zIndex: 1001,
+                    textAlign: 'center',
+                    pointerEvents: 'none',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  Developed by Shahar Barsheshet
+                </div>
             </div>
           </div>
         </div>

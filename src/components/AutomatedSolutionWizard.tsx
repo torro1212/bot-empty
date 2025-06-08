@@ -52,7 +52,26 @@ const styles: Record<string, CSSProperties> = {
     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
     border: 'none',
     background: 'linear-gradient(to bottom right, white, #e2e8f0)',
-    textAlign: 'center'
+    textAlign: 'center',
+    width: '100vw',
+    height: 'auto',
+    minHeight: '400px',
+    margin: '0',
+    maxWidth: '100vw',
+    maxHeight: '100vh',
+    overflow: 'auto'
+  },
+  cardFullScreen: {
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+    border: 'none',
+    background: 'linear-gradient(to bottom right, white, #e2e8f0)',
+    textAlign: 'center',
+    width: '100vw',
+    height: '100vh',
+    margin: '0',
+    maxWidth: '100vw',
+    maxHeight: '100vh',
+    overflow: 'auto'
   },
   cardHeader: {
     background: 'linear-gradient(to right, #4f46e5, #9333ea)',
@@ -133,6 +152,9 @@ const styles: Record<string, CSSProperties> = {
   cardContent: {
     backgroundColor: '#f8fafc',
     borderRadius: '0 0 0.5rem 0.5rem',
+    paddingBottom: '50px',
+    maxHeight: '100vh',
+    overflow: 'auto'
   },
   rtlContainer: {
     direction: 'rtl',
@@ -180,9 +202,12 @@ interface FlowData {
 interface WizardProps {
   onComplete?: (showFeedbackForm?: boolean, showReportForm?: boolean) => void;
   onReportIssue?: () => void;
+  onWizardStart?: () => void;
+  onWizardReset?: () => void;
+  isWizardStarted?: boolean;
 }
 
-const AutomatedSolutionWizard = ({ onComplete, onReportIssue }: WizardProps) => {
+const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onWizardReset, isWizardStarted = false }: WizardProps) => {
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
   const [currentNodeId, setCurrentNodeId] = useState<string | null>(null);
   const [currentNode, setCurrentNode] = useState<FlowNode | null>(null);
@@ -291,6 +316,8 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue }: WizardProps) => 
       setSelectedFlow(null);
       setCurrentNodeId(null);
       setCurrentNode(null);
+      // איפוס מצב האשף כשחוזרים למסך הבחירה הראשי
+      if (onWizardReset) onWizardReset();
     }
   };
 
@@ -548,12 +575,12 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue }: WizardProps) => 
   // Render flow selection
   if (!selectedFlow) {
     return (
-      <Card style={styles.card}>
+      <Card style={isWizardStarted ? styles.cardFullScreen : styles.card}>
         <CardHeader style={styles.cardHeader}>
           <CardTitle style={styles.cardTitle} className="text-xl rtl-text">אשף פתרון תקלות</CardTitle>
           <CardDescription style={styles.cardDescription} className="rtl-text">בחר את סוג התקלה שברצונך לפתור</CardDescription>
         </CardHeader>
-        <CardContent className="p-6" style={styles.cardContent}>
+        <CardContent className="p-4 pb-2" style={styles.cardContent}>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {flowTypes.map((flow) => (
               <Button
@@ -561,7 +588,10 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue }: WizardProps) => 
                 variant="outline"
                 className="flex-col items-center justify-center gap-2 hover:bg-indigo-50 hover:border-indigo-300 transition-all rtl-text"
                 style={styles.flowTypeButton}
-                onClick={() => setSelectedFlow(flow.id)}
+                onClick={() => {
+                  setSelectedFlow(flow.id);
+                  if (onWizardStart) onWizardStart();
+                }}
               >
                 <div className="text-lg font-medium rtl-text">{flow.name}</div>
                 <div className="text-xs text-gray-500 rtl-text">{flow.description}</div>
@@ -575,12 +605,23 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue }: WizardProps) => 
 
   // Render current node
   return (
-    <Card style={styles.card}>
+    <Card style={styles.cardFullScreen}>
       <CardHeader style={styles.cardHeader}>
         <div className="flex justify-between items-center">
           <CardTitle style={styles.cardTitle} className="text-xl rtl-text">
             {flowTypes.find(f => f.id === selectedFlow)?.name}
           </CardTitle>
+          
+          {/* Botex Center */}
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🤖</span>
+                         <span className="text-xl font-bold" style={{
+               color: '#ffffff',
+               textShadow: '0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4)',
+               filter: 'brightness(1.2)'
+             }}>בוטקס</span>
+          </div>
+          
           <Badge variant="outline" style={styles.badge} className="rtl-text">
             שלב {history.length + 1}
           </Badge>
