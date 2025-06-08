@@ -246,6 +246,20 @@ body, html {
   overflow: auto;
 }
 
+/* Make sure the page content can scroll properly */
+body {
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Ensure all containers are properly positioned for scrolling */
+#root {
+  position: relative;
+  min-height: 100vh;
+  overflow: visible;
+}
+
 /* Better scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;

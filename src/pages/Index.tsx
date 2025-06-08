@@ -815,24 +815,19 @@ ${navigator.userAgent}
             <div className="absolute inset-0" style={styles.heroCardGlow}></div>
             <div style={{
               ...styles.heroCard,
-              width: '100vw',
-              minHeight: 'calc(100vh + 100px)', // Ensure always scrollable
+              width: '100%',
+              minHeight: '100vh',
               height: 'auto',
-              position: 'fixed',
-              top: '0',
-              left: '0',
-              zIndex: 1000,
+              position: 'relative',
+              zIndex: 1,
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'flex-start',
-              padding: '10px',
-              paddingBottom: '80px', // Increased bottom padding for better scrolling
-              overflowY: 'auto',
-              overflowX: 'hidden', // Prevent horizontal scroll
-              WebkitOverflowScrolling: 'touch',
-              scrollbarWidth: 'thin', // For Firefox
-              msOverflowStyle: 'auto' // For IE/Edge
+              padding: '20px',
+              paddingBottom: '80px',
+              margin: '0 auto',
+              maxWidth: '100vw'
                           }}>
               {/* כותרת תוצג רק כשהאשף לא התחיל וטופס המשוב לא פתוח */}
               {!wizardStarted && !showFeedbackForm && (
