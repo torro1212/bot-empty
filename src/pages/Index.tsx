@@ -142,7 +142,11 @@ const styles: Record<string, CSSProperties> = {
     width: '95vw',
     maxWidth: '800px',
     height: '85vh',
+    maxHeight: '85vh',
     overflowY: 'auto',
+    overflowX: 'hidden',
+    WebkitOverflowScrolling: 'touch',
+    scrollbarWidth: 'thin',
     zIndex: 1000,
     background: 'linear-gradient(145deg, #ffffff, #f9fafb)',
     border: '1px solid rgba(59, 130, 246, 0.1)',
@@ -812,7 +816,7 @@ ${navigator.userAgent}
             <div style={{
               ...styles.heroCard,
               width: '100vw',
-              minHeight: '100vh',
+              minHeight: 'calc(100vh + 100px)', // Ensure always scrollable
               height: 'auto',
               position: 'fixed',
               top: '0',
@@ -823,9 +827,12 @@ ${navigator.userAgent}
               alignItems: 'center',
               justifyContent: 'flex-start',
               padding: '10px',
-              paddingBottom: '60px',
+              paddingBottom: '80px', // Increased bottom padding for better scrolling
               overflowY: 'auto',
-              WebkitOverflowScrolling: 'touch'
+              overflowX: 'hidden', // Prevent horizontal scroll
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'thin', // For Firefox
+              msOverflowStyle: 'auto' // For IE/Edge
                           }}>
               {/* כותרת תוצג רק כשהאשף לא התחיל וטופס המשוב לא פתוח */}
               {!wizardStarted && !showFeedbackForm && (
@@ -847,7 +854,16 @@ ${navigator.userAgent}
               )}
                 
                 {/* Automated Solution Wizard */}
-              <div style={{flexGrow: 1, width: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '5px', minHeight: '0'}}>
+              <div style={{
+                flexGrow: 1, 
+                width: '100%', 
+                display: 'flex', 
+                alignItems: 'flex-start', 
+                justifyContent: 'center', 
+                paddingTop: '5px', 
+                minHeight: '0',
+                paddingBottom: '10px'
+              }}>
                 {!solutionCompleted && !showReportForm && !showReportPrompt && (
                   <AutomatedSolutionWizard 
                     onComplete={handleSolutionComplete} 
@@ -891,8 +907,11 @@ ${navigator.userAgent}
                     width: '95vw',
                     maxWidth: '800px',
                     height: '85vh',
+                    maxHeight: '85vh',
                     overflowY: 'auto',
+                    overflowX: 'hidden',
                     WebkitOverflowScrolling: 'touch',
+                    scrollbarWidth: 'thin',
                     zIndex: 1000
                   }} className="animate-in zoom-in-95 duration-300">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
@@ -1146,22 +1165,19 @@ ${navigator.userAgent}
               )}
               
               {/* Developer Credit */}
-                              <div 
-                  className="text-xs md:text-xs text-gray-400 font-bold"
-                  style={{
-                    position: 'absolute',
-                    bottom: '5px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 1001,
-                    textAlign: 'center',
-                    pointerEvents: 'none',
-                    whiteSpace: 'nowrap',
-                    fontSize: 'clamp(0.625rem, 2vw, 0.75rem)'
-                  }}
-                >
-                  Developed by Shahar Barsheshet
-                </div>
+              <div 
+                className="text-xs md:text-xs text-gray-400 font-bold mt-auto"
+                style={{
+                  textAlign: 'center',
+                  pointerEvents: 'none',
+                  whiteSpace: 'nowrap',
+                  fontSize: 'clamp(0.625rem, 2vw, 0.75rem)',
+                  marginTop: '20px',
+                  paddingBottom: '10px'
+                }}
+              >
+                Developed by Shahar Barsheshet
+              </div>
             </div>
           </div>
         </div>

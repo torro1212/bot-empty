@@ -204,9 +204,65 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Force scroll behavior for all elements */
+html, body, * {
+  scroll-behavior: smooth;
+}
+
+/* Additional scrolling improvements */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+/* Prevent bounce scrolling on iOS Safari */
+body {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+}
+
 /* Better touch scrolling */
 * {
   -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure all containers can scroll properly */
+.scroll-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 100vh;
+  padding-bottom: 20px;
+}
+
+/* Fix for mobile viewport units */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+}
+
+/* Ensure content is always scrollable */
+body, html {
+  height: 100%;
+  overflow: auto;
+}
+
+/* Better scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
 }
 
 /* Responsive text sizing */
