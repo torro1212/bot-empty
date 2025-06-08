@@ -489,7 +489,7 @@ ${new Date().toLocaleString('he-IL', {
           </div>
         </div>
         
-        <div className="text-center">
+        <div className="text-center space-y-3">
           <Button 
             type="submit"
             className="px-8 py-3 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg"
@@ -512,6 +512,22 @@ ${new Date().toLocaleString('he-IL', {
                 שלח משוב
               </>
             )}
+          </Button>
+          
+          <Button 
+            type="button"
+            onClick={onClose}
+            variant="outline"
+            className="px-6 py-2 rounded-full font-medium transition-all duration-200 hover:scale-105 border-gray-300 hover:border-red-400 hover:text-red-600"
+            style={{
+              background: 'white',
+              color: '#6b7280',
+              border: '1px solid #d1d5db',
+            }}
+            disabled={isSubmitting}
+          >
+            <X size={16} className="ml-2" />
+            ביטול
           </Button>
         </div>
       </form>
@@ -1060,21 +1076,7 @@ ${navigator.userAgent}
                         </div>
                       </div>
                       
-                      <div className="flex flex-col sm:flex-row justify-center gap-3 mt-4">
-                        <Button 
-                          type="button"
-                          variant="outline" 
-                          onClick={() => {
-                            setShowReportForm(false);
-                            setSolutionCompleted(false);
-                          }}
-                          className="px-4 py-3 transition-all duration-200 hover:bg-gray-100 border-gray-300 text-sm md:text-base h-12 md:h-10"
-                          style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
-                        >
-                          <X className="mr-2 h-4 w-4" />
-                          ביטול
-                        </Button>
-                        
+                      <div className="text-center space-y-3 mt-4">
                         <Button 
                           type="submit"
                           className="px-6 py-3 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg text-sm md:text-base h-12 md:h-10"
@@ -1099,6 +1101,20 @@ ${navigator.userAgent}
                               שלח דיווח
                             </>
                           )}
+                        </Button>
+                        
+                        <Button 
+                          type="button"
+                          variant="outline" 
+                          onClick={() => {
+                            setShowReportForm(false);
+                            setSolutionCompleted(false);
+                          }}
+                          className="px-4 py-3 transition-all duration-200 hover:bg-gray-100 border-gray-300 text-sm md:text-base h-12 md:h-10"
+                          style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
+                        >
+                          <X className="mr-2 h-4 w-4" />
+                          ביטול
                         </Button>
                       </div>
                     </form>

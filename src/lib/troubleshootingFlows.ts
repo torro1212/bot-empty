@@ -5,6 +5,8 @@ export interface FlowNode {
   image2?: string;
   video?: string;
   options?: Record<string, string> | Array<{text: string, next: string}>;
+  showFeedbackForm?: boolean;
+  showReportForm?: boolean;
 }
 
 export interface FlowData {
@@ -87,7 +89,8 @@ const ashraiFlow: FlowData = {
     },
     "YES": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+      showFeedbackForm: true
     },
     "NO": {
       type: "question",
@@ -107,7 +110,8 @@ const ashraiFlow: FlowData = {
     },
     "WORKOVED": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+      showFeedbackForm: true
     },
     "WORKLOVED": {
       type: "question",
@@ -134,7 +138,8 @@ const ashraiFlow: FlowData = {
     },
     "A-CA-OVED": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+      showFeedbackForm: true
     },
     "A-CA-LOVED": {
       type: "question",
@@ -191,7 +196,8 @@ const ashraiFlow: FlowData = {
     },
     "A-CAH-OVED": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+      showFeedbackForm: true
     },
     "A-CAH-LOVED": {
       type: "question",
@@ -209,7 +215,8 @@ const ashraiFlow: FlowData = {
     },
     "SEND": {
       type: "end",
-      text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻"
+      text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻",
+      showReportForm: true
     }
   }
 };
@@ -242,12 +249,13 @@ const holetzFlow: FlowData = {
       video: getMediaUrl("YKAPvzf.mp4"),
       options: {
         "הסתדרה": "GOODREADER",
-        "לא הסתדרה": "NOGOODREADER"
+        "לא הסתדרה": "SEND"
       }
     },
     "GOODREADER": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+      showFeedbackForm: true
     },
     "NOGOODREADER": {
       type: "question",
@@ -262,13 +270,14 @@ const holetzFlow: FlowData = {
       video: getMediaUrl("8uCjX5B.mp4"),
       options: {
         "נדלק ועובד": "R-ONOVED",
-        "לא נדלק": "R-OFF",
-        "נדלק ולא עובד": "R-NDLOVED"
+        "לא נדלק": "SEND",
+        "נדלק ולא עובד": "Reader-dlok"
       }
     },
     "R-ONOVED": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+      showFeedbackForm: true
     },
     "R-OFF": {
       type: "question",
@@ -290,13 +299,14 @@ const holetzFlow: FlowData = {
       video: getMediaUrl("AVYVPXy.mp4"),
       options: {
         "נדלק ועובד": "Ho-ND+OVED",
-        "לא נדלק": "Ho-LONDLAK",
-        "נדלק ולא עובד": "HO-ND-LOVED"
+        "לא נדלק": "SEND",
+        "נדלק ולא עובד": "Holetz-dlok"
       }
     },
     "Ho-ND+OVED": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+      showFeedbackForm: true
     },
     "Ho-LONDLAK": {
       type: "question",
@@ -314,7 +324,8 @@ const holetzFlow: FlowData = {
     },
     "SEND": {
       type: "end",
-      text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻"
+      text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻",
+      showReportForm: true
     }
   }
 };
@@ -334,7 +345,8 @@ const kupaFlow: FlowData = {
     },
     "K-DLOKA": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+      showFeedbackForm: true
     },
     "K-LODLOKA": {
       type: "question",
@@ -347,7 +359,8 @@ const kupaFlow: FlowData = {
     },
     "K-C-OVED": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+      showFeedbackForm: true
     },
     "K-C-LOVED": {
       type: "question",
@@ -360,12 +373,14 @@ const kupaFlow: FlowData = {
     },
     "K-CAB-OVED": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+      showFeedbackForm: true
     },
 
     "SEND": {
       type: "end",
-      text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻"
+      text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻",
+      showReportForm: true
     }
   }
 };

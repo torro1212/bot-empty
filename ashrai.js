@@ -53,7 +53,7 @@ const flowData = {
     video: "https://i.imgur.com/hCqwr4B.mp4",
     options: {
       "הבא": "A-NEXT",
-      "כבר ביצעתי לא עזר": "DONELOVED"
+      "כבר ביצעתי לא עזר": "SEND"
     },
     buttonStyles: {
       "הבא": {
@@ -76,7 +76,7 @@ const flowData = {
     image2: "https://i.imgur.com/OyqOLJg.png",
     options: {
       "תמונה 1": "Route-PIC1-3-V",
-      "תמונה 2 \\ אחר": "Route-PIC4-X"
+      "תמונה 2 \\ אחר": "A-PIC-2-X"
     },
     buttonStyles: {
       "תמונה 1": {
@@ -98,7 +98,7 @@ const flowData = {
     video: "https://i.imgur.com/Ps5UHMg.mp4",
     options: {
       "כן": "YES",
-      "לא": "NO"
+      "לא": "A-CA-LOVED"
     },
     buttonStyles: {
       "כן": {
@@ -115,7 +115,7 @@ const flowData = {
   },
   "YES": {
     type: "end",
-    text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊",
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
     showFeedbackForm: true
   },
   "NO": {
@@ -140,7 +140,7 @@ const flowData = {
     video: "https://i.imgur.com/srw8fHO.mp4",
     options: {
       "הצליח ועובד": "WORKOVED",
-      "הצליח ולא עובד": "WORKLOVED"
+      "הצליח ולא עובד": "SEND"
     },
     buttonStyles: {
       "הצליח ועובד": {
@@ -157,7 +157,7 @@ const flowData = {
   },
   "WORKOVED": {
     type: "end",
-    text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊",
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
     showFeedbackForm: true
   },
   "WORKLOVED": {
@@ -197,7 +197,7 @@ const flowData = {
     video: "https://i.imgur.com/tyZBRer.mp4",
     options: {
       "מחובר ועובד": "A-CA-OVED",
-      "מחובר ולא עובד": "A-CA-LOVED"
+      "מחובר ולא עובד": "A-PIC-1-V"
     },
     buttonStyles: {
       "מחובר ועובד": {
@@ -214,7 +214,7 @@ const flowData = {
   },
   "A-CA-OVED": {
     type: "end",
-    text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊",
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
     showFeedbackForm: true
   },
   "A-CA-LOVED": {
@@ -246,7 +246,7 @@ const flowData = {
     video: "https://i.imgur.com/srw8fHO.mp4",
     options: {
       "הצליח ועובד": "WORKOVED",
-      "הצליח ולא עובד": "WORKLOVED"
+      "הצליח ולא עובד": "SEND"
     },
     buttonStyles: {
       "הצליח ועובד": {
@@ -268,7 +268,7 @@ const flowData = {
     video: "https://i.imgur.com/J6tKRYe.mp4",
     options: {
       "מחובר-ירוק": "MHO-YAROK",
-      "מחובר-לא ירוק": "LO-YAROK"
+      "מחובר-לא ירוק": "SEND"
     },
     buttonStyles: {
       "מחובר-ירוק": {
@@ -290,7 +290,7 @@ const flowData = {
     video: "https://i.imgur.com/srw8fHO.mp4",
     options: {
       "הצליח ועובד": "WORKOVED",
-      "הצליח ולא עובד": "WORKLOVED"
+      "הצליח ולא עובד": "SEND"
     },
     buttonStyles: {
       "הצליח ועובד": {
@@ -327,8 +327,8 @@ const flowData = {
     video: "https://i.imgur.com/eKLaeYO.mp4",
     options: {
       "נדלק ועובד": "A-CAH-OVED",
-      "נדלק ולא עובד": "A-CAH-LOVED",
-      "מחובר וכבוי": "A-CAH-LONDLAK"
+      "נדלק ולא עובד": "A-PIC-1-V",
+      "מחובר וכבוי": "SEND"
     },
     buttonStyles: {
       "נדלק ועובד": {
@@ -350,7 +350,7 @@ const flowData = {
   },
   "A-CAH-OVED": {
     type: "end",
-    text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊",
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
     showFeedbackForm: true
   },
   "A-CAH-LOVED": {
@@ -385,7 +385,8 @@ const flowData = {
   },
   "SEND": {
     type: "end",
-    text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻"
+    text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻",
+    showReportForm: true
   }
 };
 

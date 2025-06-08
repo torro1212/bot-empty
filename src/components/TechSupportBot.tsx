@@ -131,7 +131,7 @@ const creditCardFlow = {
     },
     "YES": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉"
     },
     "NO": {
       type: "question",
@@ -151,7 +151,7 @@ const creditCardFlow = {
     },
     "WORKOVED": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉"
     },
     "WORKLOVED": {
       type: "question",
@@ -178,7 +178,7 @@ const creditCardFlow = {
     },
     "A-CA-OVED": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉"
     },
     "A-CA-LOVED": {
       type: "question",
@@ -235,7 +235,7 @@ const creditCardFlow = {
     },
     "A-CAH-OVED": {
       type: "end",
-      text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+      text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉"
     },
     "A-CAH-LOVED": {
       type: "question",

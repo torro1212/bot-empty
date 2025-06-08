@@ -51,7 +51,7 @@ const flowData = {
     video: "https://i.imgur.com/YKAPvzf.mp4",
     options: {
       "כן, התקלה הסתדרה": "POSITIVE-FEEDBACK",
-      "לא, התקלה לא הסתדרה": "NEGATIVE-FEEDBACK"
+      "לא, התקלה לא הסתדרה": "REPORT-FORM"
     },
     buttonStyles: {
       "כן, התקלה הסתדרה": {
@@ -67,23 +67,8 @@ const flowData = {
     }
   },
   "POSITIVE-FEEDBACK": {
-    type: "question",
-    text: "שמחים שהצלחנו לעזור!",
-    subtext: "האם תרצו לשלוח משוב?",
-    buttonStyles: {
-      "שליחת משוב": {
-        background: "linear-gradient(45deg, #22c55e, #16a34a)",
-        color: "white",
-        icon: "Star"
-      }
-    },
-    options: {
-      "שליחת משוב": "FEEDBACK-FORM"
-    }
-  },
-  "FEEDBACK-FORM": {
     type: "end",
-    text: "טופס משוב",
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
     showFeedbackForm: true
   },
   "NEGATIVE-FEEDBACK": {
@@ -108,7 +93,8 @@ const flowData = {
   },
   "GOODREADER": {
     type: "end",
-    text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊"
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
+    showFeedbackForm: true
   },
   "NOGOODREADER": {
     type: "question",
@@ -132,7 +118,7 @@ const flowData = {
     video: "https://i.imgur.com/8uCjX5B.mp4",
     options: {
       "נדלק ועובד": "R-ONOVED",
-      "לא נדלק": "R-SUCCESS-CHECK",
+      "לא נדלק": "REPORT-FORM",
       "נדלק ולא עובד": "Reader-dlok"
     },
     buttonStyles: {
@@ -171,12 +157,12 @@ const flowData = {
     },
     options: {
       "כן, הבעיה נפתרה": "POSITIVE-FEEDBACK",
-      "לא, אני רוצה לפתוח קריאת שירות": "NEGATIVE-FEEDBACK"
+      "לא, אני רוצה לפתוח קריאת שירות": "REPORT-FORM"
     }
   },
   "R-ONOVED": {
     type: "end",
-    text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊",
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
     showFeedbackForm: true
   },
   "R-OFF": {
@@ -216,8 +202,8 @@ const flowData = {
     video: "https://i.imgur.com/AVYVPXy.mp4",
     options: {
       "נדלק ועובד": "Ho-ND+OVED",
-      "לא נדלק": "Ho-LONDLAK",
-      "נדלק ולא עובד": "HO-ND-LOVED"
+      "לא נדלק": "REPORT-FORM",
+      "נדלק ולא עובד": "Holetz-dlok"
     },
     buttonStyles: {
       "נדלק ועובד": {
@@ -239,7 +225,7 @@ const flowData = {
   },
   "Ho-ND+OVED": {
     type: "end",
-    text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊",
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
     showFeedbackForm: true
   },
   "Ho-LONDLAK": {
@@ -258,29 +244,14 @@ const flowData = {
     }
   },
   "HO-ND-LOVED": {
-    type: "question",
-    text: "האם הצלחת לפתור את התקלה?",
-    subtext: "בחר באפשרות המתאימה:",
-    buttonStyles: {
-      "כן, הבעיה נפתרה": {
-        background: "linear-gradient(45deg, #22c55e, #16a34a)",
-        color: "white",
-        icon: "CheckCircle"
-      },
-      "לא, אני רוצה לפתוח קריאת שירות": {
-        background: "linear-gradient(45deg, #f97316, #ea580c)",
-        color: "white", 
-        icon: "AlertCircle"
-      }
-    },
-    options: {
-      "כן, הבעיה נפתרה": "POSITIVE-FEEDBACK",
-      "לא, אני רוצה לפתוח קריאת שירות": "NEGATIVE-FEEDBACK"
-    }
+    type: "end",
+    text: "טופס פתיחת תקלה",
+    showReportForm: true
   },
   "SEND": {
     type: "end",
-    text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻"
+    text: "📩 נא למלא *בהודעה אחת* בצ'אט את הפרטים הבאים ⬇️\n(פשוט העתק ומלא את השורות)\n\nמותג + שם סניף:\nמספר קופה:\nפירוט התקלה:\nשם + טלפון:\n\n💬 לאחר השליחה נדאג לחזור אליך בהקדם 🙏\nמחלקת מחשוב 💻",
+    showReportForm: true
   }
 };
 

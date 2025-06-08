@@ -24,7 +24,7 @@ const flowData = {
   },
   "K-DLOKA": {
     type: "end",
-    text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊",
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
     showFeedbackForm: true
   },
   "K-LODLOKA": {
@@ -51,7 +51,7 @@ const flowData = {
   },
   "K-C-OVED": {
     type: "end",
-    text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊",
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
     showFeedbackForm: true
   },
   "K-C-LOVED": {
@@ -78,7 +78,7 @@ const flowData = {
   },
   "K-CAB-OVED": {
     type: "end",
-    text: "הצלחת? איזה כיף! ספרו לנו איך היה במייל: Support@mutagim.com 😊",
+    text: "כל הכבוד! התקלה נפתרה בהצלחה! 🎉",
     showFeedbackForm: true
   },
 

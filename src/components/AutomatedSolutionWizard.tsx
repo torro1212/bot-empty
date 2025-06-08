@@ -589,14 +589,14 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
                 key={flow.id}
                 variant="outline"
                 className="flex-col items-center justify-center gap-2 hover:bg-indigo-50 hover:border-indigo-300 transition-all rtl-text h-20 md:h-24"
-                style={{...styles.flowTypeButton, minHeight: '80px', fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}
+                style={{...styles.flowTypeButton, minHeight: '80px', fontSize: 'clamp(1.25rem, 4vw, 1.5rem)'}}
                 onClick={() => {
                   setSelectedFlow(flow.id);
                   if (onWizardStart) onWizardStart();
                 }}
               >
-                <div className="text-sm md:text-lg font-medium rtl-text" style={{fontSize: 'clamp(0.875rem, 3vw, 1.125rem)'}}>{flow.name}</div>
-                <div className="text-xs text-gray-500 rtl-text" style={{fontSize: 'clamp(0.625rem, 2.5vw, 0.75rem)'}}>{flow.description}</div>
+                <div className="text-xl md:text-2xl font-bold rtl-text" style={{fontSize: 'clamp(1.25rem, 5vw, 1.75rem)'}}>{flow.name}</div>
+                <div className="text-base md:text-lg text-gray-600 rtl-text font-semibold" style={{fontSize: 'clamp(1rem, 3.5vw, 1.25rem)'}}>{flow.description}</div>
               </Button>
             ))}
           </div>
