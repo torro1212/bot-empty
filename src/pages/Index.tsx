@@ -88,7 +88,7 @@ const styles: Record<string, CSSProperties> = {
     background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.9)), url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 100 100\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.05\' numOctaves=\'2\' stitchTiles=\'stitch\'/%3E%3CfeColorMatrix type=\'saturate\' values=\'0\'/%3E%3C/filter%3E%3Crect width=\'100\' height=\'100\' filter=\'url(%23noise)\' opacity=\'0.3\'/%3E%3C/svg%3E")',
     backdropFilter: 'blur(10px)',
     borderRadius: '1.5rem',
-    padding: '1.5rem',
+    padding: '1rem',
     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
     border: '1px solid rgba(255, 255, 255, 0.1)',
     textAlign: 'center',
@@ -132,16 +132,16 @@ const styles: Record<string, CSSProperties> = {
   },
   feedbackCard: {
     borderRadius: '16px',
-    padding: '1.5rem',
+    padding: '1rem',
     backgroundColor: '#ffffff',
     boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
     position: 'fixed',
-    top: '2vh',
+    top: '5vh',
     left: '50%',
     transform: 'translateX(-50%)',
     width: '95vw',
     maxWidth: '800px',
-    height: '90vh',
+    height: '85vh',
     overflowY: 'auto',
     zIndex: 1000,
     background: 'linear-gradient(145deg, #ffffff, #f9fafb)',
@@ -812,7 +812,8 @@ ${navigator.userAgent}
             <div style={{
               ...styles.heroCard,
               width: '100vw',
-              height: '100vh',
+              minHeight: '100vh',
+              height: 'auto',
               position: 'fixed',
               top: '0',
               left: '0',
@@ -821,19 +822,22 @@ ${navigator.userAgent}
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'flex-start',
-              padding: '20px'
+              padding: '10px',
+              paddingBottom: '60px',
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch'
                           }}>
               {/* כותרת תוצג רק כשהאשף לא התחיל וטופס המשוב לא פתוח */}
               {!wizardStarted && !showFeedbackForm && (
-                <div className="text-center mb-4" style={{marginTop: '10px'}}>
-                  <h2 className="text-2xl sm:text-4xl font-bold mb-2 sm:mb-4 relative" dir="rtl">
+                <div className="text-center mb-2 px-2" style={{marginTop: '5px'}}>
+                  <h2 className="text-lg sm:text-2xl md:text-4xl font-bold mb-2 sm:mb-4 relative" dir="rtl" style={{fontSize: 'clamp(1.25rem, 4vw, 2.5rem)'}}>
                     שלום!<br />
                     אני <span style={styles.gradientText} className="relative inline-block">
                       בוטקס
                       <span className="absolute -bottom-1 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></span>
                     </span> <span className="inline-block mr-1 animate-bounce">🤖</span>
                   </h2>
-                  <p className="text-sm sm:text-lg text-gray-200 mb-4 sm:mb-6 max-w-2xl mx-auto leading-relaxed relative" dir="rtl">
+                  <p className="text-xs sm:text-sm md:text-lg text-gray-200 mb-2 sm:mb-6 max-w-2xl mx-auto leading-relaxed relative px-2" dir="rtl" style={{fontSize: 'clamp(0.75rem, 3vw, 1.125rem)'}}>
                     <span className="bg-gradient-to-r from-gray-900 to-gray-800 px-2 py-1 rounded-lg" dir="rtl">
                       העוזר החכם שלך לפתרון תקלות טכניות<br />
                       אני כאן לעזור לך לפתור כל בעיה במהירות ויעילות!
@@ -843,7 +847,7 @@ ${navigator.userAgent}
               )}
                 
                 {/* Automated Solution Wizard */}
-              <div style={{flexGrow: 1, width: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '10px'}}>
+              <div style={{flexGrow: 1, width: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '5px', minHeight: '0'}}>
                 {!solutionCompleted && !showReportForm && !showReportPrompt && (
                   <AutomatedSolutionWizard 
                     onComplete={handleSolutionComplete} 
@@ -881,13 +885,14 @@ ${navigator.userAgent}
                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
                     border: '1px solid rgba(99, 102, 241, 0.1)',
                     position: 'fixed',
-                    top: '2vh',
+                    top: '5vh',
                     left: '50%',
                     transform: 'translateX(-50%)',
                     width: '95vw',
                     maxWidth: '800px',
-                    height: '90vh',
+                    height: '85vh',
                     overflowY: 'auto',
+                    WebkitOverflowScrolling: 'touch',
                     zIndex: 1000
                   }} className="animate-in zoom-in-95 duration-300">
                   <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
@@ -899,17 +904,17 @@ ${navigator.userAgent}
                   <CardHeader style={{
                     background: 'linear-gradient(135deg, #3b82f6, #6366f1, #8b5cf6)',
                     color: 'white',
-                    padding: '1.5rem 1rem'
+                    padding: '1rem 1rem'
                   }}>
-                    <CardTitle className="text-xl font-bold">דיווח על תקלה</CardTitle>
-                    <CardDescription className="text-gray-100">אנא מלא את הפרטים הבאים כדי שנוכל לעזור לך</CardDescription>
+                    <CardTitle className="text-lg md:text-xl font-bold" style={{fontSize: 'clamp(1rem, 4vw, 1.25rem)'}}>דיווח על תקלה</CardTitle>
+                    <CardDescription className="text-gray-100 text-sm" style={{fontSize: 'clamp(0.75rem, 3vw, 0.875rem)'}}>אנא מלא את הפרטים הבאים כדי שנוכל לעזור לך</CardDescription>
                   </CardHeader>
                   
-                  <CardContent className="p-6 pt-8">
-                    <form onSubmit={handleReportFormSubmit} className="space-y-6" style={styles.formContainer}>
+                  <CardContent className="p-4 pt-6">
+                    <form onSubmit={handleReportFormSubmit} className="space-y-4" style={styles.formContainer}>
                       <div className="space-y-2">
-                        <Label htmlFor="brand" className="text-center block font-medium text-gray-700">מותג:</Label>
-                        <div className="mx-auto" style={{maxWidth: '600px'}}>
+                        <Label htmlFor="brand" className="text-center block font-medium text-gray-700 text-sm md:text-base" style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}>מותג:</Label>
+                        <div className="mx-auto" style={{maxWidth: '100%', width: '100%'}}>
                           <Select 
                             name="brand"
                             value={reportForm.brand}
@@ -922,8 +927,9 @@ ${navigator.userAgent}
                             required
                           >
                             <SelectTrigger 
-                              className="h-10 rounded-lg border border-gray-300 bg-white px-3 py-2 text-base transition-all focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" 
+                              className="h-12 md:h-10 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm md:text-base transition-all focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" 
                               id="brand-select-trigger"
+                              style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                             >
                               <div className="w-full text-center">
                                 {reportForm.brand || "בחר מותג"}
@@ -956,8 +962,8 @@ ${navigator.userAgent}
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="branchName" className="text-center block font-medium text-gray-700">שם סניף:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '600px'}}>
+                        <Label htmlFor="branchName" className="text-center block font-medium text-gray-700 text-sm md:text-base" style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}>שם סניף:</Label>
+                        <div className="relative mx-auto" style={{maxWidth: '100%', width: '100%'}}>
                           <Input 
                             id="branchName" 
                             name="branchName" 
@@ -965,15 +971,16 @@ ${navigator.userAgent}
                             onChange={handleInputChange} 
                             placeholder="שם הסניף"
                             required
-                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl"
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
+                            style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                           />
                           <Store className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
                         </div>
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="registerNumber" className="text-center block font-medium text-gray-700">מספר קופה:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '600px'}}>
+                        <Label htmlFor="registerNumber" className="text-center block font-medium text-gray-700 text-sm md:text-base" style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}>מספר קופה:</Label>
+                        <div className="relative mx-auto" style={{maxWidth: '100%', width: '100%'}}>
                           <Input 
                             id="registerNumber" 
                             name="registerNumber" 
@@ -981,15 +988,16 @@ ${navigator.userAgent}
                             onChange={handleInputChange} 
                             placeholder="מספר הקופה"
                             required
-                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl"
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
+                            style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                           />
                           <Hash className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
                         </div>
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="issueDetails" className="text-center block font-medium text-gray-700">פירוט התקלה:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '600px'}}>
+                        <Label htmlFor="issueDetails" className="text-center block font-medium text-gray-700 text-sm md:text-base" style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}>פירוט התקלה:</Label>
+                        <div className="relative mx-auto" style={{maxWidth: '100%', width: '100%'}}>
                           <Textarea 
                             id="issueDetails" 
                             name="issueDetails" 
@@ -997,15 +1005,16 @@ ${navigator.userAgent}
                             onChange={handleInputChange} 
                             placeholder="תיאור מפורט של התקלה"
                             required
-                            className="min-h-[120px] pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl"
+                            className="min-h-[100px] pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl text-sm md:text-base"
+                            style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}
                           />
                           <AlertTriangle className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
                         </div>
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="name" className="text-center block font-medium text-gray-700">שם:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '600px'}}>
+                        <Label htmlFor="name" className="text-center block font-medium text-gray-700 text-sm md:text-base" style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}>שם:</Label>
+                        <div className="relative mx-auto" style={{maxWidth: '100%', width: '100%'}}>
                           <Input 
                             id="name" 
                             name="name" 
@@ -1013,15 +1022,16 @@ ${navigator.userAgent}
                             onChange={handleInputChange} 
                             placeholder="השם שלך"
                             required
-                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl"
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
+                            style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                           />
                           <User className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
                         </div>
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-center block font-medium text-gray-700">מספר טלפון:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '600px'}}>
+                        <Label htmlFor="phone" className="text-center block font-medium text-gray-700 text-sm md:text-base" style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}>מספר טלפון:</Label>
+                        <div className="relative mx-auto" style={{maxWidth: '100%', width: '100%'}}>
                           <Input 
                             id="phone" 
                             name="phone" 
@@ -1029,13 +1039,14 @@ ${navigator.userAgent}
                             onChange={handleInputChange} 
                             placeholder="מספר הטלפון שלך"
                             required
-                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl"
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
+                            style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                           />
                           <Phone className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
                         </div>
                       </div>
                       
-                      <div className="flex justify-center gap-4 mt-6">
+                      <div className="flex flex-col sm:flex-row justify-center gap-3 mt-4">
                         <Button 
                           type="button"
                           variant="outline" 
@@ -1043,7 +1054,8 @@ ${navigator.userAgent}
                             setShowReportForm(false);
                             setSolutionCompleted(false);
                           }}
-                          className="px-5 py-2 transition-all duration-200 hover:bg-gray-100 border-gray-300"
+                          className="px-4 py-3 transition-all duration-200 hover:bg-gray-100 border-gray-300 text-sm md:text-base h-12 md:h-10"
+                          style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                         >
                           <X className="mr-2 h-4 w-4" />
                           ביטול
@@ -1051,12 +1063,14 @@ ${navigator.userAgent}
                         
                         <Button 
                           type="submit"
-                          className="px-8 py-2 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg"
+                          className="px-6 py-3 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg text-sm md:text-base h-12 md:h-10"
                           style={{
                             background: 'linear-gradient(135deg, #3b82f6, #6366f1, #8b5cf6)',
                             color: 'white',
                             boxShadow: '0 4px 6px -1px rgba(99, 102, 241, 0.4)',
                             border: 'none',
+                            fontSize: 'clamp(0.875rem, 3vw, 1rem)',
+                            minHeight: '48px'
                           }}
                           disabled={isSubmitting}
                         >
@@ -1124,7 +1138,8 @@ ${navigator.userAgent}
               {solutionCompleted && !showFeedbackPrompt && !showFeedbackForm && !showReportPrompt && !showReportForm && (
                 <Button
                   onClick={() => setSolutionCompleted(false)}
-                  className="mt-4"
+                  className="mt-4 px-6 py-3 text-sm md:text-base h-12 md:h-10"
+                  style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                 >
                   חזרה לפתרון
                 </Button>
@@ -1132,16 +1147,17 @@ ${navigator.userAgent}
               
               {/* Developer Credit */}
                               <div 
-                  className="text-sm md:text-xs text-gray-400 font-bold"
+                  className="text-xs md:text-xs text-gray-400 font-bold"
                   style={{
                     position: 'absolute',
-                    bottom: '10px',
+                    bottom: '5px',
                     left: '50%',
                     transform: 'translateX(-50%)',
                     zIndex: 1001,
                     textAlign: 'center',
                     pointerEvents: 'none',
-                    whiteSpace: 'nowrap'
+                    whiteSpace: 'nowrap',
+                    fontSize: 'clamp(0.625rem, 2vw, 0.75rem)'
                   }}
                 >
                   Developed by Shahar Barsheshet

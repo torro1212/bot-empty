@@ -53,25 +53,26 @@ const styles: Record<string, CSSProperties> = {
     border: 'none',
     background: 'linear-gradient(to bottom right, white, #e2e8f0)',
     textAlign: 'center',
-    width: '100vw',
+    width: '100%',
     height: 'auto',
-    minHeight: '400px',
+    minHeight: '300px',
     margin: '0',
-    maxWidth: '100vw',
-    maxHeight: '100vh',
-    overflow: 'auto'
+    maxWidth: '100%',
+    overflow: 'auto',
+    borderRadius: '12px'
   },
   cardFullScreen: {
     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
     border: 'none',
     background: 'linear-gradient(to bottom right, white, #e2e8f0)',
     textAlign: 'center',
-    width: '100vw',
-    height: '100vh',
+    width: '100%',
+    minHeight: '100vh',
+    height: 'auto',
     margin: '0',
-    maxWidth: '100vw',
-    maxHeight: '100vh',
-    overflow: 'auto'
+    maxWidth: '100%',
+    overflow: 'auto',
+    borderRadius: '12px'
   },
   cardHeader: {
     background: 'linear-gradient(to right, #4f46e5, #9333ea)',
@@ -152,9 +153,10 @@ const styles: Record<string, CSSProperties> = {
   cardContent: {
     backgroundColor: '#f8fafc',
     borderRadius: '0 0 0.5rem 0.5rem',
-    paddingBottom: '50px',
-    maxHeight: '100vh',
-    overflow: 'auto'
+    paddingBottom: '30px',
+    maxHeight: 'calc(100vh - 100px)',
+    overflow: 'auto',
+    WebkitOverflowScrolling: 'touch'
   },
   rtlContainer: {
     direction: 'rtl',
@@ -401,13 +403,13 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
     // Check if options is an array (old kupa format) or an object (holetz/ashrai format)
     if (Array.isArray(currentNode.options)) {
       return (
-        <div className="flex flex-col gap-2 mt-4 rtl-text" style={styles.rtlContainer}>
+        <div className="flex flex-col gap-2 md:gap-3 mt-2 md:mt-4 rtl-text px-2" style={styles.rtlContainer}>
           {currentNode.options.map((option, index) => (
             <Button
               key={index}
               variant="outline"
-              className="py-6 text-lg font-medium rtl-button"
-              style={styles.optionButton}
+              className="py-4 md:py-6 text-sm md:text-lg font-medium rtl-button h-12 md:h-auto"
+              style={{...styles.optionButton, fontSize: 'clamp(0.875rem, 3vw, 1.125rem)', minHeight: '48px'}}
               onClick={() => handleOptionClick(option)}
             >
               <span className="rtl-text">{option.text}</span>
@@ -418,7 +420,7 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
     } else {
       // Handle object format for options
       return (
-        <div className="flex flex-col gap-2 mt-4 rtl-text" style={styles.rtlContainer}>
+        <div className="flex flex-col gap-2 md:gap-3 mt-2 md:mt-4 rtl-text px-2" style={styles.rtlContainer}>
           {Object.entries(currentNode.options).map(([text, nextNodeId]) => {
             // Get custom button style if available
             const buttonStyle = currentNode.buttonStyles?.[text];
@@ -434,8 +436,8 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
               <Button
                 key={text}
                 variant={buttonStyle ? "default" : "outline"}
-                className="py-6 text-lg font-medium rtl-button"
-                style={customStyle}
+                className="py-4 md:py-6 text-sm md:text-lg font-medium rtl-button h-12 md:h-auto"
+                style={{...customStyle, fontSize: 'clamp(0.875rem, 3vw, 1.125rem)', minHeight: '48px'}}
                 onClick={() => handleOptionClick(text)}
               >
                 <span className="rtl-text">{text}</span>
@@ -577,24 +579,24 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
     return (
       <Card style={isWizardStarted ? styles.cardFullScreen : styles.card}>
         <CardHeader style={styles.cardHeader}>
-          <CardTitle style={styles.cardTitle} className="text-xl rtl-text">אשף פתרון תקלות</CardTitle>
-          <CardDescription style={styles.cardDescription} className="rtl-text">בחר את סוג התקלה שברצונך לפתור</CardDescription>
+          <CardTitle style={{...styles.cardTitle, fontSize: 'clamp(1rem, 4vw, 1.25rem)'}} className="text-lg md:text-xl rtl-text">אשף פתרון תקלות</CardTitle>
+          <CardDescription style={{...styles.cardDescription, fontSize: 'clamp(0.75rem, 3vw, 0.875rem)'}} className="rtl-text text-sm">בחר את סוג התקלה שברצונך לפתור</CardDescription>
         </CardHeader>
         <CardContent className="p-4 pb-2" style={styles.cardContent}>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
             {flowTypes.map((flow) => (
               <Button
                 key={flow.id}
                 variant="outline"
-                className="flex-col items-center justify-center gap-2 hover:bg-indigo-50 hover:border-indigo-300 transition-all rtl-text"
-                style={styles.flowTypeButton}
+                className="flex-col items-center justify-center gap-2 hover:bg-indigo-50 hover:border-indigo-300 transition-all rtl-text h-20 md:h-24"
+                style={{...styles.flowTypeButton, minHeight: '80px', fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}
                 onClick={() => {
                   setSelectedFlow(flow.id);
                   if (onWizardStart) onWizardStart();
                 }}
               >
-                <div className="text-lg font-medium rtl-text">{flow.name}</div>
-                <div className="text-xs text-gray-500 rtl-text">{flow.description}</div>
+                <div className="text-sm md:text-lg font-medium rtl-text" style={{fontSize: 'clamp(0.875rem, 3vw, 1.125rem)'}}>{flow.name}</div>
+                <div className="text-xs text-gray-500 rtl-text" style={{fontSize: 'clamp(0.625rem, 2.5vw, 0.75rem)'}}>{flow.description}</div>
               </Button>
             ))}
           </div>
@@ -608,7 +610,7 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
     <Card style={styles.cardFullScreen}>
       <CardHeader style={styles.cardHeader}>
         <div className="flex justify-between items-center">
-          <CardTitle style={styles.cardTitle} className="text-xl rtl-text">
+          <CardTitle style={{...styles.cardTitle, fontSize: 'clamp(1rem, 4vw, 1.25rem)'}} className="text-lg md:text-xl rtl-text">
             {flowTypes.find(f => f.id === selectedFlow)?.name}
           </CardTitle>
           
@@ -631,31 +633,31 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
       <CardContent className="pt-6" style={styles.cardContent}>
         {currentNode && (
           <div className="space-y-4">
-            <h3 className="text-xl font-bold rtl-text" style={styles.textCenter}>{currentNode.text}</h3>
+            <h3 className="text-lg md:text-xl font-bold rtl-text" style={{...styles.textCenter, fontSize: 'clamp(1rem, 4vw, 1.25rem)'}}>{currentNode.text}</h3>
             
             {currentNode.subtext && (
-              <p style={styles.subtext} className="rtl-text">{currentNode.subtext}</p>
+              <p style={{...styles.subtext, fontSize: 'clamp(0.75rem, 3vw, 0.875rem)'}} className="rtl-text text-sm">{currentNode.subtext}</p>
             )}
             
             {/* Display images */}
             {(currentNode.image || currentNode.image2) && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-4 mx-auto" style={{maxWidth: '800px'}}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-4 my-2 md:my-4 mx-auto px-2" style={{maxWidth: '100%'}}>
                 {currentNode.image && (
-                  <div className="rounded-lg overflow-hidden border border-indigo-100 shadow-md mx-auto">
-                    <img src={currentNode.image} alt="הדרכה" className="w-full h-auto" />
+                  <div className="rounded-lg overflow-hidden border border-indigo-100 shadow-md mx-auto w-full">
+                    <img src={currentNode.image} alt="הדרכה" className="w-full h-auto max-w-full" style={{maxHeight: '300px', objectFit: 'contain'}} />
                   </div>
                 )}
                 {currentNode.image2 && (
-                  <div className="rounded-lg overflow-hidden border border-indigo-100 shadow-md mx-auto">
-                    <img src={currentNode.image2} alt="הדרכה נוספת" className="w-full h-auto" />
+                  <div className="rounded-lg overflow-hidden border border-indigo-100 shadow-md mx-auto w-full">
+                    <img src={currentNode.image2} alt="הדרכה נוספת" className="w-full h-auto max-w-full" style={{maxHeight: '300px', objectFit: 'contain'}} />
                   </div>
                 )}
               </div>
             )}
             
             {currentNode.video && (
-              <div className="mt-4 rounded-lg overflow-hidden border border-indigo-100 shadow-md">
-                <video src={currentNode.video} controls className="w-full h-auto" />
+              <div className="mt-2 md:mt-4 rounded-lg overflow-hidden border border-indigo-100 shadow-md mx-2">
+                <video src={currentNode.video} controls className="w-full h-auto" style={{maxHeight: '300px'}} />
               </div>
             )}
             
@@ -667,8 +669,8 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="rtl-button hover:bg-indigo-50"
-                style={styles.backButton}
+                className="rtl-button hover:bg-indigo-50 h-10 md:h-8 px-4 py-2"
+                style={{...styles.backButton, fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '40px'}}
                 onClick={handleBack}
                 disabled={history.length === 0 && !selectedFlow}
               >
@@ -679,8 +681,8 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
               <Button 
                 variant="outline" 
                 size="sm"
-                className="rtl-text hover:bg-indigo-50 hover:text-indigo-700"
-                style={styles.restartButton}
+                className="rtl-text hover:bg-indigo-50 hover:text-indigo-700 h-10 md:h-8 px-4 py-2"
+                style={{...styles.restartButton, fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '40px'}}
                 onClick={handleRestart}
               >
                 התחל מחדש
