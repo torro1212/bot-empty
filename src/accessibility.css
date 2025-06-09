@@ -1,3 +1,6 @@
+/* Dyslexia-Friendly Font - פונט נוח לדיסלקציה */
+@import url('https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap');
+
 /* Accessibility CSS - עיצוב נגישות */
 
 /* High Contrast Mode - מצב ניגודיות גבוהה */
@@ -53,9 +56,6 @@ body.enhanced-focus a:focus {
   background-color: #ffffcc !important;
   border-color: #0066cc !important;
 }
-
-/* Dyslexia-Friendly Font - פונט נוח לדיסלקציה */
-@import url('https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap');
 
 body.dyslexia-font,
 body.dyslexia-font * {

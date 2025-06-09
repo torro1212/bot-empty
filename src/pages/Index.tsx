@@ -191,12 +191,11 @@ const RECIPIENT_EMAIL = 'Support@mutagim.com'; // המייל שאליו ישלח
 // אתחול EmailJS מוקדם עם בדיקות
 if (typeof window !== 'undefined') {
   try {
-  emailjs.init(EMAILJS_PUBLIC_KEY);
-    console.log('EmailJS initialized successfully with public key:', EMAILJS_PUBLIC_KEY);
-    console.log('Service ID:', EMAILJS_SERVICE_ID);
-    console.log('Feedback Template ID:', EMAILJS_FEEDBACK_TEMPLATE_ID);
-    console.log('Issue Report Template ID:', EMAILJS_TEMPLATE_ID);
-    console.log('Recipient Email:', RECIPIENT_EMAIL);
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+    // הסרת לוגים רגישים לפרודקשן
+    if (import.meta.env.DEV) {
+      console.log('EmailJS initialized successfully');
+    }
   } catch (error) {
     console.error('Failed to initialize EmailJS:', error);
   }
