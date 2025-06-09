@@ -799,7 +799,7 @@ ${navigator.userAgent}
   };
 
   return (
-    <div style={styles.pageBackground}>
+    <div style={styles.pageBackground} id="main-content">
       {/* Brand Bubbles Container */}
       <div style={styles.brandsContainer as CSSProperties}>
         {brandBubbles.map((bubble, index) => (

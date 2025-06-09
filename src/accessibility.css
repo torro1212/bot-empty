@@ -1,0 +1,432 @@
+/* Accessibility CSS - עיצוב נגישות */
+
+/* High Contrast Mode - מצב ניגודיות גבוהה */
+body.high-contrast {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast * {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+body.high-contrast button,
+body.high-contrast input,
+body.high-contrast select,
+body.high-contrast textarea {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast button:hover,
+body.high-contrast button:focus {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.high-contrast a {
+  color: #ffff00 !important;
+  text-decoration: underline !important;
+}
+
+body.high-contrast a:hover,
+body.high-contrast a:focus {
+  color: #00ffff !important;
+  background-color: #ffffff !important;
+}
+
+/* Enhanced Focus Mode - מצב פוקוס משופר */
+body.enhanced-focus *:focus {
+  outline: 3px solid #0066cc !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 5px rgba(0, 102, 204, 0.3) !important;
+}
+
+body.enhanced-focus button:focus,
+body.enhanced-focus input:focus,
+body.enhanced-focus select:focus,
+body.enhanced-focus textarea:focus,
+body.enhanced-focus a:focus {
+  background-color: #ffffcc !important;
+  border-color: #0066cc !important;
+}
+
+/* Dyslexia-Friendly Font - פונט נוח לדיסלקציה */
+@import url('https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap');
+
+body.dyslexia-font,
+body.dyslexia-font * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', cursive !important;
+  line-height: 1.8 !important;
+  letter-spacing: 0.1em !important;
+  word-spacing: 0.3em !important;
+}
+
+body.dyslexia-font h1,
+body.dyslexia-font h2,
+body.dyslexia-font h3,
+body.dyslexia-font h4,
+body.dyslexia-font h5,
+body.dyslexia-font h6 {
+  font-weight: bold !important;
+  margin-bottom: 1em !important;
+}
+
+body.dyslexia-font p {
+  margin-bottom: 1.2em !important;
+}
+
+/* Reduced Motion - הפחתת אנימציות */
+body.reduced-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+body.reduced-motion *::before,
+body.reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Font Size Scaling - שינוי גודל טקסט */
+body {
+  font-size: var(--accessibility-base-font-size, 16px);
+}
+
+/* Additional Accessibility Improvements - שיפורי נגישות נוספים */
+
+/* Skip Links - קישורי דילוג */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  z-index: 9999;
+  border-radius: 4px;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Screen Reader Only Text - טקסט לקוראי מסך בלבד */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Improved Button States - מצבי כפתור משופרים */
+button:focus-visible {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+  background-color: rgba(0, 102, 204, 0.1);
+}
+
+/* High Contrast Fixes for specific components */
+body.high-contrast [data-radix-popper-content-wrapper] {
+  background-color: #000000 !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .bg-background {
+  background-color: #000000 !important;
+}
+
+body.high-contrast .text-foreground {
+  color: #ffffff !important;
+}
+
+body.high-contrast .border {
+  border-color: #ffffff !important;
+}
+
+body.high-contrast .shadow-lg {
+  box-shadow: 0 0 0 2px #ffffff !important;
+}
+
+/* Ensure text remains readable in high contrast */
+body.high-contrast .text-muted-foreground {
+  color: #cccccc !important;
+}
+
+body.high-contrast .text-destructive {
+  color: #ff6666 !important;
+}
+
+/* Custom properties for responsive font scaling */
+:root {
+  --accessibility-font-scale: 1;
+  --accessibility-base-font-size: 16px;
+}
+
+/* Improve accessibility of the AccessibilityButton itself */
+.accessibility-button {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 1000;
+}
+
+/* Ensure AccessibilityButton stays white even in high contrast mode */
+body.high-contrast [data-accessibility-button] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #4f46e5 !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3) !important;
+}
+
+/* Ensure Accessibility Statement stays visible and white */
+[data-accessibility-statement] {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+body.high-contrast [data-accessibility-statement] {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+/* Force visibility of accessibility buttons on any background */
+[data-accessibility-button="true"] {
+  background-color: #ffffff !important;
+  color: #4f46e5 !important;
+  border: 2px solid #4f46e5 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-accessibility-statement="true"] {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Hover states */
+[data-accessibility-button="true"]:hover {
+  background-color: #f8fafc !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-accessibility-statement="true"]:hover {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+  text-decoration: underline !important;
+}
+
+/* Apply font scaling to common elements */
+h1, h2, h3, h4, h5, h6 {
+  font-size: calc(var(--base-font-size, 1em) * var(--accessibility-font-scale, 1));
+}
+
+p, div, span, a, button, input, textarea, select {
+  font-size: calc(1em * var(--accessibility-font-scale, 1));
+}
+
+/* RTL Support for Hebrew - תמיכה בעברית */
+[dir="rtl"] .accessibility-button {
+  left: auto;
+  right: 1rem;
+}
+
+/* Update positioning for right side */
+.accessibility-button {
+  position: fixed;
+  bottom: 4rem;
+  right: 1rem;
+  z-index: 1000;
+}
+
+[dir="rtl"] .dropdown-menu {
+  text-align: right;
+}
+
+/* Keyboard navigation improvements */
+body.enhanced-focus [tabindex]:focus,
+body.enhanced-focus [role="button"]:focus,
+body.enhanced-focus [role="link"]:focus {
+  outline: 3px solid #0066cc !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 5px rgba(0, 102, 204, 0.3) !important;
+}
+
+/* Cursor Size - הגדלת סמן עכבר */
+:root {
+  --cursor-scale: 1;
+}
+
+* {
+  cursor: var(--cursor-type, auto);
+  cursor: -webkit-image-set(
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"><polygon points="0,0 0,16 6,12 10,20 14,18 10,10 20,10"/></svg>') calc(24px * var(--cursor-scale)),
+    auto
+  );
+}
+
+button, a, [role="button"], [role="link"] {
+  cursor: -webkit-image-set(
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="black"><path d="M8 3v3h3V3h2v3h3V3h2v18h-2v-3h-3v3H11v-3H8v3H6V3h2z"/></svg>') calc(24px * var(--cursor-scale)),
+    pointer
+  );
+}
+
+/* Underlined Links - קו תחתי לקישורים */
+body.underline-links a {
+  text-decoration: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 3px !important;
+}
+
+body.underline-links button {
+  border-bottom: 2px solid currentColor !important;
+}
+
+/* Stop All Animations - עצירת כל האנימציות */
+body.stop-animations *,
+body.stop-animations *::before,
+body.stop-animations *::after {
+  animation-play-state: paused !important;
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  transform: none !important;
+}
+
+/* Reading Guide - מדריך קריאה */
+body.reading-guide {
+  position: relative;
+}
+
+body.reading-guide::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #ff6b6b;
+  box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Improved text spacing for better readability */
+body {
+  line-height: 1.6 !important;
+  word-spacing: 0.1em;
+  letter-spacing: 0.02em;
+}
+
+/* Better focus indicators for all interactive elements */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus,
+select:focus,
+[tabindex]:focus {
+  outline: 3px solid #0066cc;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px white, 0 0 0 4px #0066cc;
+}
+
+/* Ensure sufficient color contrast */
+::selection {
+  background-color: #0066cc;
+  color: white;
+}
+
+/* Improve readability of small text */
+small, .text-xs, .text-sm {
+  font-size: max(12px, 1em) !important;
+}
+
+/* Force minimum click target size (44x44px per WCAG) */
+button, 
+a, 
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 12px;
+}
+
+/* Ensure form labels are properly associated */
+label {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Improve table accessibility */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: right;
+}
+
+th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+/* Media queries for high contrast preference */
+@media (prefers-contrast: high) {
+  * {
+    border-color: #000 !important;
+  }
+  
+  button, input, select, textarea {
+    border: 2px solid #000 !important;
+  }
+}
+
+/* Media queries for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Force colors in Windows High Contrast Mode */
+@media (-ms-high-contrast: active) {
+  * {
+    color: windowText !important;
+    background-color: window !important;
+  }
+  
+  button {
+    border: 2px solid buttonText !important;
+    background-color: buttonFace !important;
+    color: buttonText !important;
+  }
+} 

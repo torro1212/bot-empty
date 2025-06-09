@@ -4,6 +4,7 @@ import './reset.css'
 import './App.css'
 import './index.css'
 import './explicit-colors.css'
+import './accessibility.css'
 import { StagewiseToolbar } from '@stagewise/toolbar-react'
 
 // Create main app root with theme class
