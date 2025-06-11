@@ -10,8 +10,19 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import FeedbackPrompt from '@/components/ui/feedback-prompt';
+import ClickAnalyticsDashboard from '@/components/ClickAnalyticsDashboard';
 import emailjs from '@emailjs/browser';
 import { DEMO_MODE, EMAIL_CONFIG } from '@/lib/config';
+import { setGoogleSheetsUrl } from '@/utils/analytics';
+
+// הגדרת Google Sheets URL - הוסף את ה-URL שלך כאן
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB96_qnlAetIyNLILmaX_uKcMQozpbP23fSvQZo7Yy92y-nyAoEtwCg10xA/exec';
+
+// הגדרת ה-URL בטעינת הדף
+if (typeof window !== 'undefined') {
+  setGoogleSheetsUrl(GOOGLE_SHEETS_URL);
+  console.log('✅ Google Sheets URL הוגדר:', GOOGLE_SHEETS_URL);
+}
 
 // Add global keyframe animations
 const keyframes = `
@@ -191,7 +202,7 @@ const RECIPIENT_EMAIL = 'Support@mutagim.com'; // המייל שאליו ישלח
 // אתחול EmailJS מוקדם עם בדיקות
 if (typeof window !== 'undefined') {
   try {
-    emailjs.init(EMAILJS_PUBLIC_KEY);
+  emailjs.init(EMAILJS_PUBLIC_KEY);
     // הסרת לוגים רגישים לפרודקשן
     if (import.meta.env.DEV) {
       console.log('EmailJS initialized successfully');
@@ -546,6 +557,49 @@ const Index = () => {
   const [wizardStarted, setWizardStarted] = useState(false);
   const [showReportForm, setShowReportForm] = useState(false);
   const [showReportPrompt, setShowReportPrompt] = useState(false);
+  const [showAnalyticsDashboard, setShowAnalyticsDashboard] = useState(false);
+  const [showWizard, setShowWizard] = useState(true);
+
+  // בדיקת קוד סודי בURL לגישה לאנליטיקס
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const secretCode = urlParams.get('analytics');
+    if (secretCode === 'shahar2024') {
+      setShowAnalyticsDashboard(true);
+      // הסרת הפרמטר מהURL כדי לא לחשוף אותו
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  // רצף מקשים סודי לפתיחת אנליטיקס
+  useEffect(() => {
+    let keySequence: string[] = [];
+    const secretSequence = ['a', 'n', 'a', 'l', 'y', 't', 'i', 'c', 's']; // "analytics"
+
+    const handleKeyPress = (event: KeyboardEvent) => {
+      keySequence.push(event.key.toLowerCase());
+      
+      // שמירה של רק 20 המקשים האחרונים
+      if (keySequence.length > 20) {
+        keySequence = keySequence.slice(-20);
+      }
+
+      // בדיקה אם הרצף הסודי הוקלד
+      const lastKeys = keySequence.slice(-secretSequence.length);
+      if (JSON.stringify(lastKeys) === JSON.stringify(secretSequence)) {
+        setShowAnalyticsDashboard(true);
+        keySequence = []; // איפוס הרצף
+        toast({
+          title: "🔓 גישה לאנליטיקס",
+          description: "הרצף הסודי זוהה! פותח דשבורד...",
+          duration: 2000
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [toast]);
   const [brandBubbles, setBrandBubbles] = useState<Array<{
     name: string;
     color: string;
@@ -799,6 +853,34 @@ ${navigator.userAgent}
 
   return (
     <div style={styles.pageBackground} id="main-content">
+      {/* Analytics Dashboard */}
+      {showAnalyticsDashboard && (
+        <>
+          {/* Dark overlay */}
+          <div 
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              zIndex: 1000,
+              backdropFilter: 'blur(5px)',
+              padding: '20px',
+              overflow: 'auto'
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowAnalyticsDashboard(false);
+              }
+            }}
+          >
+            <ClickAnalyticsDashboard onClose={() => setShowAnalyticsDashboard(false)} />
+          </div>
+        </>
+      )}
+
       {/* Brand Bubbles Container */}
       <div style={styles.brandsContainer as CSSProperties}>
         {brandBubbles.map((bubble, index) => (
@@ -874,12 +956,15 @@ ${navigator.userAgent}
                 minHeight: '0',
                 paddingBottom: '10px'
               }}>
-                {!solutionCompleted && !showReportForm && !showReportPrompt && (
+                {showWizard && !solutionCompleted && !showReportForm && !showReportPrompt && (
                   <AutomatedSolutionWizard 
                     onComplete={handleSolutionComplete} 
                     onReportIssue={() => setShowReportForm(true)}
                     onWizardStart={() => setWizardStarted(true)}
-                    onWizardReset={() => setWizardStarted(false)}
+                    onWizardReset={() => {
+                      setWizardStarted(false);
+                      // משאירים את showWizard=true כדי שיוצג מסך הבחירה
+                    }}
                     isWizardStarted={wizardStarted}
                   />
                 )}
@@ -1128,8 +1213,14 @@ ${navigator.userAgent}
                   if (wantsToGiveFeedback) {
                     handleSolutionComplete(true);
                   } else {
+                    // כשהמשתמש לוחץ "לא" - חזרה למסך הבחירה הראשי
                     setShowFeedbackPrompt(false);
+                    setShowFeedbackForm(false);
                     setSolutionCompleted(false);
+                    setWizardStarted(false);
+                    setShowReportForm(false);
+                    setShowReportPrompt(false);
+                    // משאירים את showWizard=true כדי שיוצג מסך הבחירה
                   }
                 }} />
               )}
@@ -1171,6 +1262,31 @@ ${navigator.userAgent}
                   style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                 >
                   חזרה לפתרון
+                </Button>
+              )}
+              
+              {/* Analytics Button - Only in development mode */}
+              {import.meta.env.DEV && (
+                <Button
+                  onClick={() => {
+                    const password = prompt('הזן סיסמה לגישה לאנליטיקס:');
+                    if (password === 'admin123') {
+                      setShowAnalyticsDashboard(true);
+                    } else if (password !== null) {
+                      alert('סיסמה שגויה!');
+                    }
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="fixed bottom-4 left-4 z-50 bg-white/90 backdrop-blur-sm hover:bg-white"
+                  style={{
+                    fontSize: '12px',
+                    padding: '8px 12px',
+                    borderColor: '#3b82f6',
+                    color: '#3b82f6'
+                  }}
+                >
+                  📊 אנליטיקס
                 </Button>
               )}
               

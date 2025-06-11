@@ -10,14 +10,18 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import FeedbackPrompt from '@/components/ui/feedback-prompt';
+import { trackButtonClick } from '@/utils/analytics';
 
 // Import flow data
 import kupaFlow from '../../kupa.js';
 import ashraiFlow from '../../ashrai.js';
 import holetzFlow from '../../holetz.js';
 
-// Add global RTL style
+// Add global RTL style safely
+const addGlobalRtlStyle = () => {
+  if (typeof document !== 'undefined' && !document.getElementById('global-rtl-style')) {
 const globalRtlStyle = document.createElement('style');
+    globalRtlStyle.id = 'global-rtl-style';
 globalRtlStyle.innerHTML = `
   body {
     direction: rtl;
@@ -45,6 +49,13 @@ globalRtlStyle.innerHTML = `
   }
 `;
 document.head.appendChild(globalRtlStyle);
+  }
+};
+
+// Call the function safely
+if (typeof window !== 'undefined') {
+  addGlobalRtlStyle();
+}
 
 // Direct style objects with explicit colors
 const styles: Record<string, CSSProperties> = {
@@ -210,6 +221,8 @@ interface WizardProps {
 }
 
 const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onWizardReset, isWizardStarted = false }: WizardProps) => {
+  console.log('🔧 AutomatedSolutionWizard נטען');
+  
   const [selectedFlow, setSelectedFlow] = useState<string | null>(null);
   const [currentNodeId, setCurrentNodeId] = useState<string | null>(null);
   const [currentNode, setCurrentNode] = useState<FlowNode | null>(null);
@@ -233,6 +246,8 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
     { id: 'ashrai', name: 'בעיות אשראי', description: 'פתרון בעיות במכשיר האשראי' },
     { id: 'holetz', name: 'בעיות חולץ', description: 'פתרון בעיות בחולץ' },
   ];
+
+
 
   // Get the appropriate flow data based on selection
   const getFlowData = (): FlowData => {
@@ -354,6 +369,8 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
       setCurrentNodeId(null);
       setCurrentNode(null);
       setHistory([]);
+      // איפוס מצב האשף במסך הראשי
+      if (onWizardReset) onWizardReset();
     }
   };
 
@@ -576,6 +593,8 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
 
   // Render flow selection
   if (!selectedFlow) {
+    console.log('🎯 מציג מסך בחירת זרימה - כפתורים זמינים:', flowTypes);
+    
     return (
       <Card style={isWizardStarted ? styles.cardFullScreen : styles.card}>
         <CardHeader style={styles.cardHeader}>
@@ -584,13 +603,31 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
         </CardHeader>
         <CardContent className="p-4 pb-2" style={styles.cardContent}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-            {flowTypes.map((flow) => (
+            {flowTypes.map((flow) => {
+              console.log('🔘 יוצר כפתור עבור:', flow);
+              return (
               <Button
                 key={flow.id}
                 variant="outline"
                 className="flex-col items-center justify-center gap-2 hover:bg-indigo-50 hover:border-indigo-300 transition-all rtl-text h-20 md:h-24"
                 style={{...styles.flowTypeButton, minHeight: '80px', fontSize: 'clamp(1.25rem, 4vw, 1.5rem)'}}
                 onClick={() => {
+                    try {
+                      // מעקב אחר הלחיצה
+                      console.log('🔄 מתחיל מעקב לחיצה עבור:', flow.name);
+                      trackButtonClick(flow.id, flow.name, 'main_buttons');
+                      console.log('✅ מעקב לחיצה הושלם בהצלחה');
+                    } catch (error) {
+                      console.error('❌ שגיאה במעקב לחיצה:', error);
+                    }
+                    
+                    // הצגת הודעה למשתמש
+                    toast({
+                      title: `נבחר: ${flow.name}`,
+                      description: "מתחיל תהליך פתרון התקלה...",
+                      duration: 2000
+                    });
+                    
                   setSelectedFlow(flow.id);
                   if (onWizardStart) onWizardStart();
                 }}
@@ -598,7 +635,8 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
                 <div className="text-xl md:text-2xl font-bold rtl-text" style={{fontSize: 'clamp(1.25rem, 5vw, 1.75rem)'}}>{flow.name}</div>
                 <div className="text-base md:text-lg text-gray-600 rtl-text font-semibold" style={{fontSize: 'clamp(1rem, 3.5vw, 1.25rem)'}}>{flow.description}</div>
               </Button>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>

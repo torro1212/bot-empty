@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CSSProperties } from 'react';
 import { ThumbsUp, ThumbsDown, PartyPopper, Check } from 'lucide-react';
+import { trackButtonClick } from '@/utils/analytics';
 
 interface FeedbackPromptProps {
   onResponse: (wantsToGiveFeedback: boolean) => void;
@@ -110,7 +111,16 @@ const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({ onResponse }) => {
               כן
             </Button>
             <Button
-              onClick={() => onResponse(false)}
+              onClick={() => {
+                // מעקב אחר לחיצת "לא" למשוב
+                try {
+                  trackButtonClick('feedback-no', 'לא - לא רוצה לתת משוב', 'feedback_response');
+                  console.log('✅ מעקב אחר משוב שלילי נשלח ל-Google Sheets');
+                } catch (error) {
+                  console.error('❌ שגיאה במעקב משוב שלילי:', error);
+                }
+                onResponse(false);
+              }}
               className="w-full transition-all"
               style={{
                 background: '#ef4444',
