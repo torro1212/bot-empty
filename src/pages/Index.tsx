@@ -265,7 +265,7 @@ const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
     if (rating === 0) {
       toast({
         title: "נא לדרג את החוויה",
-        description: "אנא דרג את החוויה שלך באמצעות הכוכבים",
+        description: "אנא דרגו את החוויה שלכם באמצעות הכוכבים",
         variant: "destructive"
       });
       return;
@@ -287,7 +287,7 @@ const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
       setTimeout(() => {
         toast({
           title: "תודה על המשוב!",
-          description: "המשוב שלך התקבל בהצלחה (מצב הדגמה)",
+          description: "המשוב שלכם התקבל בהצלחה (מצב הדגמה)",
           style: { 
             background: 'linear-gradient(to right, #3b82f6, #6366f1)',
             color: 'white',
@@ -381,7 +381,7 @@ ${new Date().toLocaleString('he-IL', {
       
       toast({
         title: "תודה על המשוב!",
-        description: "המשוב שלך התקבל בהצלחה",
+        description: "המשוב שלכם התקבל בהצלחה",
         style: { 
           background: 'linear-gradient(to right, #3b82f6, #6366f1)',
           color: 'white',
@@ -404,7 +404,7 @@ ${new Date().toLocaleString('he-IL', {
       
       toast({
         title: "שגיאה בשליחה",
-        description: "אירעה שגיאה בשליחת המשוב. אנא נסה שנית.",
+        description: "אירעה שגיאה בשליחת המשוב. אנא נסו שנית.",
         variant: "destructive"
       });
     } finally {
@@ -425,11 +425,11 @@ ${new Date().toLocaleString('he-IL', {
         <X size={18} />
       </Button>
       
-      <h3 className="text-2xl font-bold text-center mb-5 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">המשוב שלך חשוב לנו!</h3>
+                      <h3 className="text-2xl font-bold text-center mb-5 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">המשוב שלכם חשוב לנו!</h3>
       
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
         <div className="text-center">
-          <p className="mb-3 font-medium text-gray-700">איך היית מדרג את החוויה שלך?</p>
+          <p className="mb-3 font-medium text-gray-700">איך הייתם מדרגים את החוויה שלכם?</p>
           <div className="flex justify-center gap-3">
             {[1, 2, 3, 4, 5].map((star) => (
               <button
@@ -515,7 +515,7 @@ ${new Date().toLocaleString('he-IL', {
               name="comments"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              placeholder="ספר לנו על החוויה שלך..."
+              placeholder="ספרו לנו על החוויה שלכם..."
               className="w-full pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right text-gray-800 input-with-icon-rtl"
             />
             <MessageSquare className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
@@ -529,7 +529,7 @@ ${new Date().toLocaleString('he-IL', {
               name="from_name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="השם שלך"
+              placeholder="השם שלכם"
               className="w-full pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right text-gray-800 input-with-icon-rtl"
             />
             <User className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
@@ -556,7 +556,7 @@ ${new Date().toLocaleString('he-IL', {
             ) : (
               <>
                 <Send size={16} className="ml-2" />
-                שלח משוב
+                שלחו משוב
               </>
             )}
           </Button>
@@ -731,7 +731,7 @@ const Index = () => {
       setTimeout(() => {
         toast({
           title: "דיווח נשלח בהצלחה",
-          description: "תודה על הדיווח! צוות התמיכה יצור איתך קשר בהקדם. (מצב הדגמה)",
+          description: "תודה על הדיווח! צוות התמיכה יצור איתכם קשר בהקדם. (מצב הדגמה)",
         });
         
         setShowReportForm(false);
@@ -844,7 +844,7 @@ ${navigator.userAgent}
       
       toast({
         title: "דיווח נשלח בהצלחה",
-        description: "תודה על הדיווח! צוות התמיכה יצור איתך קשר בהקדם.",
+        description: "תודה על הדיווח! צוות התמיכה יצור איתכם קשר בהקדם.",
       });
       
       setShowReportForm(false);
@@ -872,7 +872,7 @@ ${navigator.userAgent}
       }
       toast({
         title: "שגיאה בשליחה",
-        description: "אירעה שגיאה בשליחת הדיווח. אנא נסה שנית.",
+        description: "אירעה שגיאה בשליחת הדיווח. אנא נסו שנית.",
         variant: "destructive"
       });
     } finally {
@@ -975,8 +975,8 @@ ${navigator.userAgent}
                   </h2>
                   <p className="text-xs sm:text-sm md:text-lg text-gray-200 mb-2 sm:mb-6 max-w-2xl mx-auto leading-relaxed relative px-2" dir="rtl" style={{fontSize: 'clamp(0.75rem, 3vw, 1.125rem)'}}>
                     <span className="bg-gradient-to-r from-gray-900 to-gray-800 px-2 py-1 rounded-lg" dir="rtl">
-                      העוזר החכם שלך לפתרון תקלות טכניות<br />
-                      אני כאן לעזור לך לפתור כל בעיה במהירות ויעילות!
+                      העוזר החכם שלכם לפתרון תקלות טכניות<br />
+                                              אני כאן לעזור לכם לפתור כל בעיה במהירות ויעילות!
                     </span>
                   </p>
                 </div>
@@ -1058,7 +1058,7 @@ ${navigator.userAgent}
                     padding: '1rem 1rem'
                   }}>
                     <CardTitle className="text-lg md:text-xl font-bold" style={{fontSize: 'clamp(1rem, 4vw, 1.25rem)'}}>דיווח על תקלה</CardTitle>
-                    <CardDescription className="text-gray-100 text-sm" style={{fontSize: 'clamp(0.75rem, 3vw, 0.875rem)'}}>אנא מלא את הפרטים הבאים כדי שנוכל לעזור לך</CardDescription>
+                    <CardDescription className="text-gray-100 text-sm" style={{fontSize: 'clamp(0.75rem, 3vw, 0.875rem)'}}>אנא מלאו את הפרטים הבאים כדי שנוכל לעזור לכם</CardDescription>
                   </CardHeader>
                   
                   <CardContent className="p-4 pt-6">
@@ -1084,7 +1084,7 @@ ${navigator.userAgent}
                               style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                             >
                               <div className="w-full text-center">
-                                {reportForm.brand || "בחר מותג"}
+                                {reportForm.brand || "בחרו מותג"}
                               </div>
                             </SelectTrigger>
                             <SelectContent className="border-blue-200 shadow-lg animation-pulse" style={{textAlign: 'center'}}>
@@ -1134,7 +1134,7 @@ ${navigator.userAgent}
                               style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                             >
                               <div className="w-full text-center">
-                                {reportForm.branchName || (reportForm.brand ? "בחר סניף" : "בחר מותג תחילה")}
+                                {reportForm.branchName || (reportForm.brand ? "בחרו סניף" : "בחרו מותג תחילה")}
                               </div>
                             </SelectTrigger>
                             <SelectContent className="border-blue-200 shadow-lg animation-pulse" style={{textAlign: 'center'}}>
@@ -1164,11 +1164,18 @@ ${navigator.userAgent}
                           <Input 
                             id="registerNumber" 
                             name="registerNumber" 
+                            type="number"
                             value={reportForm.registerNumber} 
                             onChange={handleInputChange} 
+                            onInput={(e) => {
+                              // מאפשר רק מספרים
+                              const target = e.target as HTMLInputElement;
+                              target.value = target.value.replace(/[^0-9]/g, '');
+                            }}
                             placeholder="מספר הקופה"
                             required
-                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
+                            maxLength={10}
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-center input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
                             style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                           />
                           <Hash className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
@@ -1185,7 +1192,7 @@ ${navigator.userAgent}
                             onChange={handleInputChange} 
                             placeholder="תיאור מפורט של התקלה"
                             required
-                            className="min-h-[100px] pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl text-sm md:text-base"
+                            className="min-h-[100px] pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-center input-with-icon-rtl text-sm md:text-base"
                             style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}
                           />
                           <AlertTriangle className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
@@ -1200,9 +1207,9 @@ ${navigator.userAgent}
                             name="name" 
                             value={reportForm.name} 
                             onChange={handleInputChange} 
-                            placeholder="השם שלך"
+                            placeholder="השם שלכם"
                             required
-                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-center input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
                             style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                           />
                           <User className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
@@ -1215,11 +1222,19 @@ ${navigator.userAgent}
                           <Input 
                             id="phone" 
                             name="phone" 
+                            type="tel"
                             value={reportForm.phone} 
                             onChange={handleInputChange} 
-                            placeholder="מספר הטלפון שלך"
+                            onInput={(e) => {
+                              // מאפשר רק מספרים וקווים
+                              const target = e.target as HTMLInputElement;
+                              target.value = target.value.replace(/[^0-9\-]/g, '');
+                            }}
+                            placeholder="050-1234567"
                             required
-                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
+                            maxLength={12}
+                            pattern="[0-9\-]*"
+                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-center input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
                             style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
                           />
                           <Phone className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
@@ -1248,7 +1263,7 @@ ${navigator.userAgent}
                           ) : (
                             <>
                               <Send className="ml-2 h-4 w-4" />
-                              שלח דיווח
+                              שלחו דיווח
                             </>
                           )}
                         </Button>
@@ -1335,7 +1350,7 @@ ${navigator.userAgent}
               {import.meta.env.DEV && (
                 <Button
                   onClick={() => {
-                    const password = prompt('הזן סיסמה לגישה לאנליטיקס:');
+                    const password = prompt('הזינו סיסמה לגישה לאנליטיקס:');
                     if (password === 'admin123') {
                       setShowAnalyticsDashboard(true);
                     } else if (password !== null) {

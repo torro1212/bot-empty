@@ -600,7 +600,7 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
       <Card style={isWizardStarted ? styles.cardFullScreen : styles.card}>
         <CardHeader style={styles.cardHeader}>
           <CardTitle style={{...styles.cardTitle, fontSize: 'clamp(1rem, 4vw, 1.25rem)'}} className="text-lg md:text-xl rtl-text">אשף פתרון תקלות</CardTitle>
-          <CardDescription style={{...styles.cardDescription, fontSize: 'clamp(0.75rem, 3vw, 0.875rem)'}} className="rtl-text text-sm">בחר את סוג התקלה שברצונך לפתור</CardDescription>
+          <CardDescription style={{...styles.cardDescription, fontSize: 'clamp(0.75rem, 3vw, 0.875rem)'}} className="rtl-text text-sm">בחרו את סוג התקלה שברצונכם לפתור</CardDescription>
         </CardHeader>
         <CardContent className="p-4 pb-2" style={styles.cardContent}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">

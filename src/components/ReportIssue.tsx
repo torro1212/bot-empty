@@ -238,7 +238,7 @@ const ReportIssue = () => {
             פרטי התקלה
           </CardTitle>
           <CardDescription className="text-red-100 text-xs sm:text-sm">
-            אנא מלא את כל השדות כדי שנוכל לעזור לך בצורה הטובה ביותר
+            אנא מלאו את כל השדות כדי שנוכל לעזור לכם בצורה הטובה ביותר
           </CardDescription>
         </CardHeader>
         
