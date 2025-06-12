@@ -61,7 +61,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
     const timer = setTimeout(() => {
       setIsVisible(false);
       setTimeout(onComplete, 500);
-    }, 1500);
+    }, 4500);
 
     return () => {
       clearTimeout(timer);
@@ -135,7 +135,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
               return (
                 <motion.div
                   key={`brand-${brand.name}`}
-                  className="absolute w-16 h-16 md:w-24 md:h-24 bg-white/30 backdrop-blur-md rounded-2xl flex items-center justify-center p-1 md:p-2 border-2 border-white/60 shadow-2xl"
+                  className="absolute w-16 h-16 md:w-20 md:h-20 flex items-center justify-center"
                   style={{
                     left: window.innerWidth < 768 ? '44%' : '48%',
                     top: '43%',
@@ -152,7 +152,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
                     duration: 1.33,
                     ease: "easeOut"
                   }}
-                  whileHover={{ scale: 1.1, opacity: 1, y: -5 }}
+                  whileHover={{ scale: 1.15, opacity: 1, y: -5 }}
                 >
                   <BrandLogo
                     brand={brand}
@@ -161,13 +161,14 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
                       width: '100%',
                       height: '100%',
                       objectFit: 'contain',
-                      filter: 'brightness(1.3) contrast(1.2) saturate(1.1)'
+                      padding: '0%',
+                      filter: 'contrast(1.3) saturate(1.2)'
                     }}
                     fallbackStyle={{ 
-                      color: 'white',
+                      color: '#333',
                       fontSize: '12px',
                       fontWeight: 'bold',
-                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      backgroundColor: '#fff',
                       width: '100%',
                       height: '100%',
                       display: 'flex',

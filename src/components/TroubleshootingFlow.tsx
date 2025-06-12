@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { FlowData, FlowNode, FlowType } from '@/lib/troubleshootingFlows';
 import { useToast } from '@/hooks/use-toast';
+import { AutoPlayVideo } from '@/components/ui/AutoPlayVideo';
 
 interface TroubleshootingFlowProps {
   flowType: FlowType;
@@ -121,9 +122,8 @@ const TroubleshootingFlow = ({ flowType, flowData, onComplete }: Troubleshooting
             {currentNode.video && (
               <div className="flex justify-center">
                 <div className="border rounded-lg overflow-hidden shadow-md w-full max-w-2xl">
-                  <video 
-                    src={currentNode.video} 
-                    controls
+                  <AutoPlayVideo
+                    src={currentNode.video}
                     className="w-full"
                     onPlay={() => setIsVideoPlaying(true)}
                     onPause={() => setIsVideoPlaying(false)}

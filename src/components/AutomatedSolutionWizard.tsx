@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import FeedbackPrompt from '@/components/ui/feedback-prompt';
 import { trackButtonClick } from '@/utils/analytics';
+import { AutoPlayVideo } from '@/components/ui/AutoPlayVideo';
 
 // Import flow data
 import kupaFlow from '../../kupa.js';
@@ -695,7 +696,11 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
             
             {currentNode.video && (
               <div className="mt-2 md:mt-4 rounded-lg overflow-hidden border border-indigo-100 shadow-md mx-2">
-                <video src={currentNode.video} controls className="w-full h-auto" style={{maxHeight: '300px'}} />
+                <AutoPlayVideo 
+                  src={currentNode.video} 
+                  className="w-full h-auto" 
+                  style={{maxHeight: '300px'}} 
+                />
               </div>
             )}
             

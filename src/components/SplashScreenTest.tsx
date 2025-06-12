@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
+import BrandShowcaseSplash from './BrandShowcaseSplash';
 
 const SplashScreenTest: React.FC = () => {
+  const [showSplash, setShowSplash] = useState(false);
   const logos = [
     { name: 'BERSHKA', logo: '/logos/BSKL.png' },
     { name: 'lefties', logo: '/logos/LFL.png' },
@@ -16,14 +18,24 @@ const SplashScreenTest: React.FC = () => {
     <div className="p-8 bg-gray-100 min-h-screen">
       <h1 className="text-3xl font-bold mb-8 text-center">בדיקת טעינת לוגואים</h1>
       
-      <div className="grid grid-cols-4 gap-6">
+      <div className="mb-8 text-center">
+        <button 
+          onClick={() => setShowSplash(true)} 
+          className="px-4 py-2 bg-purple-600 text-white rounded-lg shadow-md hover:bg-purple-700"
+        >
+          הצג מסך פתיחה
+        </button>
+      </div>
+      
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {logos.map((brand, index) => (
           <div key={index} className="bg-white p-4 rounded-lg shadow-lg text-center">
-            <div className="h-24 w-24 mx-auto mb-4 border border-gray-200 rounded-lg flex items-center justify-center">
+            <div className="h-32 w-32 mx-auto mb-4 bg-white rounded-lg flex items-center justify-center p-2 shadow-md">
               <img
                 src={brand.logo}
                 alt={brand.name}
                 className="max-h-full max-w-full object-contain"
+                style={{ width: '85%', height: '85%' }}
                 onLoad={() => console.log(`✅ ${brand.name} loaded successfully`)}
                 onError={(e) => {
                   console.error(`❌ Failed to load: ${brand.name} from ${brand.logo}`);
@@ -47,6 +59,8 @@ const SplashScreenTest: React.FC = () => {
           4. אם יש שגיאות, בדוק את נתיבי הקבצים
         </p>
       </div>
+
+      {showSplash && <BrandShowcaseSplash onComplete={() => setShowSplash(false)} />}
     </div>
   );
 };

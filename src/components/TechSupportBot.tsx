@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { MessageCircle, Send, Settings, Printer, Wifi, Monitor, Users, HelpCircle, CheckCircle, CreditCard } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { CSSProperties } from 'react';
+import { AutoPlayVideo } from '@/components/ui/AutoPlayVideo';
 
 // Direct style objects with explicit colors
 const styles: Record<string, CSSProperties> = {
@@ -555,14 +556,11 @@ const TechSupportBot = () => {
 
                     {message.hasVideo && message.videoUrl && (
                       <div className="mt-3">
-                        <video 
-                          controls 
+                        <AutoPlayVideo
+                          src={message.videoUrl}
                           className="rounded-lg max-w-full h-auto"
                           style={{ maxHeight: '300px' }}
-                        >
-                          <source src={message.videoUrl} type="video/mp4" />
-                          הדפדפן שלך לא תומך בהצגת וידאו
-                        </video>
+                        />
                       </div>
                     )}
 

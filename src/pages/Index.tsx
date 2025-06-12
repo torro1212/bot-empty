@@ -72,6 +72,43 @@ const brandLogos = [
   { name: 'OYSHO', color: '#111111' }
 ];
 
+// מותגים וסניפים - מסודר לפי א-ב עברי
+const brandsAndStores = {
+  'ZARA': [
+    'איילון', 'אילת', 'אשדוד', 'BIG גלילות', 'באר שבע', 'באר שבע גרנד',
+    'חדרה', 'חולון', 'חיפה גרנד', 'TLV', 'כפר סבא', 'מלחה', 'ממילא', 'מודיעין',
+    'נצרת', 'עזריאלי', 'עיר ימים', 'פתח תקווה', 'קניון הזהב', 'קריון', 'רמת אביב',
+    'רעננה', 'רחובות', 'דיזינגוף'
+  ],
+  'ZARA-HOME': [
+    'איילון', 'BIG אשדוד', 'BIG גלילות', 'TLV'
+  ],
+  'PULL & BEAR': [
+    'איילון', 'אילת', 'אשדוד', 'BIG אשדוד', 'BIG גלילות', 'בן יהודה', 'באר שבע גרנד',
+    'חדרה', 'חיפה גרנד', 'TLV', 'כרמיאל', 'מלחה', 'מודיעין', 'נהריה', 'נצרת',
+    'עזריאלי', 'עיר ימים', 'פתח תקווה', 'קניון הזהב', 'קריון', 'ראשונים', 'רננים',
+    'רחובות', 'דיזינגוף'
+  ],
+  'MASSIMO': [
+    'BIG גלילות', 'TLV', 'רמת אביב'
+  ],
+  'LEFTIES': [
+    'באר שבע גרנד', 'חדרה'
+  ],
+  'BERSHKA': [
+    'איילון', 'אילת', 'אשדוד', 'ביג ב"ש', 'באר שבע גרנד', 'חדרה', 'חיפה גרנד',
+    'TLV', 'כרמיאל', 'נהריה', 'עזריאלי', 'עפולה', 'פתח תקווה', 'קניון הזהב', 'רחובות'
+  ],
+  'STRADIVARIUS': [
+    'איילון', 'אילת', 'אשדוד', 'BIG אשדוד', 'BIG גלילות', 'באר שבע גרנד',
+    'זהב', 'חדרה', 'TLV', 'כרמיאל', 'ממילא', 'עזריאלי', 'עיר ימים', 'עפולה',
+    'פ"ת', 'ראשונים', 'רעננה'
+  ],
+  'oysho': [
+    'עזריאלי', 'BIG גלילות'
+  ]
+};
+
 // Direct style objects with explicit colors
 const styles: Record<string, CSSProperties> = {
   pageBackground: {
@@ -1035,7 +1072,8 @@ ${navigator.userAgent}
                             onValueChange={(value) => {
                               setReportForm(prev => ({
                                 ...prev,
-                                brand: value
+                                brand: value,
+                                branchName: '' // איפוס הסניף כשמשנים מותג
                               }));
                             }}
                             required
@@ -1051,13 +1089,13 @@ ${navigator.userAgent}
                             </SelectTrigger>
                             <SelectContent className="border-blue-200 shadow-lg animation-pulse" style={{textAlign: 'center'}}>
                               <SelectItem value="ZARA" className="text-center justify-center">ZARA</SelectItem>
-                              <SelectItem value="PULL&BEAR" className="text-center justify-center">PULL&BEAR</SelectItem>
-                              <SelectItem value="Massimo Dutti" className="text-center justify-center">Massimo Dutti</SelectItem>
+                              <SelectItem value="ZARA-HOME" className="text-center justify-center">ZARA-HOME</SelectItem>
+                              <SelectItem value="PULL & BEAR" className="text-center justify-center">PULL & BEAR</SelectItem>
+                              <SelectItem value="MASSIMO" className="text-center justify-center">MASSIMO</SelectItem>
+                              <SelectItem value="LEFTIES" className="text-center justify-center">LEFTIES</SelectItem>
                               <SelectItem value="BERSHKA" className="text-center justify-center">BERSHKA</SelectItem>
                               <SelectItem value="STRADIVARIUS" className="text-center justify-center">STRADIVARIUS</SelectItem>
-                              <SelectItem value="ZARA HOME" className="text-center justify-center">ZARA HOME</SelectItem>
-                              <SelectItem value="Lefties" className="text-center justify-center">Lefties</SelectItem>
-                              <SelectItem value="OYSHO" className="text-center justify-center">OYSHO</SelectItem>
+                              <SelectItem value="oysho" className="text-center justify-center">oysho</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -1076,20 +1114,48 @@ ${navigator.userAgent}
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="branchName" className="text-center block font-medium text-gray-700 text-sm md:text-base" style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}>שם סניף:</Label>
-                        <div className="relative mx-auto" style={{maxWidth: '100%', width: '100%'}}>
-                          <Input 
-                            id="branchName" 
-                            name="branchName" 
-                            value={reportForm.branchName} 
-                            onChange={handleInputChange} 
-                            placeholder="שם הסניף"
+                        <Label htmlFor="branchName" className="text-center block font-medium text-gray-700 text-sm md:text-base" style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)'}}>סניף:</Label>
+                        <div className="mx-auto" style={{maxWidth: '100%', width: '100%'}}>
+                          <Select 
+                            name="branchName"
+                            value={reportForm.branchName}
+                            onValueChange={(value) => {
+                              setReportForm(prev => ({
+                                ...prev,
+                                branchName: value
+                              }));
+                            }}
                             required
-                            className="pr-8 pl-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 rounded-lg transition-all duration-200 text-right input-with-icon-rtl h-12 md:h-10 text-sm md:text-base"
-                            style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
-                          />
-                          <Store className="absolute right-2 top-3 h-4 w-4 text-gray-400 icon-rtl" />
+                            disabled={!reportForm.brand}
+                          >
+                            <SelectTrigger 
+                              className="h-12 md:h-10 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm md:text-base transition-all focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50" 
+                              id="branch-select-trigger"
+                              style={{fontSize: 'clamp(0.875rem, 3vw, 1rem)', minHeight: '48px'}}
+                            >
+                              <div className="w-full text-center">
+                                {reportForm.branchName || (reportForm.brand ? "בחר סניף" : "בחר מותג תחילה")}
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent className="border-blue-200 shadow-lg animation-pulse" style={{textAlign: 'center'}}>
+                              {reportForm.brand && brandsAndStores[reportForm.brand as keyof typeof brandsAndStores]?.map((store) => (
+                                <SelectItem key={store} value={store} className="text-center justify-center">{store}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
+                        <style dangerouslySetInnerHTML={{__html: `
+                          #branch-select-trigger {
+                            display: flex;
+                            align-items: center;
+                            padding-right: 30px;
+                            text-align: right;
+                          }
+                          
+                          #branch-select-trigger svg {
+                            display: none;
+                          }
+                        `}} />
                       </div>
                       
                       <div className="space-y-2">

@@ -17,11 +17,51 @@ const EMAILJS_TEMPLATE_ID = 'template_94n4ms8'; // Replace with your template ID
 const EMAILJS_PUBLIC_KEY = '6RjrhWpav2fs1C9Dq'; // Replace with your public key
 const RECIPIENT_EMAIL = 'Support@Mutagim.com'; // Replace with the email you want to send to
 
+// מותגים וסניפים
+const brandsAndStores = {
+  'ZARA': [
+    'מילנו', 'קוק התרן', 'מלחה', 'בת אביב', 'דיזינגוף', 'איילון', 'חולון', 'קריון',
+    'באר שבע', 'חיפה גרנד', 'פתח תקווה', 'איילת', 'רחובות', 'אשדוד', 'רעננה',
+    'עזריאלי', 'עיר ימים', 'באר שבע גרנד', 'שברת', 'לפי סבא', 'TLV', 'הדריה',
+    'מודיעין', 'גלילות BIG'
+  ],
+  'ZARA-HOME': [
+    'TLV', 'גלילות BIG', 'BIG אשדוד'
+  ],
+  'PULL & BEAR': [
+    'רחובות', 'מלחה', 'דיזינגוף', 'אשדוד', 'עזריאלי', 'חיפה גרנד', 'קריון',
+    'מודיעין', 'איילון', 'שברת', 'פתח תקווה', 'איילת', 'באר שבע גרנד', 'TLV',
+    'חשמונאים', 'חולון', 'הדריה', 'נתצרת', 'עיר ימים', 'בן יהודה', 'BIG אשדוד',
+    'BIG גלילות'
+  ],
+  'MASSIMO': [
+    'TLV', 'BIG גלילות'
+  ],
+  'LEFTIES': [
+    'הדריה', 'באר שבע גרנד'
+  ],
+  'BERSHKA': [
+    'איילון', 'רחובות', 'באר שבע גרנד', 'פתח תקווה', 'חיפה גרנד', 'קוק התרן',
+    'קריון', 'TLV', 'אשדוד', 'עזריאלי', 'שברת', 'הדריה', 'בת ש"ן', 'איילת',
+    'עמונה'
+  ],
+  'STRADIVARIUS': [
+    'עזריאלי', 'איילון', 'אשדוד', 'באר שבע גרנד', 'חשמונאים', 'עיר ימים',
+    'פתח תקווה', 'הדריה', 'איילת', 'רעננה', 'מלחה', 'קוק התרן', 'דיזינגוף',
+    'פי"פ', 'BIG גלילות', 'BIG אשדוד', 'עמונה'
+  ],
+  'שסף': [
+    'BIG גלילות'
+  ]
+};
+
 const ReportIssue = () => {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     email: '',
+    brand: '',
+    store: '',
     issueType: '',
     priority: '',
     description: '',
@@ -49,7 +89,13 @@ const ReportIssue = () => {
   ];
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      // אם המותג משתנה, נאפס את הסניף
+      if (field === 'brand') {
+        return { ...prev, [field]: value, store: '' };
+      }
+      return { ...prev, [field]: value };
+    });
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,6 +108,11 @@ const ReportIssue = () => {
       ...prev,
       attachments: prev.attachments.filter((_, i) => i !== index)
     }));
+  };
+
+  // קבלת הסניפים הזמינים לפי המותג הנבחר
+  const getAvailableStores = () => {
+    return formData.brand ? brandsAndStores[formData.brand as keyof typeof brandsAndStores] || [] : [];
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,6 +132,8 @@ const ReportIssue = () => {
         from_name: formData.name,
         from_email: formData.email,
         from_phone: formData.phone,
+        brand: formData.brand || 'לא צוין',
+        store: formData.store || 'לא צוין',
         issue_type: issueTypeLabel,
         priority: priorityLabel,
         description: formData.description,
@@ -88,7 +141,7 @@ const ReportIssue = () => {
         attachments_info: formData.attachments.length > 0 
           ? `צורפו ${formData.attachments.length} קבצים` 
           : 'לא צורפו קבצים',
-        subject: `דיווח תקלה חדשה: ${issueTypeLabel} (${priorityLabel})`,
+        subject: `דיווח תקלה חדשה: ${formData.brand} - ${formData.store} (${priorityLabel})`,
         response_time: getEstimatedResponseTime(formData.priority)
       };
 
@@ -113,6 +166,8 @@ const ReportIssue = () => {
         name: '',
         phone: '',
         email: '',
+        brand: '',
+        store: '',
         issueType: '',
         priority: '',
         description: '',
@@ -226,6 +281,45 @@ const ReportIssue = () => {
                 placeholder="your@email.com"
                 className="text-sm"
               />
+            </div>
+
+            {/* Brand and Store Selection */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="brand" className="text-xs sm:text-sm">מותג *</Label>
+                <Select value={formData.brand} onValueChange={(value) => handleInputChange('brand', value)}>
+                  <SelectTrigger className="text-sm">
+                    <SelectValue placeholder="בחר מותג" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(brandsAndStores).map((brand) => (
+                      <SelectItem key={brand} value={brand} className="text-sm">
+                        {brand}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-1 sm:space-y-2">
+                <Label htmlFor="store" className="text-xs sm:text-sm">סניף *</Label>
+                <Select 
+                  value={formData.store} 
+                  onValueChange={(value) => handleInputChange('store', value)}
+                  disabled={!formData.brand}
+                >
+                  <SelectTrigger className="text-sm">
+                    <SelectValue placeholder={formData.brand ? "בחר סניף" : "בחר מותג תחילה"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getAvailableStores().map((store) => (
+                      <SelectItem key={store} value={store} className="text-sm">
+                        {store}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {/* Issue Details */}

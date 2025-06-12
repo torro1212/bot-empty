@@ -26,10 +26,12 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
         style={{
           ...style,
           ...fallbackStyle,
-          backgroundColor: brand.color || '#333',
-          color: 'white',
+          backgroundColor: '#FFFFFF',
+          color: brand.color || '#333',
           textAlign: 'center',
-          fontSize: '0.8rem'
+          fontSize: '1.4rem',
+          fontWeight: '900',
+          boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.1)'
         }}
       >
         {brand.name}
@@ -38,17 +40,27 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
   }
 
   return (
-    <img
-      src={brand.logo}
-      alt={brand.name}
-      className={`object-contain ${className}`}
-      style={style}
-      onError={(e) => {
-        console.error(`❌ Failed to load logo: ${brand.name} from ${brand.logo}`);
-        setImageError(true);
-      }}
-      onLoad={() => console.log(`✅ Logo loaded: ${brand.name} from ${brand.logo}`)}
-    />
+    <div className={`bg-white flex items-center justify-center ${className}`} style={{
+      borderRadius: '6px',
+      padding: '2px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+      ...style
+    }}>
+      <img
+        src={brand.logo}
+        alt={brand.name}
+        className="object-contain max-w-full max-h-full"
+        style={{
+          width: '95%',
+          height: '95%',
+        }}
+        onError={(e) => {
+          console.error(`❌ Failed to load logo: ${brand.name} from ${brand.logo}`);
+          setImageError(true);
+        }}
+        onLoad={() => console.log(`✅ Logo loaded: ${brand.name} from ${brand.logo}`)}
+      />
+    </div>
   );
 };
 
