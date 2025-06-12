@@ -285,6 +285,15 @@ const FeedbackForm = ({ onClose }: { onClose: () => void }) => {
       
       // סימולציה של טעינה
       setTimeout(() => {
+        // סיום מעקב זמן - משוב נשלח (מצב הדגמה)
+        console.log('🏁 מסיים מעקב זמן - משוב נשלח (מצב הדגמה)');
+        import('@/utils/analytics').then(({ endUserTimer, formatDuration }) => {
+          const timing = endUserTimer(undefined, 'form_submit');
+          if (timing?.duration) {
+            console.log(`⏱️ זמן עד שליחת משוב: ${formatDuration(timing.duration)}`);
+          }
+        });
+        
         toast({
           title: "תודה על המשוב!",
           description: "המשוב שלכם התקבל בהצלחה (מצב הדגמה)",
@@ -378,6 +387,15 @@ ${new Date().toLocaleString('he-IL', {
       );
       
       console.log('Email sent successfully with send method:', result);
+      
+      // סיום מעקב זמן - משוב נשלח בהצלחה
+      console.log('🏁 מסיים מעקב זמן - משוב נשלח בהצלחה');
+      import('@/utils/analytics').then(({ endUserTimer, formatDuration }) => {
+        const timing = endUserTimer(undefined, 'form_submit');
+        if (timing?.duration) {
+          console.log(`⏱️ זמן עד שליחת משוב: ${formatDuration(timing.duration)}`);
+        }
+      });
       
       toast({
         title: "תודה על המשוב!",
@@ -729,6 +747,15 @@ const Index = () => {
       
       // סימולציה של טעינה
       setTimeout(() => {
+        // סיום מעקב זמן - דיווח תקלה נשלח (מצב הדגמה)
+        console.log('🏁 מסיים מעקב זמן - דיווח תקלה נשלח (מצב הדגמה)');
+        import('@/utils/analytics').then(({ endUserTimer, formatDuration }) => {
+          const timing = endUserTimer(undefined, 'form_submit');
+          if (timing?.duration) {
+            console.log(`⏱️ זמן עד שליחת דיווח: ${formatDuration(timing.duration)}`);
+          }
+        });
+        
         toast({
           title: "דיווח נשלח בהצלחה",
           description: "תודה על הדיווח! צוות התמיכה יצור איתכם קשר בהקדם. (מצב הדגמה)",
@@ -842,6 +869,15 @@ ${navigator.userAgent}
       
       console.log('Email sent successfully:', result);
       
+      // סיום מעקב זמן - דיווח תקלה נשלח בהצלחה
+      console.log('🏁 מסיים מעקב זמן - דיווח תקלה נשלח בהצלחה');
+      import('@/utils/analytics').then(({ endUserTimer, formatDuration }) => {
+        const timing = endUserTimer(undefined, 'form_submit');
+        if (timing?.duration) {
+          console.log(`⏱️ זמן עד שליחת דיווח: ${formatDuration(timing.duration)}`);
+        }
+      });
+      
       toast({
         title: "דיווח נשלח בהצלחה",
         description: "תודה על הדיווח! צוות התמיכה יצור איתכם קשר בהקדם.",
@@ -913,7 +949,10 @@ ${navigator.userAgent}
               }
             }}
           >
-            <ClickAnalyticsDashboard onClose={() => setShowAnalyticsDashboard(false)} />
+            <ClickAnalyticsDashboard 
+          isVisible={showAnalyticsDashboard}
+          onClose={() => setShowAnalyticsDashboard(false)} 
+        />
           </div>
         </>
       )}
@@ -1272,6 +1311,15 @@ ${navigator.userAgent}
                           type="button"
                           variant="outline" 
                           onClick={() => {
+                            // סיום מעקב זמן - משתמש ביטל דיווח תקלה
+                            console.log('🏁 מסיים מעקב זמן - ביטול דיווח תקלה');
+                            import('@/utils/analytics').then(({ endUserTimer, formatDuration }) => {
+                              const timing = endUserTimer(undefined, 'wizard_complete');
+                              if (timing?.duration) {
+                                console.log(`⏱️ זמן עד ביטול דיווח: ${formatDuration(timing.duration)}`);
+                              }
+                            });
+                            
                             setShowReportForm(false);
                             setSolutionCompleted(false);
                           }}
@@ -1328,6 +1376,15 @@ ${navigator.userAgent}
                     }}
                   />
                   <FeedbackForm onClose={() => {
+                    // סיום מעקב זמן - משתמש סגר טופס משוב (ללא שליחה)
+                    console.log('🏁 מסיים מעקב זמן - סגירת טופס משוב');
+                    import('@/utils/analytics').then(({ endUserTimer, formatDuration }) => {
+                      const timing = endUserTimer(undefined, 'wizard_complete');
+                      if (timing?.duration) {
+                        console.log(`⏱️ זמן עד סגירת משוב: ${formatDuration(timing.duration)}`);
+                      }
+                    });
+                    
                     setShowFeedbackForm(false);
                     setShowFeedbackPrompt(false);
                     setSolutionCompleted(false);

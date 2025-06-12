@@ -116,6 +116,15 @@ const FeedbackPrompt: React.FC<FeedbackPromptProps> = ({ onResponse }) => {
                 try {
                   trackButtonClick('feedback-no', 'לא - לא רוצה לתת משוב', 'feedback_response');
                   console.log('✅ מעקב אחר משוב שלילי נשלח ל-Google Sheets');
+                  
+                  // סיום מעקב זמן - משתמש לא רוצה לתת משוב
+                  console.log('🏁 מסיים מעקב זמן - לא רוצה לתת משוב');
+                  import('@/utils/analytics').then(({ endUserTimer, formatDuration }) => {
+                    const timing = endUserTimer(undefined, 'solution_complete');
+                    if (timing?.duration) {
+                      console.log(`⏱️ זמן עד סיום (ללא משוב): ${formatDuration(timing.duration)}`);
+                    }
+                  });
                 } catch (error) {
                   console.error('❌ שגיאה במעקב משוב שלילי:', error);
                 }

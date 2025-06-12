@@ -362,9 +362,29 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
     
     if (wantsToGiveFeedback) {
       // User wants to give feedback
+      
+      // סיום מעקב זמן
+      console.log('🏁 מסיים מעקב זמן - פתרון הושלם');
+      import('@/utils/analytics').then(({ endUserTimer, formatDuration }) => {
+        const timing = endUserTimer(undefined, 'solution_complete');
+        if (timing?.duration) {
+          console.log(`⏱️ זמן פתרון כולל: ${formatDuration(timing.duration)}`);
+        }
+      });
+      
       if (onComplete) onComplete(true, false);
     } else {
       // User doesn't want to give feedback - חזרה למסך הראשי
+      
+      // סיום מעקב זמן - משתמש לא רוצה משוב
+      console.log('🏁 מסיים מעקב זמן - משתמש לא רוצה לתת משוב');
+      import('@/utils/analytics').then(({ endUserTimer, formatDuration }) => {
+        const timing = endUserTimer(undefined, 'solution_complete');
+        if (timing?.duration) {
+          console.log(`⏱️ זמן פתרון כולל: ${formatDuration(timing.duration)}`);
+        }
+      });
+      
       setIsCompleted(false);
       setSelectedFlow(null);
       setCurrentNodeId(null);
@@ -379,6 +399,15 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
     e.preventDefault();
     // כאן יהיה הקוד לשליחת הטופס לשרת
     console.log(reportForm);
+    
+    // סיום מעקב זמן - דיווח תקלה נשלח
+    console.log('🏁 מסיים מעקב זמן - דיווח תקלה נשלח');
+    import('@/utils/analytics').then(({ endUserTimer, formatDuration }) => {
+      const timing = endUserTimer(undefined, 'form_submit');
+      if (timing?.duration) {
+        console.log(`⏱️ זמן עד שליחת דיווח: ${formatDuration(timing.duration)}`);
+      }
+    });
     
     toast({
       title: "דיווח נשלח",
@@ -618,6 +647,12 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
                       console.log('🔄 מתחיל מעקב לחיצה עבור:', flow.name);
                       trackButtonClick(flow.id, flow.name, 'main_buttons');
                       console.log('✅ מעקב לחיצה הושלם בהצלחה');
+                    
+                    // התחלת מעקב זמן
+                    console.log('⏱️ מתחיל מעקב זמן למשתמש');
+                    import('@/utils/analytics').then(({ startUserTimer }) => {
+                      startUserTimer('start_button', flow.id);
+                    });
                     } catch (error) {
                       console.error('❌ שגיאה במעקב לחיצה:', error);
                     }

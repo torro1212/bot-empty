@@ -165,26 +165,112 @@ const sendToGoogleSheets = (clickData: ClickData) => {
     const GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || '';
     
     if (!GOOGLE_SHEETS_URL) {
-      console.warn('⚠️ Google Sheets URL לא מוגדר');
+      console.warn('⚠️ Google Sheets URL לא מוגדר עבור לחיצות');
+      console.log('💡 להפעלת שליחה בזמן אמת:');
+      console.log('   1. פתח את דשבורד האנליטיקס');
+      console.log('   2. לחץ על "הגדרות Google Sheets"');
+      console.log('   3. הגדר את ה-URL לפי ההוראות');
       return;
     }
 
-    console.log('📤 שולח ל-Google Sheets:', GOOGLE_SHEETS_URL);
+    console.log('🖱️📤 שולח נתוני לחיצה ל-Google Sheets בזמן אמת:', GOOGLE_SHEETS_URL);
+    console.log('📊 נתוני לחיצה שנשלחים:', {
+      buttonId: clickData.buttonId,
+      buttonName: clickData.buttonName,
+      category: clickData.category,
+      sessionId: clickData.sessionId
+    });
+
+    // הוספת סוג הנתונים כדי לעזור לשרת לזהות את סוג השליחה
+    const dataToSend = {
+      ...clickData,
+      type: 'click'
+    };
 
     fetch(GOOGLE_SHEETS_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(clickData),
+      body: JSON.stringify(dataToSend),
       mode: 'no-cors' // נדרש עבור Google Apps Script
     }).then(() => {
-      console.log('✅ נתונים נשלחו ל-Google Sheets בהצלחה');
+      console.log('✅ נתוני לחיצה נשלחו ל-Google Sheets בהצלחה בזמן אמת!');
+      console.log('🎯 הנתונים אמורים להופיע עכשיו בגיליון שלך');
     }).catch(error => {
       console.warn('⚠️ שגיאה ברשת בשליחה ל-Google Sheets:', error);
+      console.log('💾 הנתונים נשמרו מקומית בדפדפן כגיבוי');
     });
   } catch (error) {
     console.warn('⚠️ שגיאה כללית בשליחה ל-Google Sheets:', error);
+  }
+};
+
+// שליחת נתוני זמן ל-Google Sheets
+const sendTimingToGoogleSheets = (timing: SessionTiming) => {
+  try {
+    // בדיקה שיש לנו fetch API
+    if (typeof fetch === 'undefined') {
+      console.warn('⚠️ Fetch API לא זמין - מדלג על שליחה ל-Google Sheets');
+      return;
+    }
+
+    // URL של ה-Google Apps Script Web App
+    const GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || '';
+    
+    if (!GOOGLE_SHEETS_URL) {
+      console.warn('⚠️ Google Sheets URL לא מוגדר עבור זמנים');
+      console.log('💡 להפעלת שליחה בזמן אמת:');
+      console.log('   1. פתח את דשבורד האנליטיקס');
+      console.log('   2. לחץ על "הגדרות Google Sheets"');
+      console.log('   3. הגדר את ה-URL לפי ההוראות');
+      return;
+    }
+
+    console.log('⏱️📤 שולח נתוני זמן ל-Google Sheets בזמן אמת:', GOOGLE_SHEETS_URL);
+    console.log('📊 נתוני זמן שנשלחים:', {
+      sessionId: timing.sessionId,
+      duration: timing.duration ? formatDuration(timing.duration) : 'N/A',
+      actionType: timing.actionType,
+      buttonId: timing.buttonId,
+      completed: timing.completed
+    });
+
+    // המרת הזמן למילישניות לשניות עבור הגיליון
+    const durationInSeconds = timing.duration ? Math.round(timing.duration / 1000) : null;
+
+    // יצירת אובייקט נתונים למשלוח
+    const timingData = {
+      type: 'timing', // מזהה סוג הנתונים
+      sessionId: timing.sessionId,
+      startTime: timing.startTime,
+      endTime: timing.endTime,
+      duration: durationInSeconds, // שולחים את הזמן בשניות
+      durationFormatted: timing.duration ? formatDuration(timing.duration) : 'N/A',
+      actionType: timing.actionType,
+      buttonId: timing.buttonId || 'N/A',
+      completed: timing.completed,
+      userAgent: timing.userAgent,
+      url: timing.url,
+      timestamp: timing.endTime || timing.startTime
+    };
+
+    fetch(GOOGLE_SHEETS_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(timingData),
+      mode: 'no-cors' // נדרש עבור Google Apps Script
+    }).then(() => {
+      console.log('✅ נתוני זמן נשלחו ל-Google Sheets בהצלחה בזמן אמת!');
+      console.log('🎯 הנתונים אמורים להופיע עכשיו בגיליון שלך');
+    }).catch(error => {
+      console.warn('⚠️ שגיאה ברשת בשליחת זמנים ל-Google Sheets:', error);
+      console.log('💾 הנתונים נשמרו מקומית בדפדפן כגיבוי');
+    });
+  } catch (error) {
+    console.warn('⚠️ שגיאה כללית בשליחת זמנים ל-Google Sheets:', error);
   }
 };
 
@@ -345,4 +431,310 @@ export const syncAllDataToGoogleSheets = async () => {
     success: successCount,
     errors: errorCount
   };
+};
+
+// ##### מערכת מעקב זמן מתקדמת #####
+
+export interface SessionTiming {
+  sessionId: string;
+  startTime: string;
+  endTime?: string;
+  duration?: number; // במילישניות
+  actionType: 'start_button' | 'wizard_start' | 'solution_complete' | 'form_submit' | 'wizard_complete';
+  buttonId?: string;
+  completed: boolean;
+  userAgent: string;
+  url: string;
+}
+
+// התחלת מעקב זמן למשתמש
+export const startUserTimer = (actionType: 'start_button' | 'wizard_start' = 'start_button', buttonId?: string): string => {
+  console.log('⏱️ התחלת מעקב זמן עבור:', actionType, buttonId);
+  
+  try {
+    if (typeof window === 'undefined') {
+      console.warn('⚠️ Window לא זמין - מדלג על מעקב זמן');
+      return '';
+    }
+
+    const sessionId = getOrCreateSessionId();
+    const startTime = new Date().toISOString();
+    
+    const timing: SessionTiming = {
+      sessionId,
+      startTime,
+      actionType,
+      buttonId,
+      completed: false,
+      userAgent: navigator?.userAgent || 'Unknown Browser',
+      url: window?.location?.href || 'Unknown URL'
+    };
+
+    // שמירה ב-sessionStorage (נמחק כשהכרטיסייה נסגרת)
+    sessionStorage.setItem(`timing_${sessionId}`, JSON.stringify(timing));
+    console.log('✅ מעקב זמן התחיל בזמן אמת עבור סשן:', sessionId);
+    console.log('🎯 כשהמשתמש יסיים את התהליך, הזמן יישלח אוטומטית ל-Google Sheets');
+    
+    return sessionId;
+  } catch (error) {
+    console.error('💥 שגיאה בהתחלת מעקב זמן:', error);
+    return '';
+  }
+};
+
+// סיום מעקב זמן והחזרת משך הזמן
+export const endUserTimer = (sessionId?: string, actionType: 'solution_complete' | 'form_submit' | 'wizard_complete' = 'solution_complete'): SessionTiming | null => {
+  console.log('🏁 סיום מעקב זמן עבור:', actionType, sessionId);
+  
+  try {
+    if (typeof window === 'undefined') {
+      console.warn('⚠️ Window לא זמין - מדלג על סיום מעקב');
+      return null;
+    }
+
+    const currentSessionId = sessionId || getOrCreateSessionId();
+    const timingKey = `timing_${currentSessionId}`;
+    const savedTiming = sessionStorage.getItem(timingKey);
+    
+    if (!savedTiming) {
+      console.warn('⚠️ לא נמצא מעקב זמן עבור סשן:', currentSessionId);
+      return null;
+    }
+
+    const timing: SessionTiming = JSON.parse(savedTiming);
+    const endTime = new Date().toISOString();
+    const duration = new Date(endTime).getTime() - new Date(timing.startTime).getTime();
+    
+    // עדכון הזמן עם הסיום
+    timing.endTime = endTime;
+    timing.duration = duration;
+    timing.completed = true;
+    
+    // שמירה ב-localStorage לארכיון
+    saveTimingToStorage(timing);
+    
+    // שליחה ל-Google Sheets
+    sendTimingToGoogleSheets(timing);
+    
+    // ניקוי sessionStorage
+    sessionStorage.removeItem(timingKey);
+    
+    console.log('✅ מעקב זמן הושלם בהצלחה!', {
+      duration: formatDuration(duration),
+      durationMs: duration,
+      startTime: timing.startTime,
+      endTime: timing.endTime,
+      actionType: timing.actionType
+    });
+    console.log('📤 הנתונים נשלחים עכשיו בזמן אמת ל-Google Sheets...');
+    
+    return timing;
+  } catch (error) {
+    console.error('💥 שגיאה בסיום מעקב זמן:', error);
+    return null;
+  }
+};
+
+// שמירת מעקב זמן ב-localStorage
+const saveTimingToStorage = (timing: SessionTiming) => {
+  try {
+    const existingTimings = JSON.parse(localStorage.getItem('userTimings') || '[]');
+    existingTimings.push(timing);
+    
+    // שמירה של רק 500 המדידות האחרונות
+    if (existingTimings.length > 500) {
+      existingTimings.splice(0, existingTimings.length - 500);
+    }
+    
+    localStorage.setItem('userTimings', JSON.stringify(existingTimings));
+    console.log('💾 מעקב זמן נשמר ב-localStorage');
+  } catch (error) {
+    console.warn('⚠️ שגיאה בשמירת מעקב זמן:', error);
+  }
+};
+
+// פורמט זמן לקריאה נוחה
+export const formatDuration = (milliseconds: number): string => {
+  // המרה לשניות
+  const seconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  
+  if (hours > 0) {
+    return `${hours}ש ${minutes % 60}ד ${seconds % 60}ש`;
+  } else if (minutes > 0) {
+    return `${minutes}ד ${seconds % 60}ש`;
+  } else {
+    return `${seconds}ש`;
+  }
+};
+
+// קבלת כל מדידות הזמן
+export const getAllTimings = (): SessionTiming[] => {
+  try {
+    return JSON.parse(localStorage.getItem('userTimings') || '[]');
+  } catch (error) {
+    console.warn('שגיאה בקריאת מדידות זמן:', error);
+    return [];
+  }
+};
+
+// קבלת סטטיסטיקות זמן
+export const getTimingStatistics = () => {
+  const timings = getAllTimings().filter(t => t.completed && t.duration);
+  
+  if (timings.length === 0) {
+    return {
+      totalSessions: 0,
+      averageDuration: 0,
+      minDuration: 0,
+      maxDuration: 0,
+      completedSessions: 0,
+      byActionType: {},
+      byDay: {}
+    };
+  }
+  
+  const durations = timings.map(t => t.duration!);
+  const sum = durations.reduce((a, b) => a + b, 0);
+  
+  const stats = {
+    totalSessions: timings.length,
+    averageDuration: Math.round(sum / timings.length),
+    minDuration: Math.min(...durations),
+    maxDuration: Math.max(...durations),
+    completedSessions: timings.filter(t => t.completed).length,
+    byActionType: {} as Record<string, number>,
+    byDay: {} as Record<string, number>
+  };
+
+  // חישוב לפי סוג פעולה
+  timings.forEach(timing => {
+    const actionType = timing.actionType || 'unknown';
+    if (!stats.byActionType[actionType]) {
+      stats.byActionType[actionType] = 0;
+    }
+    stats.byActionType[actionType] += timing.duration || 0;
+  });
+
+  // חישוב לפי יום
+  timings.forEach(timing => {
+    const day = timing.startTime.split('T')[0];
+    if (!stats.byDay[day]) {
+      stats.byDay[day] = 0;
+    }
+    stats.byDay[day] += timing.duration || 0;
+  });
+
+  return stats;
+};
+
+// ניקוי נתוני זמן
+export const clearTimingData = () => {
+  localStorage.removeItem('userTimings');
+  // ניקוי sessionStorage גם כן
+  Object.keys(sessionStorage).forEach(key => {
+    if (key.startsWith('timing_')) {
+      sessionStorage.removeItem(key);
+    }
+  });
+  console.log('🧹 נתוני מעקב זמן נוקו');
+};
+
+// ייצוא נתוני זמן
+export const exportTimingData = () => {
+  const timings = getAllTimings();
+  const stats = getTimingStatistics();
+  
+  const exportData = {
+    exportDate: new Date().toISOString(),
+    totalTimings: timings.length,
+    statistics: stats,
+    timings: timings
+  };
+  
+  const dataStr = JSON.stringify(exportData, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(dataBlob);
+  link.download = `timing-data-${new Date().toLocaleDateString('he-IL')}.json`;
+  link.click();
+  
+  console.log('📊 נתוני מעקב זמן יוצאו:', exportData);
+};
+
+// סנכרון כל נתוני הזמן ל-Google Sheets
+export const syncAllTimingDataToGoogleSheets = async () => {
+  const timings = getAllTimings();
+  const GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || '';
+  
+  if (!GOOGLE_SHEETS_URL) {
+    console.warn('⚠️ Google Sheets URL לא מוגדר - לא ניתן לסנכרן נתוני זמן');
+    return { success: false, error: 'Google Sheets URL לא מוגדר' };
+  }
+
+  if (timings.length === 0) {
+    console.log('ℹ️ אין נתוני זמן לסנכרון');
+    return { success: true, message: 'אין נתונים לסנכרון' };
+  }
+
+  console.log(`🔄 מתחיל סנכרון ${timings.length} נתוני זמן ל-Google Sheets...`);
+
+  let successCount = 0;
+  let errorCount = 0;
+
+  for (const timing of timings) {
+    try {
+      await new Promise(resolve => setTimeout(resolve, 100)); // המתנה קצרה בין בקשות
+      sendTimingToGoogleSheets(timing);
+      successCount++;
+    } catch (error) {
+      console.error('❌ שגיאה בסנכרון נתוני זמן:', error);
+      errorCount++;
+    }
+  }
+
+  const result = {
+    success: errorCount === 0,
+    total: timings.length,
+    success_count: successCount,
+    error_count: errorCount,
+    message: `סונכרנו ${successCount} מתוך ${timings.length} נתוני זמן`
+  };
+
+  console.log('✅ סנכרון נתוני זמן הושלם:', result);
+  return result;
+};
+
+// ניקוי נתוני זמן מ-Google Sheets (אם נדרש)
+export const clearTimingDataFromGoogleSheets = async () => {
+  const GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || '';
+  
+  if (!GOOGLE_SHEETS_URL) {
+    console.warn('⚠️ Google Sheets URL לא מוגדר');
+    return { success: false, error: 'Google Sheets URL לא מוגדר' };
+  }
+
+  try {
+    const clearCommand = {
+      type: 'clear_timings',
+      timestamp: new Date().toISOString()
+    };
+
+    await fetch(GOOGLE_SHEETS_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(clearCommand),
+      mode: 'no-cors'
+    });
+
+    console.log('✅ פקודת ניקוי נתוני זמן נשלחה ל-Google Sheets');
+    return { success: true, message: 'פקודת ניקוי נשלחה' };
+  } catch (error) {
+    console.error('❌ שגיאה בשליחת פקודת ניקוי:', error);
+    return { success: false, error: error };
+  }
 }; 
