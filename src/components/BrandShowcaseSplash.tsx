@@ -120,7 +120,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
           <div className="absolute inset-0">
             {brands.map((brand, index) => {
               const baseAngle = (index * 360) / brands.length - 90; // התחלה מלמעלה
-              const radius = window.innerWidth < 768 ? 180 : 280; // מרחק מותאם למובייל
+              const radius = window.innerWidth < 768 ? 140 : 280; // מרחק מותאם למובייל
               
               // מספור הלוגואים (לא נראה בדף):
               // 1 = ZARA (למעלה באמצע)
@@ -137,7 +137,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
                   key={`brand-${brand.name}`}
                   className="absolute w-16 h-16 md:w-24 md:h-24 bg-white/30 backdrop-blur-md rounded-2xl flex items-center justify-center p-1 md:p-2 border-2 border-white/60 shadow-2xl"
                   style={{
-                    left: '48%',
+                    left: window.innerWidth < 768 ? '44%' : '48%',
                     top: '43%',
                     transform: 'translate(-50%, -50%)',
                   }}
@@ -286,15 +286,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
             </motion.div>
           </div>
 
-          {/* מונה לאחור */}
-          <motion.div
-            className="absolute top-4 right-4 text-white/70 text-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-          >
-            לחץ כדי לדלג
-          </motion.div>
+
         </motion.div>
       )}
     </AnimatePresence>

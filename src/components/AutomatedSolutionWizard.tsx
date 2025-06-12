@@ -242,7 +242,7 @@ const AutomatedSolutionWizard = ({ onComplete, onReportIssue, onWizardStart, onW
   const { toast } = useToast();
 
   const flowTypes = [
-    { id: 'kupa', name: 'בעיות קופה', description: 'פתרון בעיות במערכת הקופה' },
+    { id: 'kupa', name: 'קופה כבויה', description: 'פתרון בעיות במערכת הקופה' },
     { id: 'ashrai', name: 'בעיות אשראי', description: 'פתרון בעיות במכשיר האשראי' },
     { id: 'holetz', name: 'בעיות חולץ', description: 'פתרון בעיות בחולץ' },
   ];
