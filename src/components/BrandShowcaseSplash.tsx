@@ -225,7 +225,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
                 }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               >
-                FASHION
+                קבוצת ZARA 
               </motion.h1>
 
               <motion.div

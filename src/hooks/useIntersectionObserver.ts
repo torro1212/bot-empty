@@ -7,8 +7,8 @@ interface UseIntersectionObserverProps {
 }
 
 export const useIntersectionObserver = ({
-  threshold = 0.1,
-  rootMargin = '50px',
+  threshold = 0.01,
+  rootMargin = '300px',
   triggerOnce = false
 }: UseIntersectionObserverProps = {}) => {
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -26,6 +26,21 @@ export const useIntersectionObserver = ({
     if (triggerOnce && hasTriggered) {
       console.log('IntersectionObserver: כבר הופעל פעם אחת');
       return;
+    }
+
+    // בדיקה מיידית אם האלמנט כבר בתצוגה
+    const rect = target.getBoundingClientRect();
+    const viewHeight = window.innerHeight || document.documentElement.clientHeight;
+    const viewWidth = window.innerWidth || document.documentElement.clientWidth;
+    
+    const isCurrentlyVisible = rect.top < viewHeight && rect.bottom > 0 && rect.left < viewWidth && rect.right > 0;
+    
+    if (isCurrentlyVisible) {
+      console.log('IntersectionObserver: אלמנט כבר נראה - מפעיל מיד');
+      setIsIntersecting(true);
+      if (triggerOnce) {
+        setHasTriggered(true);
+      }
     }
 
     // בדיקה אם IntersectionObserver נתמך

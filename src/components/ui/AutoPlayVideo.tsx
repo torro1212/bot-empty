@@ -48,193 +48,161 @@ export const AutoPlayVideo = ({
   onPause,
 }: AutoPlayVideoProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [hasUserInteracted, setHasUserInteracted] = useState(false);
-  const [canAutoPlay, setCanAutoPlay] = useState(true);
-  const [showPlayButton, setShowPlayButton] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
+  const [showPlayButton, setShowPlayButton] = useState(false);
   const [hasAttemptedPlay, setHasAttemptedPlay] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   
   const { targetRef, isIntersecting } = useIntersectionObserver({
-    threshold: 0.1,
-    rootMargin: '100px',
+    threshold: 0.01, // סף נמוך מאוד
+    rootMargin: '300px', // מרחק גדול מאוד
     triggerOnce: false
   });
 
-  // בדיקת תמיכה ב-autoplay בעת טעינה
-  useEffect(() => {
-    testAutoplaySupport().then((supported) => {
-      if (!supported) {
-        setCanAutoPlay(false);
-        setShowPlayButton(true);
-      }
-    });
-  }, []);
-
-  // בדיקה אם המשתמש אי פעם לחץ על המסמך
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      console.log('👤 משתמש אינטראקט עם הדף - מאפשר autoplay');
-      setHasUserInteracted(true);
-      setCanAutoPlay(true);
-      globalAutoplayAllowed = true;
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('keydown', handleUserInteraction);
-    };
-
-    document.addEventListener('click', handleUserInteraction);
-    document.addEventListener('touchstart', handleUserInteraction);
-    document.addEventListener('keydown', handleUserInteraction);
-
-    return () => {
-      document.removeEventListener('click', handleUserInteraction);
-      document.removeEventListener('touchstart', handleUserInteraction);
-      document.removeEventListener('keydown', handleUserInteraction);
-    };
-  }, []);
-
-  const attemptAutoPlay = useCallback(async () => {
+  // פונקציה אגרסיבית לניגון
+  const forcePlay = useCallback(async (reason = '') => {
     const video = videoRef.current;
-    if (!video || hasAttemptedPlay || !canAutoPlay) return;
-
-    setHasAttemptedPlay(true);
-    console.log('🎬 מנסה לנגן וידאו באופן אוטומטי:', src);
+    if (!video) return false;
 
     try {
-      // רק אם הוידאו לא מתנגן כבר
-      if (video.paused) {
-        await video.play();
-        console.log('✅ וידאו התחיל להתנגן אוטומטית:', src);
-        setIsPlaying(true);
-        setShowPlayButton(false);
-        onPlay?.();
-      }
-    } catch (error: any) {
-      console.log('❌ נכשל לנגן וידאו אוטומטית:', src, error.message);
+      // הגדרות אגרסיביות לautoplay
+      video.muted = true;
+      video.volume = 0;
+      video.defaultMuted = true;
       
-      // אם זה NotAllowedError (autoplay policy), נציג כפתור play
-      if (error.name === 'NotAllowedError') {
-        console.log('🚫 Autoplay חסום על ידי הדפדפן עבור:', src);
-        setCanAutoPlay(false);
-        setShowPlayButton(true);
-        globalAutoplayAllowed = false;
-      } else if (retryCount < 3) {
-        // נסה שוב אחרי זמן קצר (לא עבור NotAllowedError)
-        console.log(`🔄 מנסה שוב (נסיון ${retryCount + 1}/3)...`);
-        setTimeout(() => {
-          setRetryCount(prev => prev + 1);
-          setHasAttemptedPlay(false);
-        }, 1000 + (retryCount * 500));
-      } else {
-        console.log('💔 נכשל לנגן אחרי 3 נסיונות - מציג כפתור ידני');
-        setShowPlayButton(true);
-      }
+      console.log(`🚀 מנסה לנגן וידאו ${reason}:`, src);
+      
+      await video.play();
+      console.log('✅ וידאו מתנגן!', src);
+      setIsPlaying(true);
+      setShowPlayButton(false);
+      onPlay?.();
+      return true;
+    } catch (error: any) {
+      console.log('❌ נכשל לנגן:', error.message);
+      setShowPlayButton(true);
+      return false;
     }
-  }, [src, hasAttemptedPlay, retryCount, canAutoPlay, onPlay]);
+  }, [src, onPlay]);
 
-  // מאזיני אירועים לוידאו
+  // מיד כשהרכיב נטען - נסה לנגן
+  useEffect(() => {
+    setIsMounted(true);
+    
+    // נסה לנגן מיד כשהרכיב נטען
+    const immediatePlayAttempt = async () => {
+      if (!hasAttemptedPlay) {
+        setHasAttemptedPlay(true);
+        console.log('🎯 נסיון ניגון מיידי כשהרכיב נטען');
+        await forcePlay('מיד כשנטען');
+      }
+    };
+
+    const timer = setTimeout(immediatePlayAttempt, 100);
+    return () => clearTimeout(timer);
+  }, [forcePlay, hasAttemptedPlay]);
+
+  // טיפול באירועי וידאו
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
+    const handleLoadStart = () => {
+      console.log('🔄 וידאו מתחיל לטעון:', src);
+    };
+
+    const handleLoadedMetadata = async () => {
+      console.log('📹 מטא-דאטה נטענה:', src);
+      if (isMounted && !isPlaying) {
+        await forcePlay('metadata נטענה');
+      }
+    };
+
+    const handleCanPlay = async () => {
+      console.log('🎥 וידאו מוכן לניגון:', src);
+      if (isMounted && !isPlaying) {
+        await forcePlay('canplay אירוע');
+      }
+    };
+
+    const handleCanPlayThrough = async () => {
+      console.log('🎬 וידאו מוכן לניגון מלא:', src);
+      if (isMounted && !isPlaying) {
+        await forcePlay('canplaythrough אירוע');
+      }
+    };
+
     const handlePlay = () => {
-      console.log('🎬 וידאו התחיל להתנגן:', src);
+      console.log('✨ וידאו מתנגן:', src);
       setIsPlaying(true);
       setShowPlayButton(false);
       onPlay?.();
     };
 
     const handlePause = () => {
-      console.log('⏸️ וידאו הושהה:', src);
+      console.log('⏸️ וידאו מושהה:', src);
       setIsPlaying(false);
       onPause?.();
     };
 
-    const handleLoadedData = () => {
-      console.log('📹 וידאו נטען ומוכן לניגון:', src);
-      // רק אם בview ועדיין לא ניסינו לנגן
-      if (isIntersecting && !hasAttemptedPlay && canAutoPlay) {
-        setTimeout(attemptAutoPlay, 200);
-      }
-    };
-
-    const handleCanPlay = () => {
-      console.log('🎥 וידאו יכול להתנגן:', src);
-      if (isIntersecting && !hasAttemptedPlay && canAutoPlay) {
-        setTimeout(attemptAutoPlay, 100);
-      }
-    };
-
-    const handleError = (e: Event) => {
-      console.error('❌ שגיאה בטעינת וידאו:', src, e);
+    const handleError = () => {
+      console.error('❌ שגיאה בוידאו:', src);
       setShowPlayButton(true);
     };
 
-    const handleWaiting = () => {
-      console.log('⏳ וידאו מחכה לטעינה:', src);
-    };
-
+    // הוסף event listeners
+    video.addEventListener('loadstart', handleLoadStart);
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('canplaythrough', handleCanPlayThrough);
     video.addEventListener('play', handlePlay);
     video.addEventListener('pause', handlePause);
-    video.addEventListener('loadeddata', handleLoadedData);
-    video.addEventListener('canplay', handleCanPlay);
     video.addEventListener('error', handleError);
-    video.addEventListener('waiting', handleWaiting);
+
+    // אם הוידאו כבר מוכן, נסה לנגן מיד
+    if (video.readyState >= 1 && isMounted && !isPlaying) {
+      console.log('🎯 וידאו כבר מוכן - מנגן מיד');
+      forcePlay('וידאו כבר מוכן');
+    }
 
     return () => {
+      video.removeEventListener('loadstart', handleLoadStart);
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('canplaythrough', handleCanPlayThrough);
       video.removeEventListener('play', handlePlay);
       video.removeEventListener('pause', handlePause);
-      video.removeEventListener('loadeddata', handleLoadedData);
-      video.removeEventListener('canplay', handleCanPlay);
       video.removeEventListener('error', handleError);
-      video.removeEventListener('waiting', handleWaiting);
     };
-  }, [isIntersecting, hasAttemptedPlay, attemptAutoPlay, src, canAutoPlay, onPlay, onPause]);
+  }, [src, isMounted, isPlaying, forcePlay, onPlay, onPause]);
 
-  // מעקב אחרי intersection
+  // מעקב אחרי intersection - רק להשהיה כשיוצא מהמסך
   useEffect(() => {
-    if (isIntersecting && !hasAttemptedPlay && videoRef.current && canAutoPlay) {
-      console.log('🔍 וידאו נכנס לתצוגה:', src, 'ReadyState:', videoRef.current.readyState);
-      // נסה לנגן אם הוידאו מוכן
-      if (videoRef.current.readyState >= 2) {
-        attemptAutoPlay();
-      }
-    } else if (!isIntersecting && isPlaying && videoRef.current) {
-      console.log('🔍 וידאו יצא מהתצוגה - מושהה:', src);
-      videoRef.current.pause();
-    }
-  }, [isIntersecting, hasAttemptedPlay, isPlaying, attemptAutoPlay, src, canAutoPlay]);
-
-  // איפוס כשהוידאו משתנה
-  useEffect(() => {
-    console.log('🔄 איפוס וידאו חדש:', src);
-    setHasAttemptedPlay(false);
-    setRetryCount(0);
-    setIsPlaying(false);
-    if (!hasUserInteracted && globalAutoplayAllowed === false) {
-      setShowPlayButton(true);
-    } else {
-      setShowPlayButton(false);
-    }
-  }, [src, hasUserInteracted]);
-
-  const handleManualPlay = async () => {
     const video = videoRef.current;
     if (!video) return;
 
-    console.log('👆 לחיצה ידנית לניגון וידאו:', src);
-    
-    try {
-      await video.play();
-      setHasUserInteracted(true);
-      setCanAutoPlay(true);
-      setShowPlayButton(false);
+    if (isIntersecting && !isPlaying && isMounted) {
+      console.log('🔍 וידאו נכנס לתצוגה - מנסה לנגן:', src);
+      forcePlay('נכנס לתצוגה');
+    } else if (!isIntersecting && isPlaying) {
+      console.log('🔍 וידאו יצא מהתצוגה - מושהה:', src);
+      video.pause();
+    }
+  }, [isIntersecting, isPlaying, isMounted, forcePlay, src]);
+
+  // איפוס כשהוידאו משתנה
+  useEffect(() => {
+    console.log('🔄 וידאו חדש נטען:', src);
+    setHasAttemptedPlay(false);
+    setIsPlaying(false);
+    setShowPlayButton(false);
+  }, [src]);
+
+  const handleManualPlay = async () => {
+    console.log('👆 לחיצה ידנית:', src);
+    const success = await forcePlay('לחיצה ידנית');
+    if (success) {
       setHasAttemptedPlay(true);
-      globalAutoplayAllowed = true;
-      console.log('✅ וידאו התחיל להתנגן באופן ידני:', src);
-    } catch (error) {
-      console.error('❌ נכשל לנגן וידאו ידנית:', error);
     }
   };
 
@@ -247,13 +215,15 @@ export const AutoPlayVideo = ({
         ref={videoRef}
         src={src}
         controls={controls}
-        muted={muted}
+        muted={true}
         loop={loop}
         style={style}
         className="w-full h-auto"
-        preload="metadata"
+        preload="auto"
         playsInline
-        autoPlay={false}
+        autoPlay={true}
+        webkit-playsinline="true"
+        onLoadStart={() => console.log('🔄 וידאו מתחיל לטעון (HTML):', src)}
       />
       {showPlayButton && (
         <div 
