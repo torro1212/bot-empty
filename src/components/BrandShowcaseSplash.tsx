@@ -120,7 +120,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
           <div className="absolute inset-0">
             {brands.map((brand, index) => {
               const baseAngle = (index * 360) / brands.length - 90; // התחלה מלמעלה
-              const radius = 280; // מרחק מושלם
+              const radius = window.innerWidth < 768 ? 180 : 280; // מרחק מותאם למובייל
               
               // מספור הלוגואים (לא נראה בדף):
               // 1 = ZARA (למעלה באמצע)
@@ -135,7 +135,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
               return (
                 <motion.div
                   key={`brand-${brand.name}`}
-                  className="absolute w-24 h-24 bg-white/30 backdrop-blur-md rounded-2xl flex items-center justify-center p-2 border-2 border-white/60 shadow-2xl"
+                  className="absolute w-16 h-16 md:w-24 md:h-24 bg-white/30 backdrop-blur-md rounded-2xl flex items-center justify-center p-1 md:p-2 border-2 border-white/60 shadow-2xl"
                   style={{
                     left: '48%',
                     top: '43%',
@@ -193,8 +193,8 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
                 className="absolute inset-0 rounded-full"
                 style={{
                   background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 40%, transparent 70%)',
-                  width: '300px',
-                  height: '300px',
+                  width: window.innerWidth < 768 ? '200px' : '300px',
+                  height: window.innerWidth < 768 ? '200px' : '300px',
                   left: '50%',
                   top: '50%',
                   transform: 'translate(-50%, -50%)',
@@ -207,7 +207,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
               />
               
               <motion.h1
-                className="text-6xl font-bold text-white mb-4 relative z-10"
+                className="text-4xl md:text-6xl font-bold text-white mb-2 md:mb-4 relative z-10"
                 style={{
                   background: 'linear-gradient(45deg, #ffffff, #fff8dc, #ffffff)',
                   WebkitBackgroundClip: 'text',
@@ -241,7 +241,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
               />
               
               <motion.h2
-                className="text-3xl font-bold text-white mb-3"
+                className="text-2xl md:text-3xl font-bold text-white mb-2 md:mb-3"
                 animate={{
                   opacity: [0.8, 1, 0.8],
                 }}
@@ -251,7 +251,7 @@ const BrandShowcaseSplash: React.FC<BrandShowcaseSplashProps> = ({ onComplete })
               </motion.h2>
               
               <motion.p
-                className="text-lg text-white/90 mb-6 font-light"
+                className="text-sm md:text-lg text-white/90 mb-4 md:mb-6 font-light px-4 md:px-0"
                 animate={{ opacity: [0.7, 1, 0.7] }}
                 transition={{ duration: 3, repeat: Infinity }}
               >
