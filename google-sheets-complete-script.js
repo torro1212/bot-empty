@@ -4,8 +4,8 @@
  */
 
 // הגדרות בסיסיות - עם ה-ID הנכון שלך!
-const SHEET_NAME = 'BOTEX Analytics';
-const SPREADSHEET_ID = '1IIMYXIfPbURrbVrJbZNWbLqx42WXeL5lJq8vg8Q9bWs';
+const SHEET_NAME = 'BOTEX Analytics Dashboard';
+const SPREADSHEET_ID = '1VTuFkUeiPjZ1HtdDg-47cVmpcw-lZvxWTaxg50DFdO4';
 
 /**
  * פונקציה ראשית - מטפלת בבקשות POST מהאתר
