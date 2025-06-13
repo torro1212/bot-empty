@@ -7,6 +7,9 @@
 const SHEET_NAME = 'BOTEX Analytics Dashboard';
 const SPREADSHEET_ID = '1VTuFkUeiPjZ1HtdDg-47cVmpcw-lZvxWTaxg50DFdO4';
 
+// URL של יישום האינטרנט המפורס
+const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB96_qnlAetIyNLILmaX_uKcMQozpbP23fSvQZo7Yy92y-nyAoEtwCg10xA/exec';
+
 /**
  * פונקציה ראשית - מטפלת בבקשות POST מהאתר
  */
@@ -498,4 +501,84 @@ function cleanOldData(daysToKeep = 90) {
       timestamp: new Date().toISOString()
     };
   }
+}
+
+/**
+ * פונקציה שמחזירה את ה-URL של היישום
+ */
+function getWebAppUrl() {
+  return WEBAPP_URL;
+}
+
+/**
+ * פונקציה שיוצרת היפר-קישור בגיליון לכתובת היישום
+ */
+function addUrlToSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getActiveSheet();
+  
+  // הוספת הכותרת וה-URL לגיליון
+  sheet.getRange("A1").setValue("קישור ליישום האינטרנט:");
+  sheet.getRange("B1").setValue(WEBAPP_URL);
+  sheet.getRange("B1").setFormula('=HYPERLINK("' + WEBAPP_URL + '", "לחץ כאן לפתיחת היישום")');
+}
+
+/**
+ * פונקציה שמוודאת שה-URL תמיד שמור בגיליון
+ * רצה בכל פעם שהגיליון נפתח
+ */
+function ensureUrlAlwaysPresent() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getActiveSheet();
+  
+  // בדיקה אם ה-URL כבר קיים בגיליון
+  const a1Value = sheet.getRange("A1").getValue();
+  
+  // אם התא ריק או לא מכיל את הכותרת הנכונה, הוסף את ה-URL
+  if (a1Value === "" || a1Value !== "קישור ליישום האינטרנט:") {
+    addUrlToSheet();
+  }
+  
+  // שמירת הגיליון
+  SpreadsheetApp.flush();
+}
+
+/**
+ * פונקציה שיוצרת תפריט מותאם אישית בגיליון
+ * ומפעילה את הפונקציה שמוודאת שה-URL קיים
+ */
+function onOpen() {
+  // יצירת תפריט מותאם אישית
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('כלים מותאמים אישית')
+    .addItem('הוסף קישור ליישום', 'addUrlToSheet')
+    .addToUi();
+  
+  // הפעלת הפונקציה שמוודאת שה-URL תמיד שמור בגיליון
+  ensureUrlAlwaysPresent();
+}
+
+/**
+ * פונקציה שרצה באופן אוטומטי בכל שעה כדי לוודא שה-URL תמיד שמור
+ */
+function createTimeDrivenTrigger() {
+  // מחיקת טריגרים קיימים כדי למנוע כפילויות
+  const triggers = ScriptApp.getProjectTriggers();
+  for (let i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === 'ensureUrlAlwaysPresent') {
+      ScriptApp.deleteTrigger(triggers[i]);
+    }
+  }
+  
+  // יצירת טריגר חדש שרץ כל שעה
+  ScriptApp.newTrigger('ensureUrlAlwaysPresent')
+    .timeBased()
+    .everyHours(1)
+    .create();
+}
+
+// הפעלת יצירת הטריגר בפעם הראשונה שהסקריפט רץ
+function initialize() {
+  createTimeDrivenTrigger();
+  ensureUrlAlwaysPresent();
 } 
