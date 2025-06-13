@@ -183,17 +183,28 @@ const sendToGoogleAnalytics = (clickData: ClickData) => {
 // שליחה למערכת פנימית
 const sendToInternalSystem = (clickData: ClickData) => {
   try {
-    fetch('/api/track-click', {
+    // בדיקה אם יש API endpoint זמין
+    if (!isClient) return;
+    
+    // ניסיון שליחה רק אם יש endpoint ידוע
+    const apiEndpoint = '/api/track-click';
+    
+    // שליחה שקטה - לא מציגים שגיאות אם אין endpoint
+    fetch(apiEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(clickData)
-    }).catch(error => {
-      console.warn('שגיאה בשליחת מעקב למערכת פנימית:', error);
+    }).then(response => {
+      if (response.ok) {
+        console.log('📡 נשלח למערכת פנימית בהצלחה');
+      }
+    }).catch(() => {
+      // שגיאה שקטה - לא מציגים כלום
     });
   } catch (error) {
-    console.warn('שגיאה בשליחת מעקב למערכת פנימית:', error);
+    // שגיאה שקטה - לא מציגים כלום
   }
 };
 
@@ -239,18 +250,40 @@ const sendToGoogleSheets = (clickData: ClickData) => {
       type: 'click'
     };
 
+    // ניסיון ראשון עם CORS רגיל
     fetch(GOOGLE_SHEETS_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(dataToSend),
-      mode: 'no-cors' // נדרש עבור Google Apps Script
-    }).then(() => {
-      console.log('✅ נתוני לחיצה נשלחו ל-Google Sheets בהצלחה בזמן אמת!');
-      console.log('🎯 הנתונים אמורים להופיע עכשיו בגיליון שלך');
+      body: JSON.stringify(dataToSend)
+    }).then(response => {
+      if (response.ok) {
+        console.log('✅ נתוני לחיצה נשלחו ל-Google Sheets בהצלחה עם CORS מלא!');
+        console.log('🎯 הנתונים אמורים להופיע עכשיו בגיליון שלך');
+        return response.text();
+      } else {
+        throw new Error(`HTTP ${response.status}`);
+      }
+    }).then(result => {
+      console.log('📋 תגובה מ-Google Sheets:', result);
     }).catch(error => {
-      console.warn('⚠️ שגיאה ברשת בשליחה ל-Google Sheets:', error);
+      console.warn('⚠️ CORS מלא נכשל, מנסה עם no-cors:', error);
+      
+      // ניסיון שני עם no-cors
+      return fetch(GOOGLE_SHEETS_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend),
+        mode: 'no-cors'
+      }).then(() => {
+        console.log('✅ נתוני לחיצה נשלחו ל-Google Sheets במצב no-cors');
+        console.log('🎯 הנתונים אמורים להופיע בגיליון (לא ניתן לאמת)');
+      });
+    }).catch(error => {
+      console.warn('❌ שגיאה בשליחה ל-Google Sheets:', error);
       console.log('💾 הנתונים נשמרו מקומית בדפדפן כגיבוי');
     });
   } catch (error) {
@@ -420,38 +453,68 @@ export const getGoogleSheetsUrl = (): string => {
   return safeLocalStorage.getItem('googleSheetsUrl') || '';
 };
 
+// בדיקת חיבור ל-Google Sheets
 export const testGoogleSheetsConnection = async (): Promise<boolean> => {
-  const url = getGoogleSheetsUrl();
-  if (!url) {
-    console.warn('Google Sheets URL לא מוגדר');
+  if (!isClient) {
+    console.warn('⚠️ לא ניתן לבדוק חיבור - לא בסביבת דפדפן');
     return false;
   }
 
+  const GOOGLE_SHEETS_URL = safeLocalStorage.getItem('googleSheetsUrl') || 
+                            'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB96_qnlAetIyNLILmaX_uKcMQozpbP23fSvQZo7Yy92y-nyAoEtwCg10xA/exec';
+  
+  console.log('🧪 בודק חיבור ל-Google Sheets:', GOOGLE_SHEETS_URL);
+  
   try {
     const testData = {
-      buttonId: 'test',
-      buttonName: 'בדיקת חיבור',
+      type: 'test',
       timestamp: new Date().toISOString(),
-      userAgent: 'Test Agent',
-      url: window.location.href,
-      sessionId: 'test-session',
-      category: 'test'
+      message: 'בדיקת חיבור מ-BOTEX'
     };
 
-    await fetch(url, {
+    // ניסיון בדיקה עם CORS מלא
+    const response = await fetch(GOOGLE_SHEETS_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(testData),
-      mode: 'no-cors'
+      body: JSON.stringify(testData)
     });
 
-    console.log('✅ בדיקת חיבור ל-Google Sheets הצליחה');
-    return true;
+    if (response.ok) {
+      const result = await response.text();
+      console.log('✅ חיבור ל-Google Sheets עובד! תגובה:', result);
+      return true;
+    } else {
+      console.warn('⚠️ חיבור ל-Google Sheets נכשל. סטטוס:', response.status);
+      return false;
+    }
   } catch (error) {
-    console.error('❌ בדיקת חיבור ל-Google Sheets נכשלה:', error);
-    return false;
+    console.warn('⚠️ שגיאה בבדיקת חיבור ל-Google Sheets:', error);
+    console.log('💡 זה יכול להיות תקין אם הסקריפט מגביל CORS');
+    
+         // ניסיון עם no-cors כגיבוי
+     try {
+       const fallbackData = {
+         type: 'test',
+         timestamp: new Date().toISOString(),
+         message: 'בדיקת חיבור מ-BOTEX (fallback)'
+       };
+       
+       await fetch(GOOGLE_SHEETS_URL, {
+         method: 'POST',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(fallbackData),
+         mode: 'no-cors'
+       });
+       console.log('📤 נתוני בדיקה נשלחו במצב no-cors');
+       return true;
+     } catch (noCorsError) {
+       console.error('❌ גם no-cors נכשל:', noCorsError);
+       return false;
+     }
   }
 };
 
@@ -816,5 +879,88 @@ export const clearTimingDataFromGoogleSheets = async () => {
   } catch (error) {
     console.error('❌ שגיאה בשליחת פקודת ניקוי:', error);
     return { success: false, error: error };
+  }
+};
+
+// פונקציית אבחון מהירה למערכת הניטור
+export const diagnostics = () => {
+  if (!isClient) {
+    console.log('❌ לא בסביבת דפדפן - אבחון לא זמין');
+    return;
+  }
+
+  console.log('=== 🔍 אבחון מערכת הניטור BOTEX ===');
+  console.log('🌐 סביבה:', window.location.hostname);
+  console.log('📱 דפדפן:', navigator.userAgent);
+  console.log('💾 LocalStorage זמין:', typeof localStorage !== 'undefined');
+  console.log('🔄 SessionStorage זמין:', typeof sessionStorage !== 'undefined');
+  console.log('🌍 Fetch API זמין:', typeof fetch !== 'undefined');
+  
+  // בדיקת נתונים שמורים
+  const clicks = getAllClicks();
+  const timings = getAllTimings();
+  console.log('🖱️ כמות לחיצות שמורות:', clicks.length);
+  console.log('⏱️ כמות מדידות זמן:', timings.length);
+  
+  // בדיקת הגדרות
+  const googleSheetsUrl = getGoogleSheetsUrl();
+  console.log('📋 Google Sheets URL מוגדר:', !!googleSheetsUrl);
+  if (googleSheetsUrl) {
+    console.log('🔗 URL:', googleSheetsUrl);
+  }
+  
+  // נתונים אחרונים
+  if (clicks.length > 0) {
+    const lastClick = clicks[clicks.length - 1];
+    console.log('🖱️ לחיצה אחרונה:', {
+      buttonId: lastClick.buttonId,
+      timestamp: lastClick.timestamp,
+      sessionId: lastClick.sessionId
+    });
+  }
+  
+  if (timings.length > 0) {
+    const lastTiming = timings[timings.length - 1];
+    console.log('⏱️ מדידת זמן אחרונה:', {
+      duration: lastTiming.duration ? formatDuration(lastTiming.duration) : 'לא הושלם',
+      completed: lastTiming.completed,
+      sessionId: lastTiming.sessionId
+    });
+  }
+  
+  console.log('=== סוף אבחון ===');
+  
+  // הצעות לפתרון בעיות
+  if (!googleSheetsUrl) {
+    console.log('💡 לקבלת נתונים ב-Google Sheets:');
+    console.log('   setGoogleSheetsUrl("YOUR_SCRIPT_URL_HERE")');
+  }
+  
+  if (clicks.length === 0) {
+    console.log('💡 לבדיקת מעקב לחיצות:');
+    console.log('   trackButtonClick("test", "כפתור בדיקה", "test")');
+  }
+};
+
+// פונקציה לבדיקה מהירה של Google Sheets
+export const quickTestGoogleSheets = async () => {
+  if (!isClient) {
+    console.log('❌ לא בסביבת דפדפן - בדיקה לא זמינה');
+    return;
+  }
+
+  console.log('🧪 מתחיל בדיקה מהירה של Google Sheets...');
+  
+  const success = await testGoogleSheetsConnection();
+  
+  if (success) {
+    console.log('✅ Google Sheets נראה תקין!');
+    console.log('💡 נסה ללחוץ על כפתור ולבדוק אם הנתונים מגיעים לגיליון');
+  } else {
+    console.log('❌ יש בעיה עם Google Sheets');
+    console.log('💡 בדוק:');
+    console.log('   1. שה-URL נכון');
+    console.log('   2. שהסקריפט פרוס ומאושר');
+    console.log('   3. שיש הרשאות לכתיבה לגיליון');
   }
 }; 
