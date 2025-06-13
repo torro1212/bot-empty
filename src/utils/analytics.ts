@@ -450,7 +450,7 @@ export const setGoogleSheetsUrl = (url: string) => {
 
 export const getGoogleSheetsUrl = (): string => {
   if (!isClient) return '';
-  return safeLocalStorage.getItem('googleSheetsUrl') || '';
+  return safeLocalStorage.getItem('googleSheetsUrl') || 'https://script.google.com/macros/s/AKfycbzrTnt25P3HSbL5-QE9a6STzJq4Yt_OQ3txeGNPYdDFelvNSYSztsvAQfAmqi4Brk-3/exec';
 };
 
 // בדיקת חיבור ל-Google Sheets
