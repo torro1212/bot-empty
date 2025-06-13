@@ -22,6 +22,29 @@ const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB9
 if (typeof window !== 'undefined') {
   setGoogleSheetsUrl(GOOGLE_SHEETS_URL);
   console.log('✅ Google Sheets URL הוגדר:', GOOGLE_SHEETS_URL);
+  console.log('🌐 Environment:', window.location.hostname);
+  
+  // בדיקת חיבור ל-Google Sheets
+  fetch(GOOGLE_SHEETS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      buttonId: 'test-connection',
+      buttonName: 'בדיקת חיבור',
+      timestamp: new Date().toISOString(),
+      category: 'system-test',
+      sessionId: 'test-session-' + Date.now(),
+      userAgent: navigator.userAgent,
+      url: window.location.href
+    })
+  }).then(() => {
+    console.log('✅ בדיקת חיבור ל-Google Sheets הושלמה');
+  }).catch(error => {
+    console.warn('⚠️ שגיאה בבדיקת חיבור:', error);
+  });
 }
 
 // Add global keyframe animations

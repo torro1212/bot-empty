@@ -162,9 +162,10 @@ const sendToGoogleSheets = (clickData: ClickData) => {
     }
 
     // URL של ה-Google Apps Script Web App
-    const GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || '';
+    const GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || 
+                              'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB96_qnlAetIyNLILmaX_uKcMQozpbP23fSvQZo7Yy92y-nyAoEtwCg10xA/exec';
     
-    if (!GOOGLE_SHEETS_URL) {
+    if (!GOOGLE_SHEETS_URL || GOOGLE_SHEETS_URL === '') {
       console.warn('⚠️ Google Sheets URL לא מוגדר עבור לחיצות');
       console.log('💡 להפעלת שליחה בזמן אמת:');
       console.log('   1. פתח את דשבורד האנליטיקס');
@@ -216,9 +217,10 @@ const sendTimingToGoogleSheets = (timing: SessionTiming) => {
     }
 
     // URL של ה-Google Apps Script Web App
-    const GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || '';
+    const GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || 
+                              'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB96_qnlAetIyNLILmaX_uKcMQozpbP23fSvQZo7Yy92y-nyAoEtwCg10xA/exec';
     
-    if (!GOOGLE_SHEETS_URL) {
+    if (!GOOGLE_SHEETS_URL || GOOGLE_SHEETS_URL === '') {
       console.warn('⚠️ Google Sheets URL לא מוגדר עבור זמנים');
       console.log('💡 להפעלת שליחה בזמן אמת:');
       console.log('   1. פתח את דשבורד האנליטיקס');
@@ -349,11 +351,13 @@ export const exportClickData = () => {
 // פונקציות Google Sheets
 export const setGoogleSheetsUrl = (url: string) => {
   localStorage.setItem('googleSheetsUrl', url);
-  console.log('Google Sheets URL הוגדר בהצלחה');
+  console.log('✅ Google Sheets URL הוגדר בהצלחה:', url);
+  console.log('🌐 Environment:', typeof window !== 'undefined' ? window.location.hostname : 'Server');
 };
 
 export const getGoogleSheetsUrl = (): string => {
-  return localStorage.getItem('googleSheetsUrl') || '';
+  return localStorage.getItem('googleSheetsUrl') || 
+         'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB96_qnlAetIyNLILmaX_uKcMQozpbP23fSvQZo7Yy92y-nyAoEtwCg10xA/exec';
 };
 
 export const testGoogleSheetsConnection = async (): Promise<boolean> => {
