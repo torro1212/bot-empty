@@ -14,14 +14,53 @@ export interface ClickData {
   additionalData?: Record<string, any>;
 }
 
+// בדיקה אם אנחנו בצד הלקוח (בדפדפן)
+const isClient = typeof window !== 'undefined';
+
+// פונקציה לבדיקה בטוחה של localStorage
+const safeLocalStorage = {
+  getItem: (key: string): string | null => {
+    if (!isClient) return null;
+    try {
+      return localStorage.getItem(key);
+    } catch (error) {
+      console.warn('⚠️ שגיאה בגישה ל-localStorage:', error);
+      return null;
+    }
+  },
+  setItem: (key: string, value: string): void => {
+    if (!isClient) return;
+    try {
+      localStorage.setItem(key, value);
+    } catch (error) {
+      console.warn('⚠️ שגיאה בשמירה ל-localStorage:', error);
+    }
+  },
+  removeItem: (key: string): void => {
+    if (!isClient) return;
+    try {
+      localStorage.removeItem(key);
+    } catch (error) {
+      console.warn('⚠️ שגיאה בהסרה מ-localStorage:', error);
+    }
+  }
+};
+
 // יצירת session ID אם לא קיים
 const getOrCreateSessionId = (): string => {
-  let sessionId = sessionStorage.getItem('sessionId');
-  if (!sessionId) {
-    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    sessionStorage.setItem('sessionId', sessionId);
+  if (!isClient) {
+    // אם אנחנו לא בדפדפן, ניצור מזהה זמני
+    return `temp_session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
-  return sessionId;
+  
+  const existingSessionId = safeLocalStorage.getItem('currentSessionId');
+  if (existingSessionId) {
+    return existingSessionId;
+  }
+  
+  const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  safeLocalStorage.setItem('currentSessionId', newSessionId);
+  return newSessionId;
 };
 
 // פונקציה למעקב אחר לחיצות כפתורים
@@ -35,12 +74,12 @@ export const trackButtonClick = (
   
   try {
     // הגנה מפני שגיאות DOM ו-Runtime
-    if (typeof window === 'undefined' || typeof document === 'undefined') {
-      console.warn('⚠️ Window או Document לא זמינים - מדלג על מעקב');
+    if (!isClient) {
+      console.warn('⚠️ לא ניתן לרשום לחיצה - לא בסביבת דפדפן');
       return null;
     }
     
-    console.log('✅ Window ו-Document זמינים');
+    console.log('✅ רישום לחיצה בסביבת דפדפן');
 
     const clickData: ClickData = {
       buttonId,
@@ -103,18 +142,24 @@ export const trackButtonClick = (
 
 // שמירה ב-localStorage
 const saveClickToLocalStorage = (clickData: ClickData) => {
+  if (!isClient) {
+    console.log('⚠️ לא ניתן לשמור נתונים - לא בסביבת דפדפן');
+    return;
+  }
+  
   try {
-    const existingClicks = JSON.parse(localStorage.getItem('buttonClicks') || '[]');
-    existingClicks.push(clickData);
+    const existingClicks = JSON.parse(safeLocalStorage.getItem('buttonClicks') || '[]');
+    const updatedClicks = [...existingClicks, clickData];
     
-    // שמירה של רק 1000 הלחיצות האחרונות כדי לא למלא את הזיכרון
-    if (existingClicks.length > 1000) {
-      existingClicks.splice(0, existingClicks.length - 1000);
+    // שמירת עד 1000 לחיצות אחרונות
+    if (updatedClicks.length > 1000) {
+      updatedClicks.splice(0, updatedClicks.length - 1000);
     }
     
-    localStorage.setItem('buttonClicks', JSON.stringify(existingClicks));
+    safeLocalStorage.setItem('buttonClicks', JSON.stringify(updatedClicks));
+    console.log('💾 הלחיצה נשמרה ב-localStorage');
   } catch (error) {
-    console.warn('שגיאה בשמירת לחיצה ב-localStorage:', error);
+    console.warn('⚠️ שגיאה בשמירת לחיצה ב-localStorage:', error);
   }
 };
 
@@ -155,6 +200,12 @@ const sendToInternalSystem = (clickData: ClickData) => {
 // שליחה ל-Google Sheets
 const sendToGoogleSheets = (clickData: ClickData) => {
   try {
+    // בדיקה שאנחנו בסביבת דפדפן
+    if (!isClient) {
+      console.warn('⚠️ לא ניתן לשלוח ל-Google Sheets - לא בסביבת דפדפן');
+      return;
+    }
+
     // בדיקה שיש לנו fetch API
     if (typeof fetch === 'undefined') {
       console.warn('⚠️ Fetch API לא זמין - מדלג על שליחה ל-Google Sheets');
@@ -162,7 +213,7 @@ const sendToGoogleSheets = (clickData: ClickData) => {
     }
 
     // URL של ה-Google Apps Script Web App
-    const GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || 
+    const GOOGLE_SHEETS_URL = safeLocalStorage.getItem('googleSheetsUrl') || 
                               'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB96_qnlAetIyNLILmaX_uKcMQozpbP23fSvQZo7Yy92y-nyAoEtwCg10xA/exec';
     
     if (!GOOGLE_SHEETS_URL || GOOGLE_SHEETS_URL === '') {
@@ -210,6 +261,12 @@ const sendToGoogleSheets = (clickData: ClickData) => {
 // שליחת נתוני זמן ל-Google Sheets
 const sendTimingToGoogleSheets = (timing: SessionTiming) => {
   try {
+    // בדיקה שאנחנו בסביבת דפדפן
+    if (!isClient) {
+      console.warn('⚠️ לא ניתן לשלוח ל-Google Sheets - לא בסביבת דפדפן');
+      return;
+    }
+
     // בדיקה שיש לנו fetch API
     if (typeof fetch === 'undefined') {
       console.warn('⚠️ Fetch API לא זמין - מדלג על שליחה ל-Google Sheets');
@@ -217,7 +274,7 @@ const sendTimingToGoogleSheets = (timing: SessionTiming) => {
     }
 
     // URL של ה-Google Apps Script Web App
-    const GOOGLE_SHEETS_URL = localStorage.getItem('googleSheetsUrl') || 
+    const GOOGLE_SHEETS_URL = safeLocalStorage.getItem('googleSheetsUrl') || 
                               'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB96_qnlAetIyNLILmaX_uKcMQozpbP23fSvQZo7Yy92y-nyAoEtwCg10xA/exec';
     
     if (!GOOGLE_SHEETS_URL || GOOGLE_SHEETS_URL === '') {
@@ -278,8 +335,9 @@ const sendTimingToGoogleSheets = (timing: SessionTiming) => {
 
 // פונקציה לקבלת כל הלחיצות מ-localStorage
 export const getAllClicks = (): ClickData[] => {
+  if (!isClient) return [];
   try {
-    return JSON.parse(localStorage.getItem('buttonClicks') || '[]');
+    return JSON.parse(safeLocalStorage.getItem('buttonClicks') || '[]');
   } catch (error) {
     console.warn('שגיאה בקריאת לחיצות מ-localStorage:', error);
     return [];
@@ -314,8 +372,9 @@ export const getClickStatistics = () => {
 
 // פונקציה לניקוי נתוני מעקב
 export const clearClickData = () => {
+  if (!isClient) return;
   try {
-    localStorage.removeItem('buttonClicks');
+    safeLocalStorage.removeItem('buttonClicks');
     console.log('נתוני מעקב נוקו בהצלחה');
   } catch (error) {
     console.warn('שגיאה בניקוי נתוני מעקב:', error);
@@ -350,14 +409,15 @@ export const exportClickData = () => {
 
 // פונקציות Google Sheets
 export const setGoogleSheetsUrl = (url: string) => {
-  localStorage.setItem('googleSheetsUrl', url);
+  if (!isClient) return;
+  safeLocalStorage.setItem('googleSheetsUrl', url);
   console.log('✅ Google Sheets URL הוגדר בהצלחה:', url);
-  console.log('🌐 Environment:', typeof window !== 'undefined' ? window.location.hostname : 'Server');
+  console.log('🌐 Environment:', isClient ? window.location.hostname : 'Server');
 };
 
 export const getGoogleSheetsUrl = (): string => {
-  return localStorage.getItem('googleSheetsUrl') || 
-         'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB96_qnlAetIyNLILmaX_uKcMQozpbP23fSvQZo7Yy92y-nyAoEtwCg10xA/exec';
+  if (!isClient) return '';
+  return safeLocalStorage.getItem('googleSheetsUrl') || '';
 };
 
 export const testGoogleSheetsConnection = async (): Promise<boolean> => {
@@ -456,9 +516,9 @@ export const startUserTimer = (actionType: 'start_button' | 'wizard_start' = 'st
   console.log('⏱️ התחלת מעקב זמן עבור:', actionType, buttonId);
   
   try {
-    if (typeof window === 'undefined') {
-      console.warn('⚠️ Window לא זמין - מדלג על מעקב זמן');
-      return '';
+    if (!isClient) {
+      console.warn('⚠️ לא ניתן להתחיל מעקב זמן - לא בסביבת דפדפן');
+      return `temp_timer_${Date.now()}`;
     }
 
     const sessionId = getOrCreateSessionId();
@@ -475,7 +535,9 @@ export const startUserTimer = (actionType: 'start_button' | 'wizard_start' = 'st
     };
 
     // שמירה ב-sessionStorage (נמחק כשהכרטיסייה נסגרת)
-    sessionStorage.setItem(`timing_${sessionId}`, JSON.stringify(timing));
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.setItem(`timing_${sessionId}`, JSON.stringify(timing));
+    }
     console.log('✅ מעקב זמן התחיל בזמן אמת עבור סשן:', sessionId);
     console.log('🎯 כשהמשתמש יסיים את התהליך, הזמן יישלח אוטומטית ל-Google Sheets');
     
@@ -491,14 +553,18 @@ export const endUserTimer = (sessionId?: string, actionType: 'solution_complete'
   console.log('🏁 סיום מעקב זמן עבור:', actionType, sessionId);
   
   try {
-    if (typeof window === 'undefined') {
-      console.warn('⚠️ Window לא זמין - מדלג על סיום מעקב');
+    if (!isClient) {
+      console.warn('⚠️ לא ניתן לסיים מעקב זמן - לא בסביבת דפדפן');
       return null;
     }
 
     const currentSessionId = sessionId || getOrCreateSessionId();
     const timingKey = `timing_${currentSessionId}`;
-    const savedTiming = sessionStorage.getItem(timingKey);
+    
+    let savedTiming = null;
+    if (typeof sessionStorage !== 'undefined') {
+      savedTiming = sessionStorage.getItem(timingKey);
+    }
     
     if (!savedTiming) {
       console.warn('⚠️ לא נמצא מעקב זמן עבור סשן:', currentSessionId);
@@ -521,7 +587,9 @@ export const endUserTimer = (sessionId?: string, actionType: 'solution_complete'
     sendTimingToGoogleSheets(timing);
     
     // ניקוי sessionStorage
-    sessionStorage.removeItem(timingKey);
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem(timingKey);
+    }
     
     console.log('✅ מעקב זמן הושלם בהצלחה!', {
       duration: formatDuration(duration),
@@ -541,19 +609,27 @@ export const endUserTimer = (sessionId?: string, actionType: 'solution_complete'
 
 // שמירת מעקב זמן ב-localStorage
 const saveTimingToStorage = (timing: SessionTiming) => {
+  if (!isClient) return;
+  
   try {
-    const existingTimings = JSON.parse(localStorage.getItem('userTimings') || '[]');
-    existingTimings.push(timing);
+    // שמירה ב-localStorage לטווח ארוך
+    const existingTimings = JSON.parse(safeLocalStorage.getItem('userTimings') || '[]');
+    const updatedTimings = [...existingTimings, timing];
     
-    // שמירה של רק 500 המדידות האחרונות
-    if (existingTimings.length > 500) {
-      existingTimings.splice(0, existingTimings.length - 500);
+    // שמירת עד 500 מדידות אחרונות
+    if (updatedTimings.length > 500) {
+      updatedTimings.splice(0, updatedTimings.length - 500);
     }
     
-    localStorage.setItem('userTimings', JSON.stringify(existingTimings));
-    console.log('💾 מעקב זמן נשמר ב-localStorage');
+    safeLocalStorage.setItem('userTimings', JSON.stringify(updatedTimings));
+    console.log('⏱️💾 מדידת זמן נשמרה ב-localStorage');
+    
+    // הסרת המדידה מ-sessionStorage (כיוון שהיא הושלמה)
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.removeItem(`timing_${timing.sessionId}`);
+    }
   } catch (error) {
-    console.warn('⚠️ שגיאה בשמירת מעקב זמן:', error);
+    console.warn('⚠️ שגיאה בשמירת מדידת זמן:', error);
   }
 };
 
@@ -575,10 +651,11 @@ export const formatDuration = (milliseconds: number): string => {
 
 // קבלת כל מדידות הזמן
 export const getAllTimings = (): SessionTiming[] => {
+  if (!isClient) return [];
   try {
-    return JSON.parse(localStorage.getItem('userTimings') || '[]');
+    return JSON.parse(safeLocalStorage.getItem('userTimings') || '[]');
   } catch (error) {
-    console.warn('שגיאה בקריאת מדידות זמן:', error);
+    console.warn('שגיאה בקריאת מדידות זמן מ-localStorage:', error);
     return [];
   }
 };
@@ -635,14 +712,13 @@ export const getTimingStatistics = () => {
 
 // ניקוי נתוני זמן
 export const clearTimingData = () => {
-  localStorage.removeItem('userTimings');
-  // ניקוי sessionStorage גם כן
-  Object.keys(sessionStorage).forEach(key => {
-    if (key.startsWith('timing_')) {
-      sessionStorage.removeItem(key);
-    }
-  });
-  console.log('🧹 נתוני מעקב זמן נוקו');
+  if (!isClient) return;
+  try {
+    safeLocalStorage.removeItem('userTimings');
+    console.log('נתוני מדידת זמן נוקו בהצלחה');
+  } catch (error) {
+    console.warn('שגיאה בניקוי נתוני מדידת זמן:', error);
+  }
 };
 
 // ייצוא נתוני זמן
