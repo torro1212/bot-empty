@@ -204,19 +204,27 @@ function handleClickData(data) {
 }
 
 function getOrCreateSpreadsheet() {
-  const spreadsheetName = 'BOTEX Analytics Dashboard';
-  
-  // חיפוש קובץ קיים
-  const files = DriveApp.getFilesByName(spreadsheetName);
-  
-  if (files.hasNext()) {
-    const file = files.next();
-    return SpreadsheetApp.openById(file.getId());
-  } else {
-    // יצירת קובץ חדש
-    const spreadsheet = SpreadsheetApp.create(spreadsheetName);
-    console.log('נוצר גיליון חדש:', spreadsheet.getUrl());
-    return spreadsheet;
+  try {
+    // השתמש ב-ID הספציפי שלך
+    const SPREADSHEET_ID = '1sdBiCyPaXuCUBQSTOhrXlrgz48CDDIj9oWhgLVJ91Po';
+    return SpreadsheetApp.openById(SPREADSHEET_ID);
+  } catch (error) {
+    console.error('שגיאה בפתיחת גיליון עם ID:', error);
+    
+    // גיבוי - חיפוש לפי שם
+    const spreadsheetName = 'BOTEX Analytics Dashboard';
+    const files = DriveApp.getFilesByName(spreadsheetName);
+    
+    if (files.hasNext()) {
+      const file = files.next();
+      console.log('נמצא גיליון לפי שם:', file.getId());
+      return SpreadsheetApp.openById(file.getId());
+    } else {
+      // יצירת קובץ חדש
+      const spreadsheet = SpreadsheetApp.create(spreadsheetName);
+      console.log('נוצר גיליון חדש:', spreadsheet.getId(), spreadsheet.getUrl());
+      return spreadsheet;
+    }
   }
 }
 

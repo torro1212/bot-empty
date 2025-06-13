@@ -4,7 +4,7 @@
  */
 
 // הגדרות בסיסיות - עדכן את ה-ID שלך כאן!
-const SPREADSHEET_ID = '1VTuFkUeiPjZ1HtdDg-47cVmpcw-lZvxWTaxg50DFdO4';
+const SPREADSHEET_ID = '1sdBiCyPaXuCUBQSTOhrXlrgz48CDDIj9oWhgLVJ91Po';
 
 /**
  * טיפול ב-OPTIONS request (CORS preflight)

@@ -5,7 +5,7 @@
 
 // הגדרות בסיסיות - עם ה-ID הנכון שלך!
 const SHEET_NAME = 'BOTEX Analytics Dashboard';
-const SPREADSHEET_ID = '1VTuFkUeiPjZ1HtdDg-47cVmpcw-lZvxWTaxg50DFdO4';
+const SPREADSHEET_ID = '1sdBiCyPaXuCUBQSTOhrXlrgz48CDDIj9oWhgLVJ91Po';
 
 // URL של יישום האינטרנט המפורס
 const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwLmA2kCXRDB96_qnlAetIyNLILmaX_uKcMQozpbP23fSvQZo7Yy92y-nyAoEtwCg10xA/exec';
